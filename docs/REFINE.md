@@ -39,6 +39,8 @@ lives in YouTube Music's own page rather than in a separate panel:
 | Speed menu: 0.25×–3×, presets, pitch on/off, a speed for any song (it stays from song to song and after a reload, even though the player puts its own back whenever a song loads), for this song or for this playlist | YouTube Music's speed button | Richer speed menu, Keep the pitch |
 | Clear slowed sound: a slowed song is played the clear way (pitch lowered, as with a record) and its pitch is put back by a phase vocoder, instead of the browser's own time-stretching, which smears and warbles on music | speed menu | Clear slowed sound |
 | Room: a soft reverb for a "slowed + reverb" sound, from off to 100% | speed menu | — |
+| Best quality: YouTube Music asks for every song in its highest audio quality (256 kbps with Premium), whatever the account's own setting; a line shows the stream really playing (codec and bitrate, from the player's own stats) | All settings → Sound quality, ✦ menu | Best quality |
+| Sound presets: Flat, Clarity, Warm, Bass, Vocal, Loudness, with a strength slider. Four gentle filters in the same sound path as Clear slowed sound; the input is turned down by exactly the most any frequency is lifted, so nothing distorts | All settings → Sound quality, ✦ menu (Sound tile) | — |
 | Times that follow the speed: at 0.8×, a 3:00 song shows 3:45 in the player bar (and on Discord, through the app) | player bar | Times follow the speed |
 | Random-song button beside the home page's first shelf | home page | Something-you-might-like button |
 | Playlist maker (item 3 below) | ✦ menu → Make a playlist | — |

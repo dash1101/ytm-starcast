@@ -36,7 +36,7 @@
   const PREFS_KEY = "pocketfader.refine.v1";
   const SPEEDS_KEY = "pocketfader.refine.speeds";
   const DEFAULTS = { shapes: true, colors: true, controls: true, wavy: true, glow: true, motion: true, material: true, logo: true, sidebar: true,
-    speedMenu: true, keepPitch: true, clearSlow: false, speedTimes: true, dice: true, lyrics: true, lyricsFollow: true, lyricsFloat: true, songMenu: true };
+    speedMenu: true, keepPitch: true, bestQuality: true, clearSlow: false, speedTimes: true, dice: true, lyrics: true, lyricsFollow: true, lyricsFloat: true, songMenu: true };
   const readJSON = (k, d) => {
     try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v && typeof v === "object" ? v : d; } catch (e) { return d; }
   };
@@ -124,6 +124,8 @@
     motion: "stroke:M10 19a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM16.5 6.2a8.5 8.5 0 0 1 0 11.6M20 8.4a8 8 0 0 1 0 7.2",
     wave: "stroke:M2.5 12c1.6-3.4 3.2-3.4 4.75 0s3.15 3.4 4.75 0 3.2-3.4 4.75 0 3.15 3.4 4.75 0",
     eq: "M7 18h2V6H7v12zm4 4h2V2h-2v20zm-8-8h2v-4H3v4zm12 4h2V6h-2v12zm4-8v4h2v-4h-2z",
+    hq: "M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-8 12H9.5v-2h-2v2H6V9h1.5v2.5h2V9H11v6zm7-1a1 1 0 0 1-1 1h-.75v1.5h-1.5V15H14a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v4zm-3.5-.5h2v-3h-2v3z",
+    tone: "M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z",
     viz: "stroke:M7 7h10v10H7zM4 9.5V8M4 16v-2.5M20 9.5V8M20 16v-2.5M9.5 4H8M16 4h-1.5M9.5 20H8M16 20h-1.5",
     material: "stroke:M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zM12 3.5v17M3.5 12h17",
     volume: "M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z",
@@ -547,6 +549,9 @@
   .pf-all-sec .pf-snd { padding: 4px 16px 0; }
   .pf-btn.pf-inline { margin: 8px 16px 0; }
   .pf-room { padding: 6px 16px 0; }
+  .pf-tone { padding: 2px 16px 0; }
+  .pf-tone .pf-chips { gap: 6px; }
+  .pf-stream { margin-top: 2px; }
   @media (max-width: 700px) {
     .pf-all-main { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
     .pf-all-nav { flex-direction: row; overflow-x: auto; padding: 0 12px 8px; }
@@ -1141,14 +1146,28 @@
   // pitch back. That needs the page's sound to run through Web Audio, which is set up the first time it's needed, after a
   // press on the page (the browser's rule), and then stays: the browser lets a page do it only once per media element.
   const SOUND_KEY = "pocketfader.refine.sound";
-  const soundOpts = (() => { const o = readJSON(SOUND_KEY, {}); return { room: clamp(Number(o.room) || 0, 0, 1) }; })();
+  // the tone presets (dB at full strength for: bass shelf, low mids, presence, treble shelf), see "Sound quality" below
+  const TONES = {
+    flat: ["Flat", [0, 0, 0, 0]],
+    clarity: ["Clarity", [1, -1.5, 2, 3]],
+    warm: ["Warm", [3, 1, -1, -2]],
+    bass: ["Bass", [6, -1, 0, 0]],
+    vocal: ["Vocal", [-2, -1, 3.5, 1]],
+    loudness: ["Loudness", [5, 0, 1, 4]],
+  };
+  const soundOpts = (() => {
+    const o = readJSON(SOUND_KEY, {});
+    return { room: clamp(Number(o.room) || 0, 0, 1), tone: TONES[o.tone] ? o.tone : "flat",
+      strength: clamp(isFinite(Number(o.strength)) && o.strength !== null && o.strength !== undefined ? Number(o.strength) : 0.7, 0, 1) };
+  })();
   const snd = { ctx: null, node: null, ps: null, el: null, kind: "", err: "", dry: null, wet: null, busy: false, lagSec: 0, clear: false };
   // the cover visualizer (its own section below); Pulse and Bars listen to the music
   const VIZ_KEY = "pocketfader.refine.viz";
   const VIZ_MODES = [["off", "Off"], ["halo", "Halo"], ["orbit", "Orbit"], ["pulse", "Pulse"], ["bars", "Bars"]];
   let vizMode = (() => { const m = readJSON(VIZ_KEY, {}).mode; return VIZ_MODES.some((x) => x[0] === m) ? m : "halo"; })();
   const vizHears = () => vizMode === "pulse" || vizMode === "bars";
-  const needSound = () => live() && (soundOpts.room > 0 || vizHears() || (!!prefs.clearSlow && !!prefs.keepPitch && getRate() < 0.99));
+  const toneOn = () => live() && soundOpts.tone !== "flat" && soundOpts.strength > 0;
+  const needSound = () => live() && (soundOpts.room > 0 || vizHears() || toneOn() || (!!prefs.clearSlow && !!prefs.keepPitch && getRate() < 0.99));
   function clearActive() {
     const v = video();
     return !!(snd.node && snd.kind !== "none" && snd.el === v && snd.ctx.state === "running" && live() && prefs.keepPitch && prefs.clearSlow &&
@@ -1167,6 +1186,39 @@
       // the stretched sound comes out a little later: the lyrics wait for it
       snd.lagSec = clear && snd.ctx ? (snd.kind === "worklet" ? 6144 : 6144 + 8192) / snd.ctx.sampleRate : 0;
     }
+  }
+  // The tone presets, through the same sound path: a bass shelf, the low mids, the presence range and a treble shelf.
+  // The input is turned down by exactly the most any frequency is lifted (measured on the filters themselves), so a
+  // preset never makes the music distort; the volume dips a little instead.
+  const TONE_BANDS = [["lowshelf", 100, 0.7], ["peaking", 320, 1], ["peaking", 3200, 0.9], ["highshelf", 10000, 0.7]];
+  const TONE_HZ = new Float32Array(Array.from({ length: 96 }, (_, i) => 20 * Math.pow(1000, i / 95)));   // 20 Hz to 20 kHz
+  function toneGains() {
+    const k = toneOn() ? soundOpts.strength : 0;
+    return TONES[soundOpts.tone][1].map((g) => g * k);
+  }
+  function toneHeadroom(ctx, gains) {
+    if (!gains.some((g) => g > 0)) return 0;
+    const total = new Float32Array(TONE_HZ.length).fill(1), mag = new Float32Array(TONE_HZ.length), ph = new Float32Array(TONE_HZ.length);
+    TONE_BANDS.forEach(([type, f, q], i) => {
+      const b = ctx.createBiquadFilter();   // a spare, unconnected filter set to the new values, only to measure them
+      b.type = type; b.frequency.value = f; b.Q.value = q; b.gain.value = gains[i];
+      b.getFrequencyResponse(TONE_HZ, mag, ph);
+      for (let j = 0; j < total.length; j++) total[j] *= mag[j];
+    });
+    return Math.max(0, 20 * Math.log10(Math.max(...total)));
+  }
+  function applyTone() {
+    if (!snd.ctx || !snd.bands) return;
+    const gains = toneGains(), t = snd.ctx.currentTime;
+    snd.bands.forEach((b, i) => b.gain.setTargetAtTime(gains[i], t, 0.05));
+    snd.input.gain.setTargetAtTime(Math.pow(10, -toneHeadroom(snd.ctx, gains) / 20), t, 0.05);
+  }
+  function setTone(tone, strength) {
+    if (tone !== undefined && TONES[tone]) soundOpts.tone = tone;
+    if (strength !== undefined) soundOpts.strength = clamp(strength, 0, 1);
+    writeJSON(SOUND_KEY, soundOpts);
+    if (toneOn()) ensureSound(true);
+    applyTone();
   }
   function applyRoom() {
     if (!snd.ctx) return;
@@ -1203,8 +1255,8 @@
   async function ensureSound(gesture) {
     if (snd.busy) return;
     const v = video();
-    if (!v || !needSound()) { applyRoom(); applyPitch(); return; }
-    if (snd.ctx && snd.el === v) { applyRoom(); applyPitch(); return; }
+    if (!v || !needSound()) { applyRoom(); applyTone(); applyPitch(); return; }
+    if (snd.ctx && snd.el === v) { applyRoom(); applyTone(); applyPitch(); return; }
     // YouTube Music streams through Media Source (a blob: address on this page). Anything else can't be routed
     // through Web Audio without going silent, so it is left alone.
     if (!/^blob:/.test(v.currentSrc || v.src || "")) { snd.err = "not a stream this can use"; return; }
@@ -1241,6 +1293,12 @@
         const head = node || ctx.createGain(), dry = ctx.createGain(), wet = ctx.createGain(), conv = ctx.createConvolver();
         conv.buffer = roomImpulse(ctx);
         wet.gain.value = 0;
+        // the tone: four gentle filters with a little headroom in front of them (the input), flat until a preset is chosen
+        const input = ctx.createGain();
+        const bands = TONE_BANDS.map(([type, f, q]) => { const b = ctx.createBiquadFilter(); b.type = type; b.frequency.value = f; b.Q.value = q; b.gain.value = 0; return b; });
+        let tail = input;
+        for (const b of bands) { tail.connect(b); tail = b; }
+        tail.connect(head);
         head.connect(dry); dry.connect(ctx.destination);
         head.connect(conv); conv.connect(wet); wet.connect(ctx.destination);
         const analyser = ctx.createAnalyser();   // for the cover visualizers: listens only, plays nothing
@@ -1251,21 +1309,111 @@
         head.connect(analyser);
         // a context the system suspends (a device change) is woken again: the music runs through it now
         ctx.onstatechange = () => { if (ctx.state === "suspended") ctx.resume().catch(() => {}); applyPitch(); };
-        Object.assign(snd, { ctx, node: head, kind, dry, wet, analyser });
+        Object.assign(snd, { ctx, node: head, kind, dry, wet, analyser, input, bands });
       }
       if (snd.el !== v) {
         const src = snd.ctx.createMediaElementSource(v);   // from now on this element's sound runs through here
-        src.connect(snd.node);
+        src.connect(snd.input);
         snd.el = v;
       }
     } catch (e) {
       snd.err = String((e && e.message) || e).slice(0, 120);
     } finally { snd.busy = false; }
     applyRoom();
+    applyTone();
     applyPitch();
   }
   // the first press on the page lets the sound be set up, when it's wanted (Clear with a slowed song, or a room)
   for (const type of ["pointerdown", "keydown"]) window.addEventListener(type, () => { if (needSound() && !(snd.ctx && snd.el === video())) ensureSound(true); }, { capture: true, passive: true });
+
+  // ------------------------------------------------------------------ sound quality
+  // YouTube Music asks for every song in the audio quality its page holds (ytcfg "AUDIO_QUALITY", from the account's
+  // setting: low, medium or high). With "Best quality" on, Refine sets it to high for this page: with YouTube Music
+  // Premium that means its 256 kbps streams, from the next song that loads. Switched off, the account's own setting is
+  // put back. Nothing is changed on the account itself.
+  let qualityWas = null;
+  function syncQuality() {
+    const cfg = window.ytcfg;
+    if (!cfg || typeof cfg.get !== "function" || typeof cfg.set !== "function") return;
+    const cur = cfg.get("AUDIO_QUALITY");
+    if (on("bestQuality")) {
+      if (cur !== "AUDIO_QUALITY_HIGH") {
+        if (qualityWas === null) qualityWas = cur || "AUDIO_QUALITY_MEDIUM";
+        cfg.set("AUDIO_QUALITY", "AUDIO_QUALITY_HIGH");
+      }
+    } else if (qualityWas !== null) {
+      cfg.set("AUDIO_QUALITY", qualityWas);
+      qualityWas = null;
+    }
+  }
+  // What really plays: the stream the player chose (its "Stats for nerds" name it by its format number).
+  const STREAMS = {
+    "774": ["Opus", "256 kbps", true], "141": ["AAC", "256 kbps", true], "251": ["Opus", "about 160 kbps"], "140": ["AAC", "128 kbps"],
+    "250": ["Opus", "about 70 kbps"], "249": ["Opus", "about 50 kbps"], "139": ["AAC", "48 kbps"], "600": ["Opus", "about 35 kbps"], "599": ["AAC", "30 kbps"],
+  };
+  function streamNow() {
+    let codecs = "";
+    try { const mp = API.mp(); codecs = (mp && mp.getStatsForNerds && mp.getStatsForNerds().codecs) || ""; } catch (e) {}
+    for (const m of String(codecs).matchAll(/\((\d+)\)/g)) {
+      const s = STREAMS[m[1]];
+      if (s) return { codec: s[0], rate: s[1], high: !!s[2], itag: m[1] };
+    }
+    return null;
+  }
+  const premium = () => { try { return !!(window.ytcfg && window.ytcfg.get("IS_SUBSCRIBER")); } catch (e) { return false; } };
+  function streamText() {
+    const s = streamNow();
+    if (!s) return "Nothing playing yet.";
+    const what = "Playing now: " + s.codec + ", " + s.rate + (s.high ? " (Premium's high quality)" : "") + ".";
+    if (s.high) return what;
+    if (!premium()) return what + " That is the best YouTube Music plays without Premium.";
+    if (on("bestQuality")) return what + " The high-quality stream starts with the next song that loads.";
+    return what + " Switch on Best quality for the 256 kbps streams.";
+  }
+  // Sound quality, in All settings and from the quick menu's tile: the switch, what plays now, and the tone presets.
+  function qualitySection() {
+    const line = h("p", { class: "pf-foot pf-stream", role: "status", text: streamText() });
+    const refresh = () => { if (line.isConnected) { line.textContent = streamText(); setTimeout(refresh, 2000); } };
+    setTimeout(refresh, 2000);
+    const chips = Object.entries(TONES).map(([id, [label]]) => h("button", { class: "pf-chip", type: "button", text: label, "aria-pressed": String(soundOpts.tone === id),
+      onclick: () => { setTone(id); for (const c of chips) c.setAttribute("aria-pressed", String(c.dataset.tone === soundOpts.tone)); showStrength(); } }));
+    chips.forEach((c, i) => { c.dataset.tone = Object.keys(TONES)[i]; });
+    const range = h("input", { type: "range", min: "0", max: "100", step: "5", class: "pf-range pf-range-sm", "aria-label": "Preset strength" });
+    const val = h("span", { class: "pf-mini-val" });
+    const showStrength = () => {
+      range.value = String(Math.round(soundOpts.strength * 100));
+      range.style.setProperty("--pf-fill", soundOpts.strength * 100 + "%");
+      range.disabled = soundOpts.tone === "flat";
+      val.textContent = Math.round(soundOpts.strength * 100) + "%";
+    };
+    range.addEventListener("input", () => { setTone(undefined, Number(range.value) / 100); showStrength(); });
+    showStrength();
+    return [
+      sw("bestQuality", "Best quality", "Asks YouTube Music for its highest-quality audio: 256 kbps with YouTube Music Premium"),
+      line,
+      h("div", { class: "pf-tone" },
+        h("div", { class: "pf-label", text: "Sound" }),
+        h("div", { class: "pf-chips" }, chips),
+        h("div", { class: "pf-label pf-label-row" }, h("span", { text: "Strength" }), val), range),
+      h("p", { class: "pf-foot", text: "Clarity brings out detail and air, Warm softens the top, Bass and Loudness add weight, Vocal brings voices " +
+        "forward. Presets change the tone, not the detail in the stream itself. They start after your first press on the page, and the " +
+        "volume dips a little to leave room, so nothing ever distorts." }),
+    ];
+  }
+  // the quick menu's tile: one press for the next preset
+  function toneTile() {
+    const state = h("small");
+    const b = h("button", { class: "pf-tile", type: "button", title: "Sound preset: press for the next one" },
+      h("span", { class: "pf-tile-ico" }, icon(ICON.tone, 22)), h("span", { class: "pf-tile-text" }, "Sound", state));
+    const paint = () => { b.setAttribute("aria-checked", String(soundOpts.tone !== "flat")); b.setAttribute("aria-label", "Sound preset: " + TONES[soundOpts.tone][0]); state.textContent = TONES[soundOpts.tone][0]; };
+    b.addEventListener("click", () => {
+      const ids = Object.keys(TONES);
+      setTone(ids[(ids.indexOf(soundOpts.tone) + 1) % ids.length]);
+      paint();
+    });
+    paint();
+    return b;
+  }
 
   // ------------------------------------------------------------------ times that follow the speed
   // At 0.8x a three-minute song takes 3:45 to hear: the player bar's times say so (and so does Discord, from the app).
@@ -2511,7 +2659,8 @@
         tile("colors", "Album colours", ICON.palette), tile("motion", "Animations", ICON.motion),
         tile("wavy", "Wavy bar", ICON.wave), tile("clearSlow", "Clear slowed sound", ICON.eq),
         tile("material", "Material You page", ICON.material), vizTile(),
-        tile("lyrics", "Live lyrics", ICON.lyrics), tile("lyricsFollow", "Lyrics follow you", ICON.pip)),
+        tile("lyrics", "Live lyrics", ICON.lyrics), tile("lyricsFollow", "Lyrics follow you", ICON.pip),
+        tile("bestQuality", "Best quality", ICON.hq), toneTile()),
       h("div", { class: "pf-quick-actions" },
         h("button", { class: "pf-btn pf-tonal", disabled: !on("lyrics"), onclick: () => { closeSheet(); openLyricsWindow(); } }, icon(ICON.popOut, 18), "Lyrics window"),
         h("button", { class: "pf-btn pf-tonal", onclick: () => { closeSheet(); openMaker(); } }, icon(ICON.playlistAdd, 18), "Make a playlist")),
@@ -2579,6 +2728,7 @@
         vizChooser(),
         sw("logo", "YTM Starcast logo", "In place of YouTube Music's, to show Refine is on"),
         sw("sidebar", "In the sidebar", "Lyrics, Make a playlist and these settings, under Home, Explore and Library")]],
+      ["quality", "Sound quality", qualitySection()],
       ["playback", "Playback", [
         sw("speedMenu", "Richer speed menu", "Opens from the player's own speed button; the speed stays from song to song"),
         sw("keepPitch", "Keep the pitch at other speeds", null),
@@ -3320,7 +3470,9 @@
     syncGuide();
     syncLogo();
     syncViz();
+    syncQuality();
     applyRoom();
+    applyTone();
     applyPitch();
   }
   function restorePalette() {
@@ -3385,7 +3537,7 @@
         watchPlayerPage();
         syncAutoFloat();
         syncViz();
-        if (tick % 3 === 0) { syncNav(); syncDice(); syncSpeedButton(); syncWave(); syncTimes(); enforceRate(); syncGuide(); syncLogo(); syncDiscordDot(); }
+        if (tick % 3 === 0) { syncNav(); syncDice(); syncSpeedButton(); syncWave(); syncTimes(); enforceRate(); syncGuide(); syncLogo(); syncDiscordDot(); syncQuality(); }
         kickWave();
       }
     } catch (e) {}
@@ -3401,7 +3553,10 @@
       lyrics: { where: lyr.where, tab: !!lyricsTab(), tabHost: !!document.querySelector("ytmusic-player-page #tab-renderer"), window: !!lyr.frame, pip: !!lyr.pip,
         pinned: lyrWin.pinned, source: lyr.source, words: lyr.lines.some((ln) => ln.w && ln.w.length), estimated: lyr.est },
       speed: { rate: getRate(), base: baseRate, times: (timeEls || []).map((el) => el.tagName.toLowerCase() + "." + String(el.className).split(" ")[0]) },
-      sound: { kind: snd.kind, state: snd.ctx ? snd.ctx.state : "none", err: snd.err, clear: clearActive(), room: soundOpts.room },
+      sound: { kind: snd.kind, state: snd.ctx ? snd.ctx.state : "none", err: snd.err, clear: clearActive(), room: soundOpts.room,
+        tone: soundOpts.tone, strength: soundOpts.strength, toneGains: snd.bands ? snd.bands.map((b) => Math.round(b.gain.value * 10) / 10) : null,
+        headroomDb: snd.input ? Math.round(-20 * Math.log10(snd.input.gain.value || 1) * 10) / 10 : null },
+      quality: { best: on("bestQuality"), page: (() => { try { return window.ytcfg.get("AUDIO_QUALITY"); } catch (e) { return null; } })(), stream: streamNow() },
       discordButton: !!(dcNavBtn && dcNavBtn.isConnected), logo: document.querySelectorAll("ytmusic-logo[data-pf-logo]").length,
       sidebar: [...document.querySelectorAll(".pf-guide")].map((g) => (g.classList.contains("pf-guide-mini") ? "mini" : "full") + ":" + (g.parentElement ? g.parentElement.tagName.toLowerCase() + (g.parentElement.id ? "#" + g.parentElement.id : "") : "")),
       tabs: [...document.querySelectorAll("ytmusic-player-page tp-yt-paper-tab")].map((t) => (t.textContent || "").trim().slice(0, 20)),
@@ -3414,7 +3569,7 @@
   }) });
   if (window.__pfTest) window.__pfRefineTest = { dominant, palette, rank, spread, pickSeeds, songKey, cleanTitle, artistKey, findSliders, scaleTimes, estimateWords,
     splitWords, lyricsTab, syncLyricsTab, openLyricsWindow, closeLyricsWindow, renderLyrics, lyr, lyrWin, lyrSongs, openAll, closeAll, toggleSheet,
-    syncGuide, syncLogo, watchPlayerPage, setViz, edgePoint, vizFrame, report: () => window[Symbol.for("pocketfader.refine")].report() };
+    syncGuide, syncLogo, watchPlayerPage, setViz, edgePoint, vizFrame, setTone, streamText, report: () => window[Symbol.for("pocketfader.refine")].report() };
 
   if (partOn) restorePalette();
   applyAll();
