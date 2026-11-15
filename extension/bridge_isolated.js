@@ -86,7 +86,7 @@
     if (!isFinite(h) || !isFinite(s)) return;
     clearTimeout(paletteT);
     paletteT = setTimeout(() => {
-      try { chrome.storage.local.set({ palette: { h: ((Math.round(h) % 360) + 360) % 360, s: Math.max(0, Math.min(1, s)), at: Date.now() } }); } catch (e) {}
+      try { chrome.storage.local.set({ palette: { h: ((Math.round(h) % 360) + 360) % 360, s: Math.max(0, Math.min(1, s)), brand: p.brand === true, at: Date.now() } }); } catch (e) {}
     }, 300);
   }
 

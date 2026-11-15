@@ -1,13 +1,12 @@
-### What's new in 0.2.7-alpha
+### What's new in 0.2.8-alpha
 
-- **Sound quality in Refine** (✦ menu, or All settings → Sound quality):
-  - **Best quality** (on by default): YouTube Music asks for every song in its highest audio quality, 256 kbps with
-    YouTube Music Premium, whatever your account's own audio quality setting says. Your account isn't changed.
-  - A line shows the stream really playing, for example "Opus, about 160 kbps" or "AAC, 256 kbps (Premium's high
-    quality)".
-  - **Sound presets:** Flat, Clarity, Warm, Bass, Vocal and Loudness, with a strength slider (also one press at a time
-    from the ✦ menu's Sound tile). The volume dips a little to leave room, so a preset never distorts. Presets change
-    the tone, not the detail in the stream, and start after your first press on the page.
+- **YTM Starcast's logo in the album's colours:** the logo in YouTube Music's top bar, the extension's toolbar button
+  and its popup take the colours of the cover playing (with Refine's album colours off, they keep their usual blue).
+- **No more flicker of the whole page when a song changes:** Refine's new-song animation shared a name with one of its
+  own styles, which laid the page out wrong for about a second.
+- YouTube Music's ⋮ menus scroll with the mouse wheel again.
+- The lyrics window's pin shows whether it is pinned (a filled pin on a tonal background) or not.
+- The logo in the top bar lines up with the menu button.
 
 ### Updating from 0.2.0-alpha.10 or older
 

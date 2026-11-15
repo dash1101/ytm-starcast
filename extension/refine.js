@@ -117,6 +117,7 @@
     tune: "M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z",
     popOut: "M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z",
     popIn: "M19 5v14H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2V5zM17.59 3 11 9.59V6H9v7h7v-2h-3.59L19 4.41 17.59 3z",
+    pinOutline: "M14 4v5c0 1.12.37 2.16 1 3H9c.65-.86 1-1.9 1-3V4h4m3-2H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3V4h1c.55 0 1-.45 1-1s-.45-1-1-1z",
     pin: "M16 9V4h1a1 1 0 0 0 0-2H7a1 1 0 0 0 0 2h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z",
     pip: "M19 11h-8v6h8v-6zm4 8V4.98C23 3.88 22.1 3 21 3H3c-1.1 0-2 .88-2 1.98V19c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2zm-2 .02H3V4.97h18v14.05z",
     discord: "M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z",
@@ -148,14 +149,23 @@
   let colors = palette(DEFAULT_HUE, 1);
   let lastColor = null, colorFor = "", colorBusy = false, colorNote = "";
   let paletteSent = "";
+  // YTM Starcast's logo in the album's colours: the same shape, its tile, arcs and star from the cover's hue. At the
+  // logo's own blue (231) this gives its usual colours, which it keeps while the album colours are switched off.
+  function logoColors(hue, vivid) {
+    const c = vivid < 0.12 ? 0.3 : 1;
+    return { a: hsl(hue, 57 * c, 39), b: hsl(hue, 66 * c, 19), c: hsl(hue, 71 * c, 10), arc: hsl(hue - 22, 100 * c, 77), star: hsl(hue - 9, 100 * c, 97) };
+  }
   function setPalette(p, hue, vivid) {
     colors = p;
     const st = document.documentElement.style;
     for (const [k, v] of Object.entries(p)) st.setProperty("--pf-" + k.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase()), v);
+    const brand = !on("colors") || hue == null;
+    const lc = brand ? null : logoColors(hue, vivid == null ? 1 : vivid);
+    for (const k of ["a", "b", "c", "arc", "star"]) { if (lc) st.setProperty("--pf-logo-" + k, lc[k]); else st.removeProperty("--pf-logo-" + k); }
     if (lyr.pip) copyPalette(lyr.pip.document.documentElement);   // first called after everything below is set up
     kickWave();
     // the toolbar popup follows the same colours (the extension's script keeps the last ones)
-    const msg = JSON.stringify({ h: Math.round(hue == null ? DEFAULT_HUE : hue), s: Math.round((vivid == null ? 1 : vivid) * 100) / 100 });
+    const msg = JSON.stringify({ h: Math.round(hue == null ? DEFAULT_HUE : hue), s: Math.round((vivid == null ? 1 : vivid) * 100) / 100, brand });
     if (msg !== paletteSent) { paletteSent = msg; window.postMessage({ __vmr: "palette", palette: JSON.parse(msg) }, "*"); }
   }
   // The most vivid colour of a small copy of the cover: hues in 10-degree bins, weighted by how colourful each pixel is.
@@ -284,6 +294,7 @@
   .pf-btn.pf-wide { display: flex; width: calc(100% - 32px); margin: 14px 16px 4px; height: 48px; border-radius: 24px; font-size: 15px; }
   .pf-btn svg { flex: none; }
   .pf-icon-btn { width: 40px; padding: 0; color: var(--pf-text); }
+  .pf-icon-btn[aria-pressed="true"] { background: var(--pf-container); color: var(--pf-on-container); border-radius: var(--pf-r-sm); }
   .pf-foot { margin: 12px 16px 0; font-size: 12px; line-height: 1.45; color: var(--pf-muted); }
   .pf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .pf-chip { height: 32px; padding: 0 14px; border-radius: var(--pf-r-xs); border: 1px solid var(--pf-outline); background: transparent; cursor: pointer; font-size: 13.5px;
@@ -501,8 +512,10 @@
   .pf-menu-item.pf-sub { height: auto; min-height: 52px; padding: 8px 16px 8px 28px; border-top: 0; }
   .pf-sub-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
   .pf-sub-text small { font-size: 12px; color: var(--ytmusic-text-secondary, #aaa); }
-  /* one more row can make a long menu scroll; its scrollbar must not start a sideways one too */
-  ytmusic-menu-popup-renderer:has(.pf-menu-item) { overflow-x: hidden !important; scrollbar-width: thin; scrollbar-color: var(--pf-outline) transparent; }
+  /* one more row can make a long menu scroll; room is kept for its scrollbar so that it never starts a sideways one too.
+     (Not overflow-x: hidden: YouTube Music's menus only let the mouse wheel scroll an element that scrolls both ways.) */
+  ytmusic-menu-popup-renderer:has(.pf-menu-item) { scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: var(--pf-outline) transparent; }
+  ytmusic-menu-popup-renderer:has(.pf-menu-item) > tp-yt-paper-listbox { box-sizing: border-box; max-width: 100%; }
   .pf-dice button.pf-busy .pf-ico, .pf-bar-btn button.pf-busy .pf-ico { animation: pf-spin .8s linear infinite; }
   @keyframes pf-spin { to { transform: rotate(360deg); } }
   /* the Discord button beside ✦, with a dot for what Discord status is doing */
@@ -576,7 +589,7 @@
   [data-pf-logo-box] > :not(.pf-logo) { display: none !important; }
   ytmusic-logo[data-pf-logo] { width: auto !important; min-width: max-content; }
   ytmusic-logo[data-pf-logo] a { width: auto !important; }
-  .pf-logo { display: inline-flex; align-items: center; gap: 8px; height: 100%; vertical-align: middle; }
+  .pf-logo { display: inline-flex; align-items: center; gap: 8px; height: 100%; vertical-align: middle; transform: translateY(var(--pf-logo-dy, 0px)); }
   .pf-logo .pf-logo-tile { flex: none; filter: drop-shadow(0 3px 10px color-mix(in srgb, var(--pf-glow) 70%, transparent)); transition: transform .4s var(--pf-spring); }
   .pf-logo:hover .pf-logo-tile { transform: rotate(-8deg) scale(1.06); }
   .pf-logo-word { font-family: "YouTube Sans", Roboto, sans-serif; font-size: 21px; font-weight: 600; letter-spacing: -.03em; color: var(--ytmusic-text-primary, #fff); }
@@ -762,17 +775,17 @@
     @keyframes pf-cover { from { opacity: .35; transform: scale(.94); } to { opacity: 1; transform: none; } }
     @keyframes pf-fade { from { opacity: 0; } to { opacity: 1; } }
     /* a new page (or new results): its header, then its shelves and rows, rise in one after another */
-    html.pf-nav ytmusic-browse-response #header > *, html.pf-nav ytmusic-responsive-header-renderer, html.pf-nav ytmusic-immersive-header-renderer,
-    html.pf-nav ytmusic-detail-header-renderer, html.pf-nav ytmusic-editable-playlist-detail-header-renderer,
-    html.pf-nav ytmusic-section-list-renderer > #contents > *, html.pf-nav ytmusic-search-page #contents > *,
-    html.pf-nav ytmusic-tabbed-search-results-renderer #contents > *, html.pf-nav ytmusic-chip-cloud-renderer { animation: pf-rise .55s var(--pf-ease) both; }
-    ${stagger("html.pf-nav ytmusic-section-list-renderer > #contents > *", 8, 55, 60)}
-    html.pf-nav ytmusic-playlist-shelf-renderer #contents > :nth-child(-n+18), html.pf-nav ytmusic-shelf-renderer #contents > :nth-child(-n+18),
-    html.pf-nav ytmusic-carousel #items > :nth-child(-n+10), html.pf-nav ytmusic-grid-renderer #items > :nth-child(-n+18) { animation: pf-rise .5s var(--pf-ease) both; }
-    ${stagger("html.pf-nav ytmusic-playlist-shelf-renderer #contents > *", 18, 22, 140)}
-    ${stagger("html.pf-nav ytmusic-shelf-renderer #contents > *", 18, 22, 100)}
-    ${stagger("html.pf-nav ytmusic-carousel #items > *", 10, 35, 80)}
-    ${stagger("html.pf-nav ytmusic-grid-renderer #items > *", 18, 25, 80)}
+    html.pf-go-nav ytmusic-browse-response #header > *, html.pf-go-nav ytmusic-responsive-header-renderer, html.pf-go-nav ytmusic-immersive-header-renderer,
+    html.pf-go-nav ytmusic-detail-header-renderer, html.pf-go-nav ytmusic-editable-playlist-detail-header-renderer,
+    html.pf-go-nav ytmusic-section-list-renderer > #contents > *, html.pf-go-nav ytmusic-search-page #contents > *,
+    html.pf-go-nav ytmusic-tabbed-search-results-renderer #contents > *, html.pf-go-nav ytmusic-chip-cloud-renderer { animation: pf-rise .55s var(--pf-ease) both; }
+    ${stagger("html.pf-go-nav ytmusic-section-list-renderer > #contents > *", 8, 55, 60)}
+    html.pf-go-nav ytmusic-playlist-shelf-renderer #contents > :nth-child(-n+18), html.pf-go-nav ytmusic-shelf-renderer #contents > :nth-child(-n+18),
+    html.pf-go-nav ytmusic-carousel #items > :nth-child(-n+10), html.pf-go-nav ytmusic-grid-renderer #items > :nth-child(-n+18) { animation: pf-rise .5s var(--pf-ease) both; }
+    ${stagger("html.pf-go-nav ytmusic-playlist-shelf-renderer #contents > *", 18, 22, 140)}
+    ${stagger("html.pf-go-nav ytmusic-shelf-renderer #contents > *", 18, 22, 100)}
+    ${stagger("html.pf-go-nav ytmusic-carousel #items > *", 10, 35, 80)}
+    ${stagger("html.pf-go-nav ytmusic-grid-renderer #items > *", 18, 25, 80)}
     /* cards, rows, chips and buttons answer the pointer */
     ytmusic-two-row-item-renderer { transition: transform .32s var(--pf-spring); }
     ytmusic-two-row-item-renderer:active { transform: scale(.96); transition-duration: .12s; }
@@ -797,18 +810,18 @@
     tp-yt-paper-dialog { animation: pf-drop .34s var(--pf-spring) both; }
     ytmusic-search-suggestions-section, tp-yt-paper-toast { animation: pf-fade .22s both; }
     /* a new song: the cover and the title in the player bar slide in, the big cover settles */
-    html.pf-song ytmusic-player-bar .middle-controls .content-info-wrapper, html.pf-song ytmusic-player-bar .middle-controls .thumbnail-image-wrapper,
-    html.pf-song ytmusic-player-bar img.image, html.pf-song ytmusic-miniplayer img { animation: pf-swap .5s var(--pf-ease) both; }
-    html.pf-song ytmusic-player #song-image { animation: pf-cover .75s var(--pf-ease) both; }
+    html.pf-go-song ytmusic-player-bar .middle-controls .content-info-wrapper, html.pf-go-song ytmusic-player-bar .middle-controls .thumbnail-image-wrapper,
+    html.pf-go-song ytmusic-player-bar img.image, html.pf-go-song ytmusic-miniplayer img { animation: pf-swap .5s var(--pf-ease) both; }
+    html.pf-go-song ytmusic-player #song-image { animation: pf-cover .75s var(--pf-ease) both; }
     /* the player page opens: the cover grows into place, the panel beside it rises */
-    html.pf-page ytmusic-player-page ytmusic-player { animation: pf-cover .65s var(--pf-ease) both; }
-    html.pf-page ytmusic-player-page #side-panel { animation: pf-rise .6s .08s var(--pf-ease) both; }
+    html.pf-go-page ytmusic-player-page ytmusic-player { animation: pf-cover .65s var(--pf-ease) both; }
+    html.pf-go-page ytmusic-player-page #side-panel { animation: pf-rise .6s .08s var(--pf-ease) both; }
     /* Up next, Lyrics, Related: what's under the tabs slides in */
-    html.pf-tab ytmusic-player-page #tab-renderer > :not(:has(ytmusic-player-queue-item)) { animation: pf-swap .4s var(--pf-ease) both; }
+    html.pf-go-tab ytmusic-player-page #tab-renderer > :not(:has(ytmusic-player-queue-item)) { animation: pf-swap .4s var(--pf-ease) both; }
     /* Up next: every song in view glides in, one after another from the first one seen (however far down the list is
        scrolled), when the tab opens and when the player page does */
     @keyframes pf-row { from { opacity: 0; transform: translateX(32px) scale(.97); } 60% { opacity: 1; } to { opacity: 1; transform: none; } }
-    html:is(.pf-tab, .pf-page) ytmusic-player-page ytmusic-player-queue-item[data-pf-in] {
+    html:is(.pf-go-tab, .pf-go-page) ytmusic-player-page ytmusic-player-queue-item[data-pf-in] {
       animation: pf-row .55s cubic-bezier(.05,.7,.1,1) both; animation-delay: calc(var(--pf-i, 0) * 26ms + 60ms); }
     ytmusic-player-page tp-yt-paper-tab { transition: color .25s; }
     ytmusic-player-queue-item { transition: background-color .35s var(--pf-ease); }
@@ -1808,7 +1821,15 @@
     const dockLabel = w === "pip" ? "Back into the page" : "Close (back to the Lyrics tab)";
     lyr.btn.dock.title = dockLabel;
     lyr.btn.dock.setAttribute("aria-label", dockLabel);
-    lyr.btn.pin.setAttribute("aria-pressed", String(lyrWin.pinned));
+    // pinned: a filled pin on a tonal background; not pinned: an outlined pin, as an open choice
+    const pinned = !!lyrWin.pinned, pinLabel = pinned ? "Pinned: press to unpin (then it can be moved again)" : "Pin: keep it here, also after a reload";
+    lyr.btn.pin.setAttribute("aria-pressed", String(pinned));
+    lyr.btn.pin.title = pinLabel;
+    lyr.btn.pin.setAttribute("aria-label", pinLabel);
+    if (lyr.btn.pin.dataset.shown !== String(pinned)) {
+      lyr.btn.pin.dataset.shown = String(pinned);
+      lyr.btn.pin.replaceChildren(icon(pinned ? ICON.pin : ICON.pinOutline, 20));
+    }
     lyr.box.classList.toggle("pf-in-tab", w === "tab");
   }
   function mountLyrics(where, parent, before) {
@@ -1886,7 +1907,7 @@
     if (!el) return;
     tabsObs = new MutationObserver(() => {
       const sel = [...el.querySelectorAll("tp-yt-paper-tab")].map(tabSelected).join();
-      if (sel !== lastTabSel) { if (lastTabSel) pulse("pf-tab", 700, numberQueueRows); lastTabSel = sel; }
+      if (sel !== lastTabSel) { if (lastTabSel) pulse("pf-go-tab", 700, numberQueueRows); lastTabSel = sel; }
       syncLyricsTab();
     });
     tabsObs.observe(el, { attributes: true, subtree: true, attributeFilter: ["aria-selected", "class", "disabled", "aria-disabled"] });
@@ -2864,17 +2885,18 @@
     const P = (d, attrs) => { const p = document.createElementNS(SVGNS, "path"); p.setAttribute("d", d); for (const [k, v] of Object.entries(attrs)) p.setAttribute(k, v); s.append(p); };
     const defs = document.createElementNS(SVGNS, "defs"), g = document.createElementNS(SVGNS, "linearGradient");
     for (const [k, v] of Object.entries({ id: "pf-logo-bg", x1: "0", y1: "0", x2: "0.35", y2: "1" })) g.setAttribute(k, v);
-    for (const [o, c] of [["0", "#2A3A9A"], [".55", "#111A52"], ["1", "#070B2A"]]) {
-      const st = document.createElementNS(SVGNS, "stop"); st.setAttribute("offset", o); st.setAttribute("stop-color", c); g.append(st);
+    // the colours follow the album's (see logoColors), through variables, so every logo on the page changes together
+    for (const [o, v, c] of [["0", "a", "#2A3A9A"], [".55", "b", "#111A52"], ["1", "c", "#070B2A"]]) {
+      const st = document.createElementNS(SVGNS, "stop"); st.setAttribute("offset", o); st.setAttribute("style", `stop-color: var(--pf-logo-${v}, ${c}); transition: stop-color .6s`); g.append(st);
     }
     defs.append(g); s.append(defs);
     const r = document.createElementNS(SVGNS, "rect");
     for (const [k, v] of Object.entries({ x: 16, y: 16, width: 480, height: 480, rx: 112, fill: "url(#pf-logo-bg)" })) r.setAttribute(k, v);
     s.append(r);
     for (const [rad, w, o] of [[132, 38, 1], [200, 36, 0.7]]) {
-      P(`M176,${336 - rad} A${rad},${rad} 0 0 1 ${176 + rad},336`, { fill: "none", stroke: "#8CC8FF", "stroke-width": w, "stroke-linecap": "round", opacity: o });
+      P(`M176,${336 - rad} A${rad},${rad} 0 0 1 ${176 + rad},336`, { fill: "none", style: "stroke: var(--pf-logo-arc, #8CC8FF)", "stroke-width": w, "stroke-linecap": "round", opacity: o });
     }
-    P(LOGO_STAR, { fill: "#F2F6FF" });
+    P(LOGO_STAR, { style: "fill: var(--pf-logo-star, #F2F6FF)" });
     return s;
   }
   function syncLogo() {
@@ -2903,6 +2925,15 @@
     if (!logo || !next || !logo.getClientRects().length) return;
     const room = next.getBoundingClientRect().left - 8;
     const r = logo.getBoundingClientRect();
+    // in line with the menu button beside it (YouTube Music's logo box sits a few pixels lower than the button)
+    const burger = bar.querySelector("#guide-button");
+    const tile = logo.querySelector(".pf-logo-tile");
+    if (burger && tile) {
+      const br = burger.getBoundingClientRect(), tr = tile.getBoundingClientRect();
+      const cur = parseFloat(logo.style.getPropertyValue("--pf-logo-dy")) || 0;
+      const dy = Math.round(br.top + br.height / 2 - (tr.top + tr.height / 2) + cur);
+      if (br.height && tr.height && Math.abs(dy) <= 12 && dy !== cur) logo.style.setProperty("--pf-logo-dy", dy + "px");
+    }
     if (!logo.classList.contains("pf-logo-compact")) {
       logo.__pfFull = r.width;
       if (r.right > room) logo.classList.add("pf-logo-compact");
@@ -3379,6 +3410,8 @@
   // ------------------------------------------------------------------ animations
   // The "motion" layer's CSS does the moving; these marks on the page say when: a new page (or a new set of
   // results) has arrived, a new song started, the player page opened, a tab in it changed.
+  // (their names start "pf-go-" so they never match one of Refine's own styles: "pf-song" on the page once matched the
+  // playlist maker's song rows and laid the whole page out as one row while a new song began)
   const pulses = {};
   // prep (optional) runs just before the mark goes on, once the new content is laid out, and returns how much longer
   // the animation takes (rows arriving one after another)
@@ -3420,14 +3453,14 @@
     const now = Date.now();
     if (location.href !== pageUrl) {
       pageUrl = location.href;
-      if (now - dataAt < 900) { dataAt = 0; pulse("pf-nav", 1300); } else watchUntil = now + 6000;
+      if (now - dataAt < 900) { dataAt = 0; pulse("pf-go-nav", 1300); } else watchUntil = now + 6000;
     }
     const el = pageEl(), d = el && el.data;
     if (d && d !== pageData) {
       const first = !pageData;
       pageData = d;
       if (first) return;
-      if (now < watchUntil) { watchUntil = 0; pulse("pf-nav", 1300); } else dataAt = now;
+      if (now < watchUntil) { watchUntil = 0; pulse("pf-go-nav", 1300); } else dataAt = now;
     }
   }
   setInterval(watchPage, 120);
@@ -3439,13 +3472,13 @@
   let animVid = null;
   function songChanged() {
     const vid = API.curVideo();
-    if (vid && vid !== animVid) { const first = !animVid; animVid = vid; if (!first) pulse("pf-song", 1000); }
+    if (vid && vid !== animVid) { const first = !animVid; animVid = vid; if (!first) pulse("pf-go-song", 1000); }
   }
   let pageOpen = null, pageObs = null, pageObsOn = null;
   function watchPlayerPage() {
     const open = !!document.querySelector("ytmusic-player-bar[player-page-open], ytmusic-app-layout[player-page-open]");
     if (pageOpen !== null && open !== pageOpen) {
-      if (open) { pulse("pf-page", 1100, numberQueueRows); setTimeout(lyricsBack, 60); } else lyricsAway();
+      if (open) { pulse("pf-go-page", 1100, numberQueueRows); setTimeout(lyricsBack, 60); } else lyricsAway();
     }
     pageOpen = open;
     const el = document.querySelector("ytmusic-app-layout") || document.querySelector("ytmusic-player-bar");
@@ -3496,6 +3529,7 @@
     document.documentElement.removeAttribute("data-pf-playing");
     const st = document.documentElement.style;
     for (const k of Object.keys(colors)) st.removeProperty("--pf-" + k.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase()));
+    for (const k of ["a", "b", "c", "arc", "star"]) st.removeProperty("--pf-logo-" + k);
     if (ruleApplied) { ruleApplied = false; if (Math.abs(getRate() - 1) > 0.01) setRateRaw(1); }
   }
   function setPart(v) {

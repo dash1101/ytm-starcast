@@ -3,6 +3,17 @@
 What changed in each version of YTM Starcast, newest first. Versions are named `0.2.1-alpha`, `0.2.2-alpha` and so on;
 before that they were `0.2.0-alpha.1` to `0.2.0-alpha.10`.
 
+## 0.2.7-alpha
+
+- **Sound quality in Refine** (✦ menu, or All settings → Sound quality):
+  - **Best quality** (on by default): YouTube Music asks for every song in its highest audio quality, 256 kbps with
+    YouTube Music Premium, whatever your account's own audio quality setting says. Your account isn't changed.
+  - A line shows the stream really playing, for example "Opus, about 160 kbps" or "AAC, 256 kbps (Premium's high
+    quality)".
+  - **Sound presets:** Flat, Clarity, Warm, Bass, Vocal and Loudness, with a strength slider (also one press at a time
+    from the ✦ menu's Sound tile). The volume dips a little to leave room, so a preset never distorts. Presets change
+    the tone, not the detail in the stream, and start after your first press on the page.
+
 ## 0.2.6-alpha
 
 - **The Android app looks like Refine:** the whole app now takes its colours from the cover of what plays (Album

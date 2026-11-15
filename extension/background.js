@@ -22,6 +22,34 @@ async function ask(msg) {
   return null;
 }
 
+// ------------------------------------------------------------------ the toolbar icon in the album's colours
+// Refine keeps the hue of the cover playing (see bridge_isolated.js); the toolbar icon is drawn in it (logo.js), and goes
+// back to its usual colours when Refine's album colours are off.
+if (typeof importScripts === "function") { try { importScripts("logo.js"); } catch (e) { /* the icon keeps its usual colours */ } }
+let iconFor = "";
+function paintIcon(p) {
+  const L = globalThis.starcastLogo;
+  if (!L || typeof OffscreenCanvas !== "function" || !ext.action || !ext.action.setIcon) return;
+  const col = L.colors(p);
+  const key = JSON.stringify(col);
+  if (key === iconFor) return;
+  iconFor = key;
+  try {
+    const imageData = {};
+    for (const n of [16, 32, 48]) {
+      const cv = new OffscreenCanvas(n, n);
+      const ctx = cv.getContext("2d");
+      L.draw(ctx, n, col);
+      imageData[n] = ctx.getImageData(0, 0, n, n);
+    }
+    Promise.resolve(ext.action.setIcon({ imageData })).catch(() => {});
+  } catch (e) { /* the icon keeps its usual colours */ }
+}
+try {
+  Promise.resolve(ext.storage.local.get("palette")).then((r) => paintIcon(r && r.palette)).catch(() => {});
+  ext.storage.onChanged.addListener((changes, area) => { if (area === "local" && changes.palette) paintIcon(changes.palette.newValue); });
+} catch (e) { /* no storage here */ }
+
 function badge(text) {
   try {
     ext.action.setBadgeBackgroundColor({ color: "#8b5cf6" });

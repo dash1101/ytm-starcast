@@ -38,7 +38,16 @@ function palette(hue, vivid) {
     outline: hsl(hue, 10 * c, 34), text: hsl(hue, 18 * c, 93), muted: hsl(hue, 10 * c, 72), glow: hsl(hue, 85 * c, 55, 0.55),
   };
 }
+// the logo in the same colours (logo.js): sharp on any screen
+function drawLogo(p) {
+  const cv = document.getElementById("logo");
+  if (!cv || !globalThis.starcastLogo) return;
+  const px = Math.round(26 * Math.max(1, devicePixelRatio || 1));
+  if (cv.width !== px) { cv.width = px; cv.height = px; }
+  try { starcastLogo.draw(cv.getContext("2d"), px, starcastLogo.colors(p)); } catch (e) {}
+}
 function takePalette(p) {
+  drawLogo(p);
   const ok = p && typeof p === "object" && isFinite(p.h) && isFinite(p.s);
   const pal = ok ? palette(Number(p.h), Number(p.s)) : palette(352, 1);
   const st = document.documentElement.style;
