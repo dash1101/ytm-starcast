@@ -120,8 +120,10 @@ class PythonHelperTests(unittest.TestCase):
 class ExtensionHelperTests(unittest.TestCase):
     def run_js(self, body):
         script = """
-globalThis.localStorage = { s: {}, getItem(k) { return this.s[k] ?? null; }, setItem(k, v) { this.s[k] = String(v); } };
-globalThis.navigator = { languages: ["ru-RU", "en"] };
+// newer Node has navigator (and localStorage) of its own: replace them
+Object.defineProperty(globalThis, "localStorage", { configurable: true, writable: true,
+  value: { s: {}, getItem(k) { return this.s[k] ?? null; }, setItem(k, v) { this.s[k] = String(v); } } });
+Object.defineProperty(globalThis, "navigator", { configurable: true, writable: true, value: { languages: ["ru-RU", "en"] } });
 require(%s); require(%s);
 const I = globalThis[Symbol.for("pocketfader.i18n")];
 const out = [];
