@@ -78,15 +78,16 @@ fun SpeedButton(modifier: Modifier = Modifier) {
     val percent = prefs.phoneSpeed
     val scheme = MaterialTheme.colorScheme
     if (percent == 100) {
-        ShapeIconButton(Icons.Filled.Speed, "Speed: normal", onClick = { open = true }, modifier = modifier, tint = scheme.onSurfaceVariant)
+        ShapeIconButton(Icons.Filled.Speed, tr("Speed: normal"), onClick = { open = true }, modifier = modifier, tint = scheme.onSurfaceVariant)
     } else {
         val label = speedShort(percent)
+        val desc = tr("Speed: {speed}", "speed" to label)
         Surface(
             onClick = { open = true },
             shape = PfShape.Full,
             color = scheme.secondaryContainer,
             contentColor = scheme.onSecondaryContainer,
-            modifier = modifier.padding(horizontal = 4.dp).height(32.dp).semantics { contentDescription = "Speed: $label" },
+            modifier = modifier.padding(horizontal = 4.dp).height(32.dp).semantics { contentDescription = desc },
         ) {
             Box(Modifier.padding(horizontal = 10.dp), contentAlignment = Alignment.Center) {
                 Text(label, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold, maxLines = 1)
@@ -114,7 +115,7 @@ fun SpeedDialog(onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         icon = { Icon(Icons.Filled.Speed, null) },
-        title = { Text("Speed") },
+        title = { Text(tr("Speed")) },
         text = {
             // scrolls when the screen is short (a phone on its side), so the pitch switch is never cut off
             Column(
@@ -122,11 +123,11 @@ fun SpeedDialog(onDismiss: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(
-                    "For music playing on this phone.",
+                    tr("For music playing on this phone."),
                     style = MaterialTheme.typography.bodyMedium, color = scheme.onSurfaceVariant, textAlign = TextAlign.Center,
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    ShapeIconButton(Icons.Filled.Remove, "Slower", onClick = { saveSpeed(stepDown(percent)) }, enabled = percent > SPEED_MIN)
+                    ShapeIconButton(Icons.Filled.Remove, tr("Slower"), onClick = { saveSpeed(stepDown(percent)) }, enabled = percent > SPEED_MIN)
                     Text(
                         speedLong(percent),
                         Modifier.widthIn(min = 132.dp),
@@ -134,7 +135,7 @@ fun SpeedDialog(onDismiss: () -> Unit) {
                         style = MaterialTheme.typography.displaySmall.copy(fontFeatureSettings = "tnum"),
                         fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 1,
                     )
-                    ShapeIconButton(Icons.Filled.Add, "Faster", onClick = { saveSpeed(stepUp(percent)) }, enabled = percent < SPEED_MAX)
+                    ShapeIconButton(Icons.Filled.Add, tr("Faster"), onClick = { saveSpeed(stepUp(percent)) }, enabled = percent < SPEED_MAX)
                 }
                 Slider(
                     value = percent / 100f,
@@ -168,10 +169,10 @@ fun SpeedDialog(onDismiss: () -> Unit) {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(Modifier.weight(1f).padding(end = 12.dp)) {
-                        Text("Keep the pitch", style = MaterialTheme.typography.bodyLarge)
+                        Text(tr("Keep the pitch"), style = MaterialTheme.typography.bodyLarge)
                         Text(
-                            if (prefs.keepPitch) "Voices sound the same at any speed."
-                            else "Slower sounds lower and faster sounds higher, as a record would.",
+                            if (prefs.keepPitch) tr("Voices sound the same at any speed.")
+                            else tr("Slower sounds lower and faster sounds higher, as a record would."),
                             style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant,
                         )
                     }
@@ -179,7 +180,7 @@ fun SpeedDialog(onDismiss: () -> Unit) {
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDismiss) { Text("Done") } },
-        dismissButton = { if (percent != 100) TextButton(onClick = { saveSpeed(100) }) { Text("Normal speed") } },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(tr("Done")) } },
+        dismissButton = { if (percent != 100) TextButton(onClick = { saveSpeed(100) }) { Text(tr("Normal speed")) } },
     )
 }

@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
   "name": "YTM Starcast",
-  "version": "2.8.0",
-  "description": "Your YouTube Music companion: a remote for your phone, your music as your Discord status, and a better YouTube Music.",
+  "version": "2.9.0",
+  "description": "__MSG_appDescription__",
+  "default_locale": "en",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr8iD4lerjl/Q0aYrANus3Hwxuc4ppiBzGZ7Op0otKpQCi/X3Ia6BhZOK3gbqFOIO+oT/ESuklSomYyeUCnFV8UvFYNtzC6nf8ZpkCn29AI6QjHjGKAhlbNor7LGZhNsA9jleF/Pr6NQq1/LeZDLFHR7JCs8QWTPpSL3gazdqndMVdQD99pnabAcVy2VYAdtoJ+cZ5+fJG0fCCsH2uKxhabFWDHJSdkD5Nw/NE3wTtaOqy2izR6ordLdLcdIr0pEWnQ4xrqToyfVTXYqRNMU22St99U7KFLtbhvkbAuphPcZn07FuwfZvRKA98kCygIgzEFhoua1OlZ7Hbi3kUZzp8QIDAQAB",
   "permissions": [
     "storage",
@@ -29,6 +30,8 @@
         "https://music.youtube.com/*"
       ],
       "js": [
+        "i18n_strings.js",
+        "i18n.js",
         "ytm_main.js",
         "discord_ui.js",
         "stretch.js",
@@ -72,7 +75,7 @@
       "suggested_key": {
         "default": "Alt+Shift+M"
       },
-      "description": "Show or stop showing your music on Discord"
+      "description": "__MSG_toggleDiscord__"
     }
   }
 }

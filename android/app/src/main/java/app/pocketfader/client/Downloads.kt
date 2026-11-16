@@ -51,13 +51,14 @@ data class DlSummary(val count: Int, val running: Int, val finished: Int, val do
 }
 
 /** "1.8 MB/s" */
-fun formatSpeed(bps: Double): String = if (bps >= 1_048_576) "%.1f MB/s".format(bps / 1_048_576) else "${(bps / 1024).toInt()} KB/s"
+fun formatSpeed(bps: Double): String =
+    if (bps >= 1_048_576) tr("{speed} MB/s", "speed" to "%.1f".format(bps / 1_048_576)) else tr("{speed} KB/s", "speed" to (bps / 1024).toInt())
 
 /** "about 25 s left", "about 3 min left", "about 1 h 5 min left" */
 fun formatLeft(seconds: Long): String = when {
-    seconds < 60 -> "about ${seconds.coerceAtLeast(1)} s left"
-    seconds < 3600 -> "about ${(seconds + 30) / 60} min left"
-    else -> "about ${seconds / 3600} h ${(seconds % 3600 + 30) / 60} min left"
+    seconds < 60 -> trn("about {n} s left", "about {n} s left", seconds.coerceAtLeast(1))
+    seconds < 3600 -> trn("about {n} min left", "about {n} min left", (seconds + 30) / 60)
+    else -> tr("about {hours} h {minutes} min left", "hours" to seconds / 3600, "minutes" to (seconds % 3600 + 30) / 60)
 }
 
 /**
@@ -157,8 +158,9 @@ object Downloads {
         _progress.update { m -> m + todo.associate { it.videoId!! to DlProgress(it) } }
         if (!auto || todo.size > 1) {
             Remote.notify(
-                if (todo.size == 1) "Downloading “${todo[0].title}”"
-                else if (auto) "Downloading ${todo.size} songs for offline listening" else "Downloading ${todo.size} songs"
+                if (todo.size == 1) tr("Downloading “{title}”", "title" to todo[0].title)
+                else if (auto) trn("Downloading {n} song for offline listening", "Downloading {n} songs for offline listening", todo.size)
+                else trn("Downloading {n} song", "Downloading {n} songs", todo.size)
             )
         }
         DownloadService.start(app)
@@ -210,17 +212,17 @@ object Downloads {
             )
             _items.update { list -> list.filter { it.videoId != id } + d }
             save()
-            if (!quiet) Remote.notify("Downloaded “${meta.title}”")
+            if (!quiet) Remote.notify(tr("Downloaded “{title}”", "title" to meta.title))
             done++
         } catch (e: Exception) {
             dir.listFiles()?.filter { it.name.startsWith("$id.") && it.name.endsWith(".part") }?.forEach { it.delete() }
             failed++
-            if (!quiet) Remote.notify("Couldn't download “${item.title}”: ${e.friendly()}")
+            if (!quiet) Remote.notify(tr("Couldn't download “{title}”: {error}", "title" to item.title, "error" to e.friendly()))
         } finally {
             _active.update { it - id }
             _progress.update { it - id }
             if (_active.value.isEmpty() && quiet && (done > 0 || failed > 0)) {
-                Remote.notify(if (failed == 0) "Downloads finished ($done)" else "Downloads finished: $done saved, $failed couldn't be downloaded")
+                Remote.notify(if (failed == 0) tr("Downloads finished ({done})", "done" to done) else tr("Downloads finished: {done} saved, {failed} couldn't be downloaded", "done" to done, "failed" to failed))
                 done = 0; failed = 0
             }
         }
@@ -277,11 +279,11 @@ object Downloads {
                     for ((k, v) in headers) c.setRequestProperty(k, v)
                     c.setRequestProperty("Range", "bytes=$done-${done + chunk - 1}")
                     val code = c.responseCode
-                    if (code == 416 && total < 0 && done == 0L) throw java.io.IOException("the file is empty")
-                    if (code !in 200..299) throw java.io.IOException("the server answered $code")
+                    if (code == 416 && total < 0 && done == 0L) throw java.io.IOException(tr("the file is empty"))
+                    if (code !in 200..299) throw java.io.IOException(tr("the server answered {code}", "code" to code))
                     val whole = code == 200                       // no ranges: this one answer is the whole file
                     if (whole) {
-                        if (done > 0) throw java.io.IOException("the server stopped sending pieces")
+                        if (done > 0) throw java.io.IOException(tr("the server stopped sending pieces"))
                         total = c.contentLengthLong
                     } else if (total < 0) {
                         total = c.getHeaderField("Content-Range")?.substringAfter('/')?.trim()?.toLongOrNull() ?: -1L
@@ -299,14 +301,14 @@ object Downloads {
                         }
                     }
                     if (whole || total < 0) break                 // one plain answer, or a length we can't know: that was all
-                    if (got == 0L) throw java.io.IOException("the download stopped")
+                    if (got == 0L) throw java.io.IOException(tr("the download stopped"))
                 } finally {
                     c.disconnect()
                 }
             }
         }
-        if (total > 0 && done < total) throw java.io.IOException("the download was cut short")
-        if (!part.renameTo(to)) throw java.io.IOException("couldn't save the file")
+        if (total > 0 && done < total) throw java.io.IOException(tr("the download was cut short"))
+        if (!part.renameTo(to)) throw java.io.IOException(tr("couldn't save the file"))
     }
 
     fun delete(videoId: String) {

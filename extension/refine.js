@@ -22,6 +22,8 @@
  */
 (() => {
   "use strict";
+  const I18N = globalThis[Symbol.for("pocketfader.i18n")];
+  const { tr, trn, trKey } = I18N;
   if (window.__pfRefineLoaded) return;
   window.__pfRefineLoaded = true;
   const API = window[Symbol.for("pocketfader.api")];
@@ -350,6 +352,7 @@
   .pf-choice .pf-txt { flex: 1; min-width: 0; }
   .pf-select, .pf-field { width: 100%; height: 48px; padding: 0 14px; border-radius: var(--pf-r-sm); border: 1px solid var(--pf-outline); background: var(--pf-surface2);
     color: var(--pf-text); font: inherit; font-size: 15px; }
+  .pf-select.pf-lang { width: auto; min-width: 150px; flex: none; }
   .pf-select:focus, .pf-field:focus { outline: 2px solid var(--pf-accent); outline-offset: -1px; border-color: transparent; }
   .pf-progress { height: 6px; border-radius: 3px; background: var(--pf-surface2); overflow: hidden; margin: 18px 0 10px; }
   .pf-progress i { display: block; height: 100%; width: 0; border-radius: 3px; background: var(--pf-accent); transition: width var(--pf-t-long) var(--pf-ease); }
@@ -1161,12 +1164,12 @@
   const SOUND_KEY = "pocketfader.refine.sound";
   // the tone presets (dB at full strength for: bass shelf, low mids, presence, treble shelf), see "Sound quality" below
   const TONES = {
-    flat: ["Flat", [0, 0, 0, 0]],
-    clarity: ["Clarity", [1, -1.5, 2, 3]],
-    warm: ["Warm", [3, 1, -1, -2]],
-    bass: ["Bass", [6, -1, 0, 0]],
-    vocal: ["Vocal", [-2, -1, 3.5, 1]],
-    loudness: ["Loudness", [5, 0, 1, 4]],
+    flat: [trKey("Flat"), [0, 0, 0, 0]],
+    clarity: [trKey("Clarity"), [1, -1.5, 2, 3]],
+    warm: [trKey("Warm"), [3, 1, -1, -2]],
+    bass: [trKey("Bass"), [6, -1, 0, 0]],
+    vocal: [trKey("Vocal"), [-2, -1, 3.5, 1]],
+    loudness: [trKey("Loudness"), [5, 0, 1, 4]],
   };
   const soundOpts = (() => {
     const o = readJSON(SOUND_KEY, {});
@@ -1176,7 +1179,7 @@
   const snd = { ctx: null, node: null, ps: null, el: null, kind: "", err: "", dry: null, wet: null, busy: false, lagSec: 0, clear: false };
   // the cover visualizer (its own section below); Pulse and Bars listen to the music
   const VIZ_KEY = "pocketfader.refine.viz";
-  const VIZ_MODES = [["off", "Off"], ["halo", "Halo"], ["orbit", "Orbit"], ["pulse", "Pulse"], ["bars", "Bars"]];
+  const VIZ_MODES = [["off", trKey("Off")], ["halo", trKey("Halo")], ["orbit", trKey("Orbit")], ["pulse", trKey("Pulse")], ["bars", trKey("Bars")]];
   let vizMode = (() => { const m = readJSON(VIZ_KEY, {}).mode; return VIZ_MODES.some((x) => x[0] === m) ? m : "halo"; })();
   const vizHears = () => vizMode === "pulse" || vizMode === "bars";
   const toneOn = () => live() && soundOpts.tone !== "flat" && soundOpts.strength > 0;
@@ -1361,37 +1364,39 @@
   }
   // What really plays: the stream the player chose (its "Stats for nerds" name it by its format number).
   const STREAMS = {
-    "774": ["Opus", "256 kbps", true], "141": ["AAC", "256 kbps", true], "251": ["Opus", "about 160 kbps"], "140": ["AAC", "128 kbps"],
-    "250": ["Opus", "about 70 kbps"], "249": ["Opus", "about 50 kbps"], "139": ["AAC", "48 kbps"], "600": ["Opus", "about 35 kbps"], "599": ["AAC", "30 kbps"],
+    // [codec, kbps, Premium's high quality, the rate is approximate]
+    "774": ["Opus", 256, true], "141": ["AAC", 256, true], "251": ["Opus", 160, false, true], "140": ["AAC", 128],
+    "250": ["Opus", 70, false, true], "249": ["Opus", 50, false, true], "139": ["AAC", 48], "600": ["Opus", 35, false, true], "599": ["AAC", 30],
   };
   function streamNow() {
     let codecs = "";
     try { const mp = API.mp(); codecs = (mp && mp.getStatsForNerds && mp.getStatsForNerds().codecs) || ""; } catch (e) {}
     for (const m of String(codecs).matchAll(/\((\d+)\)/g)) {
       const s = STREAMS[m[1]];
-      if (s) return { codec: s[0], rate: s[1], high: !!s[2], itag: m[1] };
+      if (s) return { codec: s[0], rate: s[3] ? tr("about {n} kbps", { n: s[1] }) : tr("{n} kbps", { n: s[1] }), high: !!s[2], itag: m[1] };
     }
     return null;
   }
   const premium = () => { try { return !!(window.ytcfg && window.ytcfg.get("IS_SUBSCRIBER")); } catch (e) { return false; } };
   function streamText() {
     const s = streamNow();
-    if (!s) return "Nothing playing yet.";
-    const what = "Playing now: " + s.codec + ", " + s.rate + (s.high ? " (Premium's high quality)" : "") + ".";
+    if (!s) return tr("Nothing playing yet.");
+    const what = s.high ? tr("Playing now: {codec}, {rate} (Premium's high quality).", { codec: s.codec, rate: s.rate })
+      : tr("Playing now: {codec}, {rate}.", { codec: s.codec, rate: s.rate });
     if (s.high) return what;
-    if (!premium()) return what + " That is the best YouTube Music plays without Premium.";
-    if (on("bestQuality")) return what + " The high-quality stream starts with the next song that loads.";
-    return what + " Switch on Best quality for the 256 kbps streams.";
+    if (!premium()) return what + " " + tr("That is the best YouTube Music plays without Premium.");
+    if (on("bestQuality")) return what + " " + tr("The high-quality stream starts with the next song that loads.");
+    return what + " " + tr("Switch on Best quality for the 256 kbps streams.");
   }
   // Sound quality, in All settings and from the quick menu's tile: the switch, what plays now, and the tone presets.
   function qualitySection() {
     const line = h("p", { class: "pf-foot pf-stream", role: "status", text: streamText() });
     const refresh = () => { if (line.isConnected) { line.textContent = streamText(); setTimeout(refresh, 2000); } };
     setTimeout(refresh, 2000);
-    const chips = Object.entries(TONES).map(([id, [label]]) => h("button", { class: "pf-chip", type: "button", text: label, "aria-pressed": String(soundOpts.tone === id),
+    const chips = Object.entries(TONES).map(([id, [label]]) => h("button", { class: "pf-chip", type: "button", text: tr(label), "aria-pressed": String(soundOpts.tone === id),
       onclick: () => { setTone(id); for (const c of chips) c.setAttribute("aria-pressed", String(c.dataset.tone === soundOpts.tone)); showStrength(); } }));
     chips.forEach((c, i) => { c.dataset.tone = Object.keys(TONES)[i]; });
-    const range = h("input", { type: "range", min: "0", max: "100", step: "5", class: "pf-range pf-range-sm", "aria-label": "Preset strength" });
+    const range = h("input", { type: "range", min: "0", max: "100", step: "5", class: "pf-range pf-range-sm", "aria-label": tr("Preset strength") });
     const val = h("span", { class: "pf-mini-val" });
     const showStrength = () => {
       range.value = String(Math.round(soundOpts.strength * 100));
@@ -1402,23 +1407,24 @@
     range.addEventListener("input", () => { setTone(undefined, Number(range.value) / 100); showStrength(); });
     showStrength();
     return [
-      sw("bestQuality", "Best quality", "Asks YouTube Music for its highest-quality audio: 256 kbps with YouTube Music Premium"),
+      sw("bestQuality", tr("Best quality"), tr("Asks YouTube Music for its highest-quality audio: 256 kbps with YouTube Music Premium")),
       line,
       h("div", { class: "pf-tone" },
-        h("div", { class: "pf-label", text: "Sound" }),
+        h("div", { class: "pf-label", text: tr("Sound") }),
         h("div", { class: "pf-chips" }, chips),
-        h("div", { class: "pf-label pf-label-row" }, h("span", { text: "Strength" }), val), range),
-      h("p", { class: "pf-foot", text: "Clarity brings out detail and air, Warm softens the top, Bass and Loudness add weight, Vocal brings voices " +
-        "forward. Presets change the tone, not the detail in the stream itself. They start after your first press on the page, and the " +
-        "volume dips a little to leave room, so nothing ever distorts." }),
+        h("div", { class: "pf-label pf-label-row" }, h("span", { text: tr("Strength") }), val), range),
+      h("p", { class: "pf-foot", text: tr("Clarity brings out detail and air, Warm softens the top, Bass and Loudness add weight, Vocal brings voices forward. Presets change the tone, not the detail in the stream itself. They start after your first press on the page, and the volume dips a little to leave room, so nothing ever distorts.") }),
     ];
   }
   // the quick menu's tile: one press for the next preset
   function toneTile() {
     const state = h("small");
-    const b = h("button", { class: "pf-tile", type: "button", title: "Sound preset: press for the next one" },
-      h("span", { class: "pf-tile-ico" }, icon(ICON.tone, 22)), h("span", { class: "pf-tile-text" }, "Sound", state));
-    const paint = () => { b.setAttribute("aria-checked", String(soundOpts.tone !== "flat")); b.setAttribute("aria-label", "Sound preset: " + TONES[soundOpts.tone][0]); state.textContent = TONES[soundOpts.tone][0]; };
+    const b = h("button", { class: "pf-tile", type: "button", title: tr("Sound preset: press for the next one") },
+      h("span", { class: "pf-tile-ico" }, icon(ICON.tone, 22)), h("span", { class: "pf-tile-text" }, tr("Sound"), state));
+    const paint = () => {
+      const name = tr(TONES[soundOpts.tone][0]);
+      b.setAttribute("aria-checked", String(soundOpts.tone !== "flat")); b.setAttribute("aria-label", tr("Sound preset: {name}", { name })); state.textContent = name;
+    };
     b.addEventListener("click", () => {
       const ids = Object.keys(TONES);
       setTone(ids[(ids.indexOf(soundOpts.tone) + 1) % ids.length]);
@@ -1500,11 +1506,11 @@
     closeSpeed();
     const vid = API.curVideo(), pl = API.curPlaylist();
     const val = h("div", { class: "pf-speed-val", "aria-live": "polite" });
-    const range = h("input", { type: "range", min: "0.25", max: "3", step: "0.05", class: "pf-range", "aria-label": "Playback speed" });
+    const range = h("input", { type: "range", min: "0.25", max: "3", step: "0.05", class: "pf-range", "aria-label": tr("Playback speed") });
     const presets = [0.5, 0.75, 0.8, 1, 1.25, 1.5, 2];
     const chips = presets.map((r) => h("button", { class: "pf-chip", text: fmtRate(r), onclick: () => show(setRate(r)) }));
     const rule = ruleFor(vid, pl);
-    const segs = [["off", "Any song"], ["song", "This song"], ["playlist", "This playlist"]].map(([kind, label]) =>
+    const segs = [["off", tr("Any song")], ["song", tr("This song")], ["playlist", tr("This playlist")]].map(([kind, label]) =>
       h("button", { class: "pf-chip", text: label, "aria-pressed": String((rule ? rule.kind : "off") === kind),
         disabled: (kind === "song" && !vid) || (kind === "playlist" && !pl), onclick: (e) => {
           setRemember(kind);
@@ -1516,12 +1522,12 @@
       input.addEventListener("change", () => onChange(input.checked));
       return { input, row: h("label", { class: "pf-row" }, h("span", { class: "pf-row-text" }, label, h("small", { text: sub })), h("span", { class: "pf-switch" }, input, h("i"))) };
     };
-    const pitch = sw2(prefs.keepPitch, "Keep the pitch", "When off, slower also sounds lower", (v) => { setPref("keepPitch", v); clear.input.disabled = !v; ensureSound(true); });
-    const clear = sw2(prefs.clearSlow, "Clear slowed sound", "Slowed songs stay smooth and clear instead of smeared", (v) => { setPref("clearSlow", v); ensureSound(true); });
+    const pitch = sw2(prefs.keepPitch, tr("Keep the pitch"), tr("When off, slower also sounds lower"), (v) => { setPref("keepPitch", v); clear.input.disabled = !v; ensureSound(true); });
+    const clear = sw2(prefs.clearSlow, tr("Clear slowed sound"), tr("Slowed songs stay smooth and clear instead of smeared"), (v) => { setPref("clearSlow", v); ensureSound(true); });
     clear.input.disabled = !prefs.keepPitch;
-    const room = h("input", { type: "range", min: "0", max: "100", step: "5", class: "pf-range pf-range-sm", "aria-label": "Room" });
+    const room = h("input", { type: "range", min: "0", max: "100", step: "5", class: "pf-range pf-range-sm", "aria-label": tr("Room") });
     const roomVal = h("span", { class: "pf-mini-val" });
-    const showRoom = () => { room.value = String(Math.round(soundOpts.room * 100)); room.style.setProperty("--pf-fill", soundOpts.room * 100 + "%"); roomVal.textContent = soundOpts.room ? Math.round(soundOpts.room * 100) + "%" : "Off"; };
+    const showRoom = () => { room.value = String(Math.round(soundOpts.room * 100)); room.style.setProperty("--pf-fill", soundOpts.room * 100 + "%"); roomVal.textContent = soundOpts.room ? Math.round(soundOpts.room * 100) + "%" : tr("Off"); };
     room.addEventListener("input", () => { soundOpts.room = clamp(Number(room.value) / 100, 0, 1); writeJSON(SOUND_KEY, soundOpts); showRoom(); ensureSound(true); applyRoom(); });
     showRoom();
     function show(r) {
@@ -1531,16 +1537,16 @@
       chips.forEach((c, i) => c.setAttribute("aria-pressed", String(Math.abs(presets[i] - r) < 0.001)));
     }
     range.addEventListener("input", () => show(setRate(parseFloat(range.value))));
-    speedPop = h("div", { class: "pf-pop pf-ui", role: "dialog", "aria-label": "Playback speed" },
+    speedPop = h("div", { class: "pf-pop pf-ui", role: "dialog", "aria-label": tr("Playback speed") },
       h("div", { class: "pf-speed-top" },
-        h("button", { class: "pf-step", "aria-label": "Slower", onclick: () => show(setRate(getRate() - 0.05)) }, icon(ICON.minus)),
+        h("button", { class: "pf-step", "aria-label": tr("Slower"), onclick: () => show(setRate(getRate() - 0.05)) }, icon(ICON.minus)),
         val,
-        h("button", { class: "pf-step", "aria-label": "Faster", onclick: () => show(setRate(getRate() + 0.05)) }, icon(ICON.plus))),
+        h("button", { class: "pf-step", "aria-label": tr("Faster"), onclick: () => show(setRate(getRate() + 0.05)) }, icon(ICON.plus))),
       range,
       h("div", { class: "pf-chips" }, chips),
       pitch.row, clear.row,
-      h("div", { class: "pf-label pf-label-row" }, h("span", { text: "Room (a slowed + reverb sound)" }), roomVal), room,
-      h("div", { class: "pf-label", text: "This speed is for" }),
+      h("div", { class: "pf-label pf-label-row" }, h("span", { text: tr("Room (a slowed + reverb sound)") }), roomVal), room,
+      h("div", { class: "pf-label", text: tr("This speed is for") }),
       h("div", { class: "pf-seg" }, segs));
     show(getRate());
     document.body.append(speedPop);
@@ -1553,7 +1559,7 @@
     speedFrom = anchor;
     range.focus({ preventScroll: true });
   }
-  const isSpeedButton = (n) => !!n && n.nodeType === 1 && ((n.classList && n.classList.contains("ytmusicPlayerControlsPlaybackRateButton")) ||
+  const isSpeedButton = (n) => !!n && n.nodeType === 1 && ((n.classList && (n.classList.contains("ytmusicPlayerControlsPlaybackRateButton") || n.classList.contains("pf-speed-btn"))) ||
     (n.tagName === "BUTTON" && /^playback speed/i.test(n.getAttribute("aria-label") || "")));
   // YouTube Music's own speed button opens this menu instead of its own.
   for (const type of ["pointerdown", "mousedown", "pointerup", "mouseup", "click"]) {
@@ -1580,7 +1586,7 @@
     const next = e.key === ">" ? STEPS.find((x) => x > cur + 0.001) : [...STEPS].reverse().find((x) => x < cur - 0.001);
     if (next == null) return;
     e.preventDefault(); e.stopImmediatePropagation();
-    toast("Speed " + fmtRate(setRate(next)));
+    toast(tr("Speed {rate}", { rate: fmtRate(setRate(next)) }));
   }, true);
 
   // ------------------------------------------------------------------ "something you might like" button
@@ -1613,16 +1619,16 @@
     if (!where) { if (dice) { dice.remove(); dice = null; } return; }
     if (dice && dice.isConnected && dice.parentElement === where) return;
     if (dice) dice.remove();
-    const btn = h("button", { class: "pf-dice-btn", "aria-label": "Play something you might like",
-      title: "Play something you might like" }, h("span", { class: "pf-ico" }, icon(ICON.dice)));
+    const btn = h("button", { class: "pf-dice-btn", "aria-label": tr("Play something you might like"),
+      title: tr("Play something you might like") }, h("span", { class: "pf-ico" }, icon(ICON.dice)));
     btn.addEventListener("click", async (e) => {
       e.stopPropagation();
       if (btn.classList.contains("pf-busy")) return;
       btn.classList.add("pf-busy");
       try {
         const r = await API.lucky();
-        toast(r && r.ok ? "Playing " + (r.picked || "something new") : "Couldn't find something to play right now");
-      } catch (err) { toast("Couldn't find something to play right now"); } finally { btn.classList.remove("pf-busy"); }
+        toast(r && r.ok ? (r.picked ? tr("Playing {name}", { name: r.picked }) : tr("Playing something new")) : tr("Couldn't find something to play right now"));
+      } catch (err) { toast(tr("Couldn't find something to play right now")); } finally { btn.classList.remove("pf-busy"); }
     });
     dice = h("div", { class: "pf-dice pf-shelf-btn" }, btn);
     where.prepend(dice);
@@ -1634,12 +1640,12 @@
     const host = on("speedMenu") ? barHost() : null;
     if (!host || !host.classic) { if (speedBtn) { speedBtn.remove(); speedBtn = null; } return; }
     if (!speedBtn || !speedBtn.isConnected) {
-      // its label marks it as a speed button: the clicks are picked up where YouTube Music's own speed button is
-      speedBtn = barWrap(host, "pf-speed-wrap", h("button", { class: "pf-speed-btn", "aria-label": "Playback speed" }, h("span", { class: "pf-ico" }, icon(ICON.speed))));
+      // its class marks it as a speed button: the clicks are picked up where YouTube Music's own speed button is
+      speedBtn = barWrap(host, "pf-speed-wrap", h("button", { class: "pf-speed-btn", "aria-label": tr("Playback speed") }, h("span", { class: "pf-ico" }, icon(ICON.speed))));
       if (host.repeat) host.repeat.before(speedBtn); else host.el.prepend(speedBtn);
     }
     const r = getRate(), changed = Math.abs(r - 1) > 0.001, b = speedBtn.firstChild;
-    const label = "Playback speed" + (changed ? ": " + fmtRate(r) : "");
+    const label = changed ? tr("Playback speed: {rate}", { rate: fmtRate(r) }) : tr("Playback speed");
     if (b.title !== label) { b.title = label; b.setAttribute("aria-label", label); b.setAttribute("aria-pressed", String(changed)); }
   }
 
@@ -1714,10 +1720,10 @@
     c.toggle("pf-lyr-notr", !lyrOpts.tr);
     for (const [btn, k, v] of lyr.optBtns) {
       btn.setAttribute("aria-pressed", String(lyrOpts[k] === v));
-      if (k === "rom") { btn.disabled = !lyr.hasRom; btn.title = lyr.hasRom ? "" : "This song's lyrics have no romanized line"; }
-      if (k === "tr") { btn.disabled = !lyr.hasTr; btn.title = lyr.hasTr ? "" : "This song's lyrics have no translation"; }
+      if (k === "rom") { btn.disabled = !lyr.hasRom; btn.title = lyr.hasRom ? "" : tr("This song's lyrics have no romanized line"); }
+      if (k === "tr") { btn.disabled = !lyr.hasTr; btn.title = lyr.hasTr ? "" : tr("This song's lyrics have no translation"); }
     }
-    if (lyr.offVal) { const o = lyrOffset(); lyr.offVal.textContent = (o > 0 ? "+" : "") + o.toFixed(2).replace(/0$/, "") + " s"; }
+    if (lyr.offVal) { const o = lyrOffset(); lyr.offVal.textContent = tr("{n} s", { n: (o > 0 ? "+" : "") + o.toFixed(2).replace(/0$/, "") }); }
   }
   function setLyrOpt(k, v) {
     lyrOpts[k] = v;
@@ -1745,25 +1751,25 @@
     lyr.offVal = h("span", { class: "pf-off-val" });
     lyr.srcRow = h("div", { class: "pf-chips pf-src" });
     return h("div", { class: "pf-lyr-opts", hidden: true },
-      h("div", { class: "pf-label", text: "Source" }), lyr.srcRow,
-      h("div", { class: "pf-label", text: "Timing" }), h("div", { class: "pf-seg pf-off" },
-        h("button", { class: "pf-chip", text: "Earlier", title: "Show the lyrics a quarter of a second earlier (this song)", onclick: () => moveLyrics(-0.25) }),
+      h("div", { class: "pf-label", text: tr("Source") }), lyr.srcRow,
+      h("div", { class: "pf-label", text: tr("Timing") }), h("div", { class: "pf-seg pf-off" },
+        h("button", { class: "pf-chip", text: tr("Earlier"), title: tr("Show the lyrics a quarter of a second earlier (this song)"), onclick: () => moveLyrics(-0.25) }),
         lyr.offVal,
-        h("button", { class: "pf-chip", text: "Later", title: "Show the lyrics a quarter of a second later (this song)", onclick: () => moveLyrics(0.25) })),
-      h("div", { class: "pf-label", text: "Words" }), seg("est", [[true, "Estimate"], [false, "Lines only"]]),
-      h("div", { class: "pf-label", text: "Size" }), seg("size", [["s", "Small"], ["m", "Medium"], ["l", "Large"]]),
-      h("div", { class: "pf-label", text: "Align" }), seg("align", [["left", "Left"], ["center", "Centre"]]),
-      h("div", { class: "pf-label", text: "Romanized" }), seg("rom", [[true, "Show"], [false, "Hide"]]),
-      h("div", { class: "pf-label", text: "Translation" }), seg("tr", [[true, "Show"], [false, "Hide"]]));
+        h("button", { class: "pf-chip", text: tr("Later"), title: tr("Show the lyrics a quarter of a second later (this song)"), onclick: () => moveLyrics(0.25) })),
+      h("div", { class: "pf-label", text: tr("Words") }), seg("est", [[true, tr("Estimate")], [false, tr("Lines only")]]),
+      h("div", { class: "pf-label", text: tr("Size") }), seg("size", [["s", tr("Small")], ["m", tr("Medium")], ["l", tr("Large")]]),
+      h("div", { class: "pf-label", text: tr("Align") }), seg("align", [["left", tr("Left")], ["center", tr("Centre")]]),
+      h("div", { class: "pf-label", text: tr("Romanized") }), seg("rom", [[true, tr("Show")], [false, tr("Hide")]]),
+      h("div", { class: "pf-label", text: tr("Translation") }), seg("tr", [[true, tr("Show")], [false, tr("Hide")]]));
   }
-  const KIND = (s) => (s.words ? "word by word" : s.synced ? "line by line" : s.found ? "not time-synced" : s.pending ? "still looking" : "nothing found");
+  const KIND = (s) => (s.words ? tr("word by word") : s.synced ? tr("line by line") : s.found ? tr("not time-synced") : s.pending ? tr("still looking") : tr("nothing found"));
   function renderSources() {
     if (!lyr.srcRow) return;
     lyr.srcRow.textContent = "";
     const chosen = lyrSongs.src[lyr.key] || "";
     const chip = (id, label, ok, note, words) => h("button", { class: "pf-chip" + (words ? " pf-words" : ""), "aria-pressed": String(chosen === id),
       disabled: !ok, title: note, onclick: () => setSource(id) }, label);
-    lyr.srcRow.append(chip("", "Best", true, "The best one found: word by word when there is one"));
+    lyr.srcRow.append(chip("", tr("Best"), true, tr("The best one found: word by word when there is one")));
     for (const s of lyr.sources) {
       if (!s || typeof s.id !== "string") continue;
       lyr.srcRow.append(chip(s.id, String(s.label || s.id), !!s.found, KIND(s), !!s.words));
@@ -1782,7 +1788,7 @@
     const np = API.nowPlaying() || {};
     const s = lyr.sources.find((x) => x && x.id === lyr.source);
     const what = !lyr.L ? "" : (s ? s.label : lyr.L.label || "") + " · " +
-      (lyr.L.synced ? (lyr.lines.some((ln) => ln.w && ln.w.length) ? "word by word" : lyr.est ? "words estimated" : "line by line") : "not time-synced");
+      (lyr.L.synced ? (lyr.lines.some((ln) => ln.w && ln.w.length) ? tr("word by word") : lyr.est ? tr("words estimated") : tr("line by line")) : tr("not time-synced"));
     lyr.sub.textContent = [np.title, what].filter(Boolean).join(" · ");
   }
   function lyrBox() {
@@ -1792,17 +1798,17 @@
     lyr.opts = lyrOptions();
     const btn = (label, ico, fn, extra) => h("button", { class: "pf-btn pf-icon-btn", "aria-label": label, title: label, onclick: fn, ...(extra || {}) }, icon(ico, 20));
     lyr.btn = {
-      opts: btn("Lyrics options", ICON.tune, () => {
+      opts: btn(tr("Lyrics options"), ICON.tune, () => {
         lyr.opts.hidden = !lyr.opts.hidden;
         lyr.btn.opts.setAttribute("aria-expanded", String(!lyr.opts.hidden));
         if (!lyr.opts.hidden) renderSources();
       }, { "aria-expanded": "false" }),
-      out: btn("Open in a window", ICON.popOut, () => openLyricsWindow()),
-      pin: btn("Pin: keep it here, also after a reload", ICON.pin, () => setPinned(!lyrWin.pinned), { "aria-pressed": "false" }),
-      float: btn("Keep above other windows", ICON.pip, () => floatLyrics()),
-      dock: btn("Back to the Lyrics tab", ICON.popIn, () => closeLyricsWindow()),
+      out: btn(tr("Open in a window"), ICON.popOut, () => openLyricsWindow()),
+      pin: btn(tr("Pin: keep it here, also after a reload"), ICON.pin, () => setPinned(!lyrWin.pinned), { "aria-pressed": "false" }),
+      float: btn(tr("Keep above other windows"), ICON.pip, () => floatLyrics()),
+      dock: btn(tr("Back to the Lyrics tab"), ICON.popIn, () => closeLyricsWindow()),
     };
-    lyr.head = h("div", { class: "pf-lyr-head" }, h("div", { class: "pf-head" }, h("div", { class: "pf-title", text: "Lyrics" }), lyr.sub),
+    lyr.head = h("div", { class: "pf-lyr-head" }, h("div", { class: "pf-head" }, h("div", { class: "pf-title", text: tr("Lyrics") }), lyr.sub),
       Object.values(lyr.btn));
     lyr.box = h("div", { class: "pf-lyr-box" }, lyr.head, lyr.opts, lyr.body);
     for (const ev of ["wheel", "touchmove", "pointerdown"]) lyr.body.addEventListener(ev, () => { lyr.userAt = Date.now(); }, { passive: true });
@@ -1818,11 +1824,11 @@
     lyr.btn.pin.hidden = w !== "window";
     lyr.btn.float.hidden = w !== "window" || !window.documentPictureInPicture;
     lyr.btn.dock.hidden = w !== "window" && w !== "pip";
-    const dockLabel = w === "pip" ? "Back into the page" : "Close (back to the Lyrics tab)";
+    const dockLabel = w === "pip" ? tr("Back into the page") : tr("Close (back to the Lyrics tab)");
     lyr.btn.dock.title = dockLabel;
     lyr.btn.dock.setAttribute("aria-label", dockLabel);
     // pinned: a filled pin on a tonal background; not pinned: an outlined pin, as an open choice
-    const pinned = !!lyrWin.pinned, pinLabel = pinned ? "Pinned: press to unpin (then it can be moved again)" : "Pin: keep it here, also after a reload";
+    const pinned = !!lyrWin.pinned, pinLabel = pinned ? tr("Pinned: press to unpin (then it can be moved again)") : tr("Pin: keep it here, also after a reload");
     lyr.btn.pin.setAttribute("aria-pressed", String(pinned));
     lyr.btn.pin.title = pinLabel;
     lyr.btn.pin.setAttribute("aria-label", pinLabel);
@@ -1878,8 +1884,8 @@
     sizeTabSlot();
     if (lyr.frame || lyr.pip) {   // the lyrics are in their own window: the tab says so
       if (!lyr.tabNote) {
-        lyr.tabNote = h("div", { class: "pf-lyr-note" }, h("p", { text: "The lyrics are in their own window." }),
-          h("button", { class: "pf-btn pf-tonal", text: "Bring them back here", onclick: () => closeLyricsWindow() }));
+        lyr.tabNote = h("div", { class: "pf-lyr-note" }, h("p", { text: tr("The lyrics are in their own window.") }),
+          h("button", { class: "pf-btn pf-tonal", text: tr("Bring them back here"), onclick: () => closeLyricsWindow() }));
       }
       if (lyr.tabNote.parentNode !== lyr.tabSlot) lyr.tabSlot.append(lyr.tabNote);
     } else {
@@ -1919,7 +1925,7 @@
     lyr.auto = auto === true;
     const handle = h("div", { class: "pf-resize", "aria-hidden": "true" });
     handle.addEventListener("pointerdown", startResize);
-    lyr.frame = h("div", { class: "pf-lyr pf-ui", role: "dialog", "aria-label": "Lyrics" }, handle);
+    lyr.frame = h("div", { class: "pf-lyr pf-ui", role: "dialog", "aria-label": tr("Lyrics") }, handle);
     document.body.append(lyr.frame);
     placeWindow();
     mountLyrics("window", lyr.frame, handle);
@@ -1963,7 +1969,7 @@
     saveWin();
     placeWindow();
     lyrButtons();
-    toast(v ? "Pinned: the lyrics stay here, also after a reload" : "Unpinned: drag the lyrics anywhere");
+    toast(v ? tr("Pinned: the lyrics stay here, also after a reload") : tr("Unpinned: drag the lyrics anywhere"));
   }
   function dragWith(e, onMove) {
     e.preventDefault();
@@ -2010,10 +2016,10 @@
     lyr.pipFrom = lyr.where === "window" && !lyr.auto ? "window" : lyr.where === "window" ? "auto-window" : "tab";
     const r = lyr.frame ? lyr.frame.getBoundingClientRect() : { width: lyrWin.w, height: lyrWin.h };
     let pw;
-    try { pw = await dpip.requestWindow({ width: Math.round(r.width), height: Math.round(r.height) }); } catch (e) { toast("The browser didn't open a floating window"); return; }
+    try { pw = await dpip.requestWindow({ width: Math.round(r.width), height: Math.round(r.height) }); } catch (e) { toast(tr("The browser didn't open a floating window")); return; }
     lyr.pip = pw;
     const d = pw.document;
-    d.title = "Lyrics";
+    d.title = tr("Lyrics");
     const st = d.createElement("style");
     st.textContent = CSS_UI + "\nhtml, body { margin: 0; height: 100%; background: var(--pf-surface3); overflow: hidden; }";
     d.head.append(st);
@@ -2089,7 +2095,7 @@
       // nothing to look up yet (also for a moment between songs): looked at again as soon as a song is there
       lyr.key = ""; lyr.L = null; lyr.sources = [];
       updateSub();
-      lyrMessage("Play a song to see its lyrics.");
+      lyrMessage(tr("Play a song to see its lyrics."));
       return;
     }
     const key = np.videoId;
@@ -2098,15 +2104,15 @@
       clearTimeout(lyr.timer);
       updateSub();
       renderSources();
-      lyrMessage("Looking for lyrics…");
+      lyrMessage(tr("Looking for lyrics…"));
     }
     const r = await fetchLyrics({ videoId: np.videoId, title: np.title, artist: np.artist || "", duration: Math.round(np.duration || 0),
       source: lyrSongs.src[key] || "" });
     if (lyr.key !== key || !lyr.where) return;   // the song changed meanwhile, or the lyrics were closed
     if (r.error) {
-      if (!lyr.L) lyrMessage(r.error === "offline" ? "Live lyrics come from the YTM Starcast app on this computer. Start it, and they appear here."
-        : r.error === "old_app" ? "Live lyrics need a newer YTM Starcast app on this computer. Update it, and they appear here."
-        : "The YTM Starcast app didn't answer in time. Trying again…");
+      if (!lyr.L) lyrMessage(r.error === "offline" ? tr("Live lyrics come from the YTM Starcast app on this computer. Start it, and they appear here.")
+        : r.error === "old_app" ? tr("Live lyrics need a newer YTM Starcast app on this computer. Update it, and they appear here.")
+        : tr("The YTM Starcast app didn't answer in time. Trying again…"));
       if (r.error !== "old_app" && lyr.retry++ < 20) { clearTimeout(lyr.timer); lyr.timer = setTimeout(() => loadLyrics(), 5000); }
       return;
     }
@@ -2118,7 +2124,7 @@
     // other sources may still be searching: ask again shortly while what's here isn't word by word yet
     if (r.pending && !words && lyr.retry++ < 6) { clearTimeout(lyr.timer); lyr.timer = setTimeout(() => loadLyrics(), 2500); }
     if (!r.found || !L || !Array.isArray(L.lines) || !L.lines.length) {
-      if (!r.pending) { lyr.L = null; lyr.sig = ""; updateSub(); lyrMessage("No lyrics found for this song."); }
+      if (!r.pending) { lyr.L = null; lyr.sig = ""; updateSub(); lyrMessage(tr("No lyrics found for this song.")); }
       return;
     }
     const sig = [r.source, L.lines.length, words, lyrOpts.est].join("|");
@@ -2284,7 +2290,7 @@
       };
       const item = h("div", { class: "pf-menu-item", role: "menuitem", tabindex: "0", onclick: go,
         onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } } },
-        h("span", { class: "pf-ico" }, icon(ICON.playlistAdd)), h("span", { text: "Playlist from this song" }));
+        h("span", { class: "pf-ico" }, icon(ICON.playlistAdd)), h("span", { text: tr("Playlist from this song") }));
       list.append(item);
       addDownload(list, vid);
     }
@@ -2300,10 +2306,10 @@
       onclick: (e) => { e.stopPropagation(); go(); }, onkeydown: menuKey(go) },
       h("span", { class: "pf-ico" }, icon(ico)), h("span", { class: "pf-sub-text" }, text, h("small", { text: small })));
     const opts = h("div", { class: "pf-dl-opts", role: "group", hidden: true },
-      own ? sub(ICON.download, "With YouTube Music Premium", "Offline, in YouTube Music", () => {
+      own ? sub(ICON.download, tr("With YouTube Music Premium"), tr("Offline, in YouTube Music"), () => {
         (own.querySelector("tp-yt-paper-item") || own).click();
       }) : null,
-      sub(ICON.computer, "Save to this computer", "A file in your Music folder", () => {
+      sub(ICON.computer, tr("Save to this computer"), tr("A file in your Music folder"), () => {
         closeMenu();
         saveSong(vid);
       }, { "data-pf-save": "" }));
@@ -2315,7 +2321,7 @@
     };
     const head = h("div", { class: "pf-menu-item pf-dl-head", role: "menuitem", tabindex: "0", "aria-haspopup": "true", "aria-expanded": "false",
       onclick: (e) => { e.stopPropagation(); toggle(); }, onkeydown: menuKey(toggle) },
-      h("span", { class: "pf-ico" }, icon(ICON.download)), h("span", { class: "pf-grow", text: "Download" }), h("span", { class: "pf-chev" }, icon(ICON.chevron, 20)));
+      h("span", { class: "pf-ico" }, icon(ICON.download)), h("span", { class: "pf-grow", text: tr("Download") }), h("span", { class: "pf-chev" }, icon(ICON.chevron, 20)));
     if (own) {
       own.setAttribute("data-pf-dl-own", "");
       head.classList.add("pf-inline");
@@ -2324,14 +2330,14 @@
   }
   // Saving takes a little while (the app fetches the song): a message now, and another when the file is there.
   async function saveSong(vid) {
-    toast("Saving the song to this computer\u2026");
+    toast(tr("Saving the song to this computer\u2026"));
     const r = await askStarcast("save", { videoId: vid });
     if (!r.ok) {
-      toast(r.error === "offline" ? "YTM Starcast isn't answering on this computer. Start it to save songs."
-        : r.error === "old_app" ? "Saving songs needs a newer YTM Starcast app on this computer. Update it to save songs."
-        : r.error === "no_ytdlp" ? "Saving songs needs yt-dlp on this computer. Install it, then try again."
-        : r.error === "needs_press" ? "Press Save to this computer again to save the song."
-        : "The song couldn't be saved. Try again in a moment.");
+      toast(r.error === "offline" ? tr("YTM Starcast isn't answering on this computer. Start it to save songs.")
+        : r.error === "old_app" ? tr("Saving songs needs a newer YTM Starcast app on this computer. Update it to save songs.")
+        : r.error === "no_ytdlp" ? tr("Saving songs needs yt-dlp on this computer. Install it, then try again.")
+        : r.error === "needs_press" ? tr("Press Save to this computer again to save the song.")
+        : tr("The song couldn't be saved. Try again in a moment."));
       return;
     }
     for (let i = 0; i < 150; i++) {
@@ -2340,12 +2346,12 @@
       const job = st.job;
       if (!job) { if (st.error === "offline" || st.error === "gone") break; continue; }
       if (job.state === "done") {
-        toast(job.name ? "Saved to your Music folder: " + job.name : "That song is already in your Music folder.");
+        toast(job.name ? tr("Saved to your Music folder: {name}", { name: job.name }) : tr("That song is already in your Music folder."));
         return;
       }
-      if (job.state === "failed") { toast("The song couldn't be saved: " + (job.error || "unknown error")); return; }
+      if (job.state === "failed") { toast(tr("The song couldn't be saved: {reason}", { reason: job.error || tr("unknown error") })); return; }
     }
-    toast("YTM Starcast stopped answering while saving the song.");
+    toast(tr("YTM Starcast stopped answering while saving the song."));
   }
   // A second click on the ⋮ that opened YouTube Music's menu closes it. On its own, YouTube Music closes the menu
   // as the button is pressed and then opens it again on the click, so it never closes.
@@ -2408,7 +2414,7 @@
       else { navBtn.classList.add("pf-float"); nav.append(navBtn); }
     }
     if (!dcNavBtn || !dcNavBtn.isConnected) {
-      dcNavBtn = h("button", { class: "pf-nav-btn pf-dc-nav", "aria-label": "Discord status", title: "Discord status", "aria-haspopup": "dialog",
+      dcNavBtn = h("button", { class: "pf-nav-btn pf-dc-nav", "aria-label": tr("Discord status"), title: tr("Discord status"), "aria-haspopup": "dialog",
         "aria-expanded": "false", onclick: (e) => { e.stopPropagation(); toggleSheet("discord", dcNavBtn); } }, icon(ICON.discord), h("i", { class: "pf-dot", "aria-hidden": "true" }));
       if (navBtn.classList.contains("pf-float")) dcNavBtn.classList.add("pf-float", "pf-float-2");
       navBtn.before(dcNavBtn);
@@ -2426,8 +2432,8 @@
     const dc = st && st.discord && typeof st.discord === "object" ? st.discord : null;
     const state = !st ? "warn" : st.parts && st.parts.discord === false ? "off" : (dc && DOT[dc.headline]) || "idle";
     dcNavBtn.dataset.state = state;
-    const words = (dc && DISCORD_TEXT[dc.headline]) || (st ? "" : "YTM Starcast isn't answering on this computer.");
-    dcNavBtn.title = "Discord status" + (words ? ": " + words : "");
+    const words = dc && DISCORD_TEXT[dc.headline] ? tr(DISCORD_TEXT[dc.headline]) : st ? "" : tr("YTM Starcast isn't answering on this computer.");
+    dcNavBtn.title = words ? tr("Discord status: {state}", { state: words }) : tr("Discord status");
   }
   function sw(key, label, sub) {
     const input = h("input", { type: "checkbox", role: "switch" });
@@ -2442,7 +2448,7 @@
     const state = h("small");
     const b = h("button", { class: "pf-tile", type: "button", role: "switch" }, h("span", { class: "pf-tile-ico" }, icon(ico, 22)),
       h("span", { class: "pf-tile-text" }, label, state));
-    const paint = () => { b.setAttribute("aria-checked", String(!!prefs[key])); state.textContent = prefs[key] ? "On" : "Off"; };
+    const paint = () => { b.setAttribute("aria-checked", String(!!prefs[key])); state.textContent = prefs[key] ? tr("On") : tr("Off"); };
     b.addEventListener("click", () => { setPref(key, !prefs[key]); paint(); if (key === "clearSlow" || key === "keepPitch") ensureSound(true); });
     paint();
     return b;
@@ -2461,23 +2467,23 @@
   }
   // What the app says about Discord status, in plain words (the same wording as the toolbar button's).
   const DISCORD_TEXT = {
-    showing: "Showing on your Discord profile.", waiting: "Getting ready to show…", idle: "Ready. Nothing is playing.",
-    off: "Off. Nothing is shown on Discord.", snoozed: "Hidden for a while. It comes back by itself.",
-    "paused-hidden": "Not shown while the music is paused.", "paused-timeout": "Hidden after a long pause. It comes back when you press play.",
-    filtered: "Not shown: this song matches one of your never-show words.", ad: "Hidden while an advert plays.",
-    "discord-down": "Can't reach Discord. Open the Discord app on this computer.",
-    "extension-quiet": "Waiting to hear from YouTube Music.", "extension-missing": "Waiting to hear from YouTube Music.",
-    "beacon-running": "The old YTM Beacon app is still running. Open YTM Starcast to move over from it.",
-    unreachable: "Discord status isn't answering right now. Try again in a moment.",
+    showing: trKey("Showing on your Discord profile."), waiting: trKey("Getting ready to show…"), idle: trKey("Ready. Nothing is playing."),
+    off: trKey("Off. Nothing is shown on Discord."), snoozed: trKey("Hidden for a while. It comes back by itself."),
+    "paused-hidden": trKey("Not shown while the music is paused."), "paused-timeout": trKey("Hidden after a long pause. It comes back when you press play."),
+    filtered: trKey("Not shown: this song matches one of your never-show words."), ad: trKey("Hidden while an advert plays."),
+    "discord-down": trKey("Can't reach Discord. Open the Discord app on this computer."),
+    "extension-quiet": trKey("Waiting to hear from YouTube Music."), "extension-missing": trKey("Waiting to hear from YouTube Music."),
+    "beacon-running": trKey("The old YTM Beacon app is still running. Open YTM Starcast to move over from it."),
+    unreachable: trKey("Discord status isn't answering right now. Try again in a moment."),
   };
   const PART_ROWS = [
-    ["remote", "YouTube Music remote", "Search, your library and this tab's queue from your phone"],
-    ["discord", "Discord status", "Show what you play on your Discord profile"],
-    ["refine", "Refine", "Everything here. Once it's off, turn it back on from YTM Starcast's button in the browser toolbar or in the YTM Starcast app"],
+    ["remote", trKey("YouTube Music remote"), trKey("Search, your library and this tab's queue from your phone")],
+    ["discord", trKey("Discord status"), trKey("Show what you play on your Discord profile")],
+    ["refine", "Refine", trKey("Everything here. Once it's off, turn it back on from YTM Starcast's button in the browser toolbar or in the YTM Starcast app")],
   ];
   // YTM Starcast's switches for the given parts, with a line saying what the app says.
   function partsBlock(keys) {
-    const note = h("p", { class: "pf-foot", role: "status", text: "Asking YTM Starcast on this computer\u2026" });
+    const note = h("p", { class: "pf-foot", role: "status", text: tr("Asking YTM Starcast on this computer\u2026") });
     const rows = {};
     // what the app last said (null: not known, or an app from before these switches, which has them all on)
     let parts = null, ok = false, busy = false;
@@ -2489,21 +2495,21 @@
         ok = !!parts;
         if (r.status) {
           const v = typeof st.version === "string" ? st.version.slice(0, 24) : "";
-          note.textContent = "YTM Starcast" + (v ? " " + v : "") + " is running on this computer.";
+          note.textContent = v ? tr("YTM Starcast {version} is running on this computer.", { version: v }) : tr("YTM Starcast is running on this computer.");
           const dc = st.discord && typeof st.discord === "object" ? st.discord : null;
-          if (rows.discord) rows.discord.small.textContent = (dc && DISCORD_TEXT[dc.headline]) || rows.discord.sub;
+          if (rows.discord) rows.discord.small.textContent = dc && DISCORD_TEXT[dc.headline] ? tr(DISCORD_TEXT[dc.headline]) : rows.discord.sub;
         }
       } else {
         ok = false;
         if (r.error === "old_app") {
           parts = null;
-          note.textContent = "The app on this computer is an older version" + (r.app && r.app.version ? " (" + r.app.version + ")" : "") +
-            ". Update it to YTM Starcast to change these here.";
-        } else if (r.error === "offline") note.textContent = "YTM Starcast isn't answering on this computer. Start it to change these.";
-        else if (r.error === "timeout") note.textContent = "YTM Starcast didn't answer in time. Try again in a moment.";
-        else if (r.error === "needs_press") note.textContent = "That didn't go through. Switch it on with a click or the Space key, " +
-          "or from YTM Starcast's button in the browser toolbar.";
-        else note.textContent = "That didn't go through. Try again in a moment.";
+          note.textContent = r.app && r.app.version
+            ? tr("The app on this computer is an older version ({version}). Update it to YTM Starcast to change these here.", { version: r.app.version })
+            : tr("The app on this computer is an older version. Update it to YTM Starcast to change these here.");
+        } else if (r.error === "offline") note.textContent = tr("YTM Starcast isn't answering on this computer. Start it to change these.");
+        else if (r.error === "timeout") note.textContent = tr("YTM Starcast didn't answer in time. Try again in a moment.");
+        else if (r.error === "needs_press") note.textContent = tr("That didn't go through. Switch it on with a click or the Space key, or from YTM Starcast's button in the browser toolbar.");
+        else note.textContent = tr("That didn't go through. Try again in a moment.");
       }
       // a change that didn't go through flips back here, to what the app last said
       for (const [key, row] of Object.entries(rows)) {
@@ -2518,7 +2524,7 @@
       if (mine === gen && !busy) show(r);
     }
     for (const key of keys) {
-      const [, , sub] = PART_ROWS.find((x) => x[0] === key);
+      const sub = tr(PART_ROWS.find((x) => x[0] === key)[2]);
       // data-pf-part: the extension's own script switches a part on only after a real press on this switch
       const input = h("input", { type: "checkbox", role: "switch", disabled: true, "data-pf-part": key });
       input.checked = true;
@@ -2536,17 +2542,36 @@
     }
     refresh();
     return { note, rows: keys.map((key) => h("label", { class: "pf-row" },
-      h("span", { class: "pf-row-text" }, PART_ROWS.find((x) => x[0] === key)[1], rows[key].small), h("span", { class: "pf-switch" }, rows[key].input, h("i")))) };
+      h("span", { class: "pf-row-text" }, tr(PART_ROWS.find((x) => x[0] === key)[1]), rows[key].small), h("span", { class: "pf-switch" }, rows[key].input, h("i")))) };
+  }
+  // The language: shared with every YTM Starcast app through the app on this computer ("auto": the browser's language).
+  // Refine is drawn again in it once the app has it (see redrawWords).
+  function languageRow() {
+    const sel = h("select", { class: "pf-select pf-lang", "aria-label": tr("Language") },
+      h("option", { value: "auto", text: tr("Automatic") }), I18N.LANGS.map(([code, name]) => h("option", { value: code, text: name })));
+    sel.value = I18N.pref;
+    const small = h("small", { text: tr("For YTM Starcast on every device. Automatic uses each device's own language.") });
+    sel.addEventListener("change", async () => {
+      sel.disabled = true;
+      const r = await askStarcast("language", { language: sel.value });
+      sel.disabled = false;
+      if (!r || typeof r.language !== "string") {
+        small.textContent = r && r.error === "offline" ? tr("YTM Starcast isn't answering on this computer. Start it to change these.")
+          : tr("That didn't go through. Try again in a moment.");
+        sel.value = I18N.pref;
+      }
+    });
+    return h("div", { class: "pf-row" }, h("span", { class: "pf-row-text" }, tr("Language"), small), sel);
   }
   // The computer's sound: the same volume, output and equalizer as YTM Starcast's mixer, through the app on this
   // computer. The extension's script passes a change on only right after a real press or drag in here.
-  const BAND_NAMES = [["bass", "Bass"], ["mid", "Mid"], ["high", "Treble"]];
+  const BAND_NAMES = [["bass", trKey("Bass")], ["mid", trKey("Mid")], ["high", trKey("Treble")]];
   function soundSection(open) {
     const box = h("div", { class: "pf-dc pf-snd", hidden: !open, "data-pf-snd": "" });
     const btn = h("button", { class: "pf-row pf-dc-toggle", type: "button", "aria-expanded": "false" },
-      h("span", { class: "pf-row-text" }, "Computer sound", h("small", { text: "Volume, output and equalizer, as in YTM Starcast's mixer" })),
+      h("span", { class: "pf-row-text" }, tr("Computer sound"), h("small", { text: tr("Volume, output and equalizer, as in YTM Starcast's mixer") })),
       h("span", { class: "pf-chev", "aria-hidden": "true", text: "›" }));
-    const note = h("p", { class: "pf-foot", role: "status", text: "Asking YTM Starcast on this computer…" });
+    const note = h("p", { class: "pf-foot", role: "status", text: tr("Asking YTM Starcast on this computer…") });
     const held = new Set();       // sliders being dragged right now aren't moved by what the app says
     const slider = (min, max, step, label) => {
       const el = h("input", { type: "range", min: String(min), max: String(max), step: String(step), class: "pf-range pf-range-sm", "aria-label": label });
@@ -2570,16 +2595,16 @@
       }, 80);
     }
     function say(r) {
-      note.textContent = r.error === "needs_press" ? "That didn't go through. Change it with a click, a drag or the keyboard."
-        : r.error === "offline" ? "YTM Starcast isn't answering on this computer. Start it to change the sound here."
-        : r.error === "old_app" ? "The app on this computer is an older version. Update YTM Starcast to change the sound here."
-        : r.error === "part_off" ? "Computer audio is switched off in YTM Starcast. Switch it on in the YTM Starcast app."
-        : r.error === "timeout" ? "YTM Starcast didn't answer in time. Try again in a moment."
-        : typeof r.error === "string" && r.error.length < 120 ? "That didn't go through: " + r.error : "That didn't go through. Try again in a moment.";
+      note.textContent = r.error === "needs_press" ? tr("That didn't go through. Change it with a click, a drag or the keyboard.")
+        : r.error === "offline" ? tr("YTM Starcast isn't answering on this computer. Start it to change the sound here.")
+        : r.error === "old_app" ? tr("The app on this computer is an older version. Update YTM Starcast to change the sound here.")
+        : r.error === "part_off" ? tr("Computer audio is switched off in YTM Starcast. Switch it on in the YTM Starcast app.")
+        : r.error === "timeout" ? tr("YTM Starcast didn't answer in time. Try again in a moment.")
+        : typeof r.error === "string" && r.error.length < 120 ? tr("That didn't go through: {reason}", { reason: r.error }) : tr("That didn't go through. Try again in a moment.");
     }
-    const vol = slider(0, 100, 1, "Volume");
+    const vol = slider(0, 100, 1, tr("Volume"));
     const volVal = h("span", { class: "pf-mini-val" });
-    const muteBtn = h("button", { class: "pf-btn pf-icon-btn", "aria-label": "Mute", "aria-pressed": "false" }, icon(ICON.volume, 20));
+    const muteBtn = h("button", { class: "pf-btn pf-icon-btn", "aria-label": tr("Mute"), "aria-pressed": "false" }, icon(ICON.volume, 20));
     vol.addEventListener("input", () => { fill(vol); volVal.textContent = vol.value + "%"; send("vol", "volume", { percent: Number(vol.value) }); });
     muteBtn.addEventListener("click", () => {
       const m = muteBtn.getAttribute("aria-pressed") !== "true";
@@ -2587,26 +2612,26 @@
       muteBtn.replaceChildren(icon(m ? ICON.mute : ICON.volume, 20));
       send("mute", "volume", { muted: m });
     });
-    const out = h("select", { class: "pf-select", "aria-label": "Output" });
+    const out = h("select", { class: "pf-select", "aria-label": tr("Output") });
     out.addEventListener("change", () => send("out", "output", { name: out.value }));
     const eqIn = h("input", { type: "checkbox", role: "switch" });
     eqIn.addEventListener("change", () => send("eqon", "eq", { enabled: eqIn.checked }));
-    const eqRow = h("label", { class: "pf-row" }, h("span", { class: "pf-row-text" }, "Equalizer", h("small", { text: "Shapes all of the computer's sound" })),
+    const eqRow = h("label", { class: "pf-row" }, h("span", { class: "pf-row-text" }, tr("Equalizer"), h("small", { text: tr("Shapes all of the computer's sound") })),
       h("span", { class: "pf-switch" }, eqIn, h("i")));
     const presets = h("div", { class: "pf-chips" });
     const bands = {};
     const bandRows = BAND_NAMES.map(([band, label]) => {
-      const el = slider(-12, 12, 0.5, label), v = h("span", { class: "pf-mini-val" });
+      const el = slider(-12, 12, 0.5, tr(label)), v = h("span", { class: "pf-mini-val" });
       el.addEventListener("input", () => { fill(el); v.textContent = (Number(el.value) > 0 ? "+" : "") + el.value + " dB"; send("b-" + band, "eq", { band, db: Number(el.value) }); });
       bands[band] = { el, v };
-      return h("div", { class: "pf-band" }, h("div", { class: "pf-label pf-label-row" }, h("span", { text: label }), v), el);
+      return h("div", { class: "pf-band" }, h("div", { class: "pf-label pf-label-row" }, h("span", { text: tr(label) }), v), el);
     });
-    const reset = h("button", { class: "pf-btn", text: "Flat", onclick: () => {
+    const reset = h("button", { class: "pf-btn", text: tr("Flat"), onclick: () => {
       for (const [band] of BAND_NAMES) { bands[band].el.value = "0"; bands[band].el.dispatchEvent(new Event("input")); }
     } });
-    const volPart = h("div", { class: "pf-snd-part" }, h("div", { class: "pf-label pf-label-row" }, h("span", { text: "Volume" }), volVal),
+    const volPart = h("div", { class: "pf-snd-part" }, h("div", { class: "pf-label pf-label-row" }, h("span", { text: tr("Volume") }), volVal),
       h("div", { class: "pf-snd-vol" }, muteBtn, vol));
-    const outPart = h("div", { class: "pf-snd-part" }, h("div", { class: "pf-label", text: "Output" }), out);
+    const outPart = h("div", { class: "pf-snd-part" }, h("div", { class: "pf-label", text: tr("Output") }), out);
     const eqPart = h("div", { class: "pf-snd-part" }, eqRow, presets, bandRows, h("div", { class: "pf-snd-foot" }, reset));
     box.append(volPart, outPart, eqPart, note);
     let timer = 0;
@@ -2675,25 +2700,25 @@
     return [
       h("div", { class: "pf-head pf-head-logo" }, logoTile(36), h("div", {},
         h("div", { class: "pf-title", text: "Refine" }),
-        h("div", { class: "pf-sub", text: KILL ? "Off for this page (?pf-refine=off). Your choices are kept for next time." : "YTM Starcast's additions to YouTube Music" }))),
+        h("div", { class: "pf-sub", text: KILL ? tr("Off for this page (?pf-refine=off). Your choices are kept for next time.") : tr("YTM Starcast's additions to YouTube Music") }))),
       h("div", { class: "pf-tiles" },
-        tile("colors", "Album colours", ICON.palette), tile("motion", "Animations", ICON.motion),
-        tile("wavy", "Wavy bar", ICON.wave), tile("clearSlow", "Clear slowed sound", ICON.eq),
-        tile("material", "Material You page", ICON.material), vizTile(),
-        tile("lyrics", "Live lyrics", ICON.lyrics), tile("lyricsFollow", "Lyrics follow you", ICON.pip),
-        tile("bestQuality", "Best quality", ICON.hq), toneTile()),
+        tile("colors", tr("Album colours"), ICON.palette), tile("motion", tr("Animations"), ICON.motion),
+        tile("wavy", tr("Wavy bar"), ICON.wave), tile("clearSlow", tr("Clear slowed sound"), ICON.eq),
+        tile("material", tr("Material You page"), ICON.material), vizTile(),
+        tile("lyrics", tr("Live lyrics"), ICON.lyrics), tile("lyricsFollow", tr("Lyrics follow you"), ICON.pip),
+        tile("bestQuality", tr("Best quality"), ICON.hq), toneTile()),
       h("div", { class: "pf-quick-actions" },
-        h("button", { class: "pf-btn pf-tonal", disabled: !on("lyrics"), onclick: () => { closeSheet(); openLyricsWindow(); } }, icon(ICON.popOut, 18), "Lyrics window"),
-        h("button", { class: "pf-btn pf-tonal", onclick: () => { closeSheet(); openMaker(); } }, icon(ICON.playlistAdd, 18), "Make a playlist")),
-      h("button", { class: "pf-btn pf-filled pf-wide", onclick: () => { closeSheet(); openAll(); } }, icon(ICON.tune, 20), "All settings"),
+        h("button", { class: "pf-btn pf-tonal", disabled: !on("lyrics"), onclick: () => { closeSheet(); openLyricsWindow(); } }, icon(ICON.popOut, 18), tr("Lyrics window")),
+        h("button", { class: "pf-btn pf-tonal", onclick: () => { closeSheet(); openMaker(); } }, icon(ICON.playlistAdd, 18), tr("Make a playlist"))),
+      h("button", { class: "pf-btn pf-filled pf-wide", onclick: () => { closeSheet(); openAll(); } }, icon(ICON.tune, 20), tr("All settings")),
     ];
   }
   function discordSheet() {
     const { rows, note } = partsBlock(["discord"]);
     const panel = window.__starcastDiscordPanel ? window.__starcastDiscordPanel({ ask: (op, extra) => askStarcast(op, extra) })
-      : h("p", { class: "pf-foot", text: "Discord status options need the extension's discord_ui.js." });
+      : h("p", { class: "pf-foot", text: tr("Discord status options need the extension's discord_ui.js.") });
     return [h("div", { class: "pf-head pf-head-logo" }, h("span", { class: "pf-dc-badge" }, icon(ICON.discord, 22)), h("div", {},
-      h("div", { class: "pf-title", text: "Discord status" }), h("div", { class: "pf-sub", text: "Your music on your Discord profile" }))),
+      h("div", { class: "pf-title", text: tr("Discord status") }), h("div", { class: "pf-sub", text: tr("Your music on your Discord profile") }))),
       rows, h("div", { class: "pf-dc-panel" }, panel), note];
   }
   function sheetOutside(e) {
@@ -2706,7 +2731,7 @@
     if (sheet && sheetKind === kind) { closeSheet(); return; }
     closeSheet();
     sheetKind = kind; sheetFrom = anchor;
-    sheet = h("div", { class: "pf-sheet pf-ui" + (kind === "discord" ? " pf-sheet-dc" : ""), role: "dialog", "aria-label": kind === "discord" ? "Discord status" : "Refine" },
+    sheet = h("div", { class: "pf-sheet pf-ui" + (kind === "discord" ? " pf-sheet-dc" : ""), role: "dialog", "aria-label": kind === "discord" ? tr("Discord status") : "Refine" },
       kind === "discord" ? discordSheet() : quickSheet());
     const r = anchor.getBoundingClientRect();
     sheet.style.top = r.bottom + 8 + "px";
@@ -2738,45 +2763,43 @@
     if (allDlg) { if (section) jumpTo(section); return; }
     allFrom = from && from !== document.body ? from : null;
     const sections = [
-      ["look", "Look", [
-        sw("colors", "Colours from the album art", "The page takes on the colour of the cover"),
-        sw("shapes", "Rounder shapes", "Covers, lists, menus and the search box"),
-        sw("material", "Material You page parts", "Pill tabs beside the player, tonal buttons, Material switches and scrollbars"),
-        sw("controls", "Expressive player controls", "A bigger play button that changes shape"),
-        sw("wavy", "Wavy progress bar", "Ripples while the song plays, flat when paused"),
-        sw("glow", "Glow behind the cover", null),
-        sw("motion", "Animations", "Pages, menus, covers and buttons move into place"),
+      ["look", tr("Look"), [
+        sw("colors", tr("Colours from the album art"), tr("The page takes on the colour of the cover")),
+        sw("shapes", tr("Rounder shapes"), tr("Covers, lists, menus and the search box")),
+        sw("material", tr("Material You page parts"), tr("Pill tabs beside the player, tonal buttons, Material switches and scrollbars")),
+        sw("controls", tr("Expressive player controls"), tr("A bigger play button that changes shape")),
+        sw("wavy", tr("Wavy progress bar"), tr("Ripples while the song plays, flat when paused")),
+        sw("glow", tr("Glow behind the cover"), null),
+        sw("motion", tr("Animations"), tr("Pages, menus, covers and buttons move into place")),
         vizChooser(),
-        sw("logo", "YTM Starcast logo", "In place of YouTube Music's, to show Refine is on"),
-        sw("sidebar", "In the sidebar", "Lyrics, Make a playlist and these settings, under Home, Explore and Library")]],
-      ["quality", "Sound quality", qualitySection()],
-      ["playback", "Playback", [
-        sw("speedMenu", "Richer speed menu", "Opens from the player's own speed button; the speed stays from song to song"),
-        sw("keepPitch", "Keep the pitch at other speeds", null),
-        sw("clearSlow", "Clear slowed sound", "Slowed songs stay smooth and clear instead of smeared"),
-        sw("speedTimes", "Times follow the speed", "At 0.8x a 3:00 song shows 3:45, here and on Discord"),
+        sw("logo", tr("YTM Starcast logo"), tr("In place of YouTube Music's, to show Refine is on")),
+        sw("sidebar", tr("In the sidebar"), tr("Lyrics, Make a playlist and these settings, under Home, Explore and Library"))]],
+      ["quality", tr("Sound quality"), qualitySection()],
+      ["playback", tr("Playback"), [
+        sw("speedMenu", tr("Richer speed menu"), tr("Opens from the player's own speed button; the speed stays from song to song")),
+        sw("keepPitch", tr("Keep the pitch at other speeds"), null),
+        sw("clearSlow", tr("Clear slowed sound"), tr("Slowed songs stay smooth and clear instead of smeared")),
+        sw("speedTimes", tr("Times follow the speed"), tr("At 0.8x a 3:00 song shows 3:45, here and on Discord")),
         roomControl()]],
-      ["lyrics", "Lyrics", [
-        sw("lyrics", "Live lyrics", "Word by word, from the YTM Starcast app, in YouTube Music's Lyrics tab"),
-        sw("lyricsFollow", "Lyrics follow you", "Leaving the player with the Lyrics tab open brings them along in a window"),
-        sw("lyricsFloat", "Above other windows when you switch tabs", "While lyrics are on screen and music plays (where the browser allows it)"),
-        h("button", { class: "pf-btn pf-tonal pf-inline", disabled: !on("lyrics"), onclick: () => { closeAll(); openLyricsWindow(); } }, icon(ICON.popOut, 18), "Open lyrics in a window")]],
-      ["controls", "Controls", [
-        sw("dice", "Something-you-might-like button", "On the home page, next to the first shelf (Listen again)"),
-        sw("songMenu", "In song menus", "“Playlist from this song” in YouTube Music's own ⋮ menus"),
-        h("button", { class: "pf-btn pf-tonal pf-inline", onclick: () => { closeAll(); openMaker(); } }, icon(ICON.playlistAdd, 18), "Make a playlist")]],
-      ["discord", "Discord status", (() => {
+      ["lyrics", tr("Lyrics"), [
+        sw("lyrics", tr("Live lyrics"), tr("Word by word, from the YTM Starcast app, in YouTube Music's Lyrics tab")),
+        sw("lyricsFollow", tr("Lyrics follow you"), tr("Leaving the player with the Lyrics tab open brings them along in a window")),
+        sw("lyricsFloat", tr("Above other windows when you switch tabs"), tr("While lyrics are on screen and music plays (where the browser allows it)")),
+        h("button", { class: "pf-btn pf-tonal pf-inline", disabled: !on("lyrics"), onclick: () => { closeAll(); openLyricsWindow(); } }, icon(ICON.popOut, 18), tr("Open lyrics in a window"))]],
+      ["controls", tr("Controls"), [
+        sw("dice", tr("Something-you-might-like button"), tr("On the home page, next to the first shelf (Listen again)")),
+        sw("songMenu", tr("In song menus"), tr("“Playlist from this song” in YouTube Music's own ⋮ menus")),
+        h("button", { class: "pf-btn pf-tonal pf-inline", onclick: () => { closeAll(); openMaker(); } }, icon(ICON.playlistAdd, 18), tr("Make a playlist"))]],
+      ["discord", tr("Discord status"), (() => {
         const { rows, note } = partsBlock(["discord"]);
         const panel = window.__starcastDiscordPanel ? window.__starcastDiscordPanel({ ask: (op, extra) => askStarcast(op, extra) }) : null;
         return [rows, panel, note];
       })()],
-      ["sound", "Computer sound", soundSection(true)],
-      ["starcast", "YTM Starcast", (() => { const { rows, note } = partsBlock(["remote", "discord", "refine"]); return [rows, note]; })()],
-      ["about", "About", [h("p", { class: "pf-foot", text: "These rely on how YouTube Music's page is built, so a change on its side can break one; " +
-        "switch off anything that misbehaves. Settings stay in this browser. Opening music.youtube.com/?pf-refine=off starts a page without " +
-        "any of it. YTM Starcast extension " + VERSION + "." })]],
+      ["sound", tr("Computer sound"), soundSection(true)],
+      ["starcast", "YTM Starcast", (() => { const { rows, note } = partsBlock(["remote", "discord", "refine"]); return [rows, languageRow(), note]; })()],
+      ["about", tr("About"), [h("p", { class: "pf-foot", text: tr("These rely on how YouTube Music's page is built, so a change on its side can break one; switch off anything that misbehaves. Settings stay in this browser. Opening music.youtube.com/?pf-refine=off starts a page without any of it. YTM Starcast extension {version}.", { version: VERSION }) })]],
     ];
-    const nav = h("nav", { class: "pf-all-nav", "aria-label": "Sections" });
+    const nav = h("nav", { class: "pf-all-nav", "aria-label": tr("Sections") });
     const body = h("div", { class: "pf-all-body" });
     const navBtns = {};
     for (const [id, label, kids] of sections) {
@@ -2784,10 +2807,10 @@
       nav.append(navBtns[id]);
       body.append(h("section", { class: "pf-all-sec", id: "pf-all-" + id, "aria-label": label }, h("h3", { text: label }), kids));
     }
-    const dlg = h("div", { class: "pf-dialog pf-all", role: "dialog", "aria-modal": "true", "aria-label": "Refine settings" },
+    const dlg = h("div", { class: "pf-dialog pf-all", role: "dialog", "aria-modal": "true", "aria-label": tr("Refine settings") },
       h("div", { class: "pf-dlg-head" }, h("div", { class: "pf-head pf-head-logo" }, logoTile(40), h("div", {},
-        h("div", { class: "pf-title", text: "Refine settings" }), h("div", { class: "pf-sub", text: "Everything YTM Starcast adds to YouTube Music, in one place" }))),
-        h("button", { class: "pf-btn pf-icon-btn", "aria-label": "Close", onclick: closeAll }, icon(ICON.close))),
+        h("div", { class: "pf-title", text: tr("Refine settings") }), h("div", { class: "pf-sub", text: tr("Everything YTM Starcast adds to YouTube Music, in one place") }))),
+        h("button", { class: "pf-btn pf-icon-btn", "aria-label": tr("Close"), onclick: closeAll }, icon(ICON.close))),
       h("div", { class: "pf-all-main" }, nav, body));
     allDlg = h("div", { class: "pf-scrim pf-ui" }, dlg);
     allDlg.addEventListener("pointerdown", (e) => { if (e.target === allDlg) closeAll(); });
@@ -2830,12 +2853,12 @@
   }
   // Room (a soft reverb for a "slowed + reverb" sound), as in the speed menu
   function roomControl() {
-    const room = h("input", { type: "range", min: "0", max: "100", step: "5", class: "pf-range pf-range-sm", "aria-label": "Room" });
+    const room = h("input", { type: "range", min: "0", max: "100", step: "5", class: "pf-range pf-range-sm", "aria-label": tr("Room") });
     const val = h("span", { class: "pf-mini-val" });
-    const show = () => { room.value = String(Math.round(soundOpts.room * 100)); room.style.setProperty("--pf-fill", soundOpts.room * 100 + "%"); val.textContent = soundOpts.room ? Math.round(soundOpts.room * 100) + "%" : "Off"; };
+    const show = () => { room.value = String(Math.round(soundOpts.room * 100)); room.style.setProperty("--pf-fill", soundOpts.room * 100 + "%"); val.textContent = soundOpts.room ? Math.round(soundOpts.room * 100) + "%" : tr("Off"); };
     room.addEventListener("input", () => { soundOpts.room = clamp(Number(room.value) / 100, 0, 1); writeJSON(SOUND_KEY, soundOpts); show(); ensureSound(true); applyRoom(); });
     show();
-    return h("div", { class: "pf-room" }, h("div", { class: "pf-label pf-label-row" }, h("span", { text: "Room (a slowed + reverb sound)" }), val), room);
+    return h("div", { class: "pf-room" }, h("div", { class: "pf-label pf-label-row" }, h("span", { text: tr("Room (a slowed + reverb sound)") }), val), room);
   }
   function sheetKey(e) {
     if (e.key !== "Escape") return;
@@ -2848,7 +2871,8 @@
   // ------------------------------------------------------------------ the sidebar and the logo
   // Lyrics, Make a playlist and All settings join Home, Explore and Library in YouTube Music's sidebar (the full one and
   // the narrow one), looking like its own entries.
-  const GUIDE = [["Lyrics", "Lyrics", () => ICON.lyrics, () => openLyricsWindow()], ["Make a playlist", "Playlist", () => ICON.playlistAdd, () => openMaker()],
+  // [name, short name for the narrow sidebar, icon, action]; the first is Lyrics
+  const GUIDE = [[trKey("Lyrics"), trKey("Lyrics"), () => ICON.lyrics, () => openLyricsWindow()], [trKey("Make a playlist"), trKey("Playlist"), () => ICON.playlistAdd, () => openMaker()],
     ["Refine", "Refine", () => ICON.sparkle, () => openAll()]];
   function syncGuide() {
     const lists = [];
@@ -2862,10 +2886,10 @@
     for (const list of lists) {
       let g = list.querySelector(":scope > .pf-guide");
       if (!g) {
-        g = h("div", { class: "pf-guide pf-ui", role: "group", "aria-label": "YTM Starcast" }, GUIDE.map(([label, short, ico, go]) =>
-          h("button", { class: "pf-guide-entry", type: "button", title: label, "aria-label": label, disabled: label === "Lyrics" && !on("lyrics"),
+        g = h("div", { class: "pf-guide pf-ui", role: "group", "aria-label": "YTM Starcast" }, GUIDE.map(([label, short, ico, go], i) =>
+          h("button", { class: "pf-guide-entry", type: "button", title: tr(label), "aria-label": tr(label), disabled: i === 0 && !on("lyrics"),
             onclick: (e) => { e.stopPropagation(); go(); } }, h("span", { class: "pf-guide-ico" }, icon(ico(), 24)),
-            h("span", { class: "pf-guide-label", text: label }), h("span", { class: "pf-guide-short", text: short }))));
+            h("span", { class: "pf-guide-label", text: tr(label) }), h("span", { class: "pf-guide-short", text: tr(short) }))));
         list.append(g);
       }
       const w = list.getBoundingClientRect().width;
@@ -2905,7 +2929,7 @@
       const box = lg.querySelector("a") || lg;
       const mine = box.querySelector(":scope > .pf-logo");
       if (want && !mine) {
-        box.append(h("span", { class: "pf-logo pf-ui", title: "YouTube Music, with YTM Starcast" }, logoTile(30), h("span", { class: "pf-logo-word", text: "Starcast" })));
+        box.append(h("span", { class: "pf-logo pf-ui", title: tr("YouTube Music, with YTM Starcast") }, logoTile(30), h("span", { class: "pf-logo-word", text: "Starcast" })));
         box.setAttribute("data-pf-logo-box", "");
         lg.setAttribute("data-pf-logo", "");
       } else if (!want && mine) {
@@ -2929,10 +2953,10 @@
     const burger = bar.querySelector("#guide-button");
     const tile = logo.querySelector(".pf-logo-tile");
     if (burger && tile) {
-      const br = burger.getBoundingClientRect(), tr = tile.getBoundingClientRect();
+      const br = burger.getBoundingClientRect(), tl = tile.getBoundingClientRect();
       const cur = parseFloat(logo.style.getPropertyValue("--pf-logo-dy")) || 0;
-      const dy = Math.round(br.top + br.height / 2 - (tr.top + tr.height / 2) + cur);
-      if (br.height && tr.height && Math.abs(dy) <= 12 && dy !== cur) logo.style.setProperty("--pf-logo-dy", dy + "px");
+      const dy = Math.round(br.top + br.height / 2 - (tl.top + tl.height / 2) + cur);
+      if (br.height && tl.height && Math.abs(dy) <= 12 && dy !== cur) logo.style.setProperty("--pf-logo-dy", dy + "px");
     }
     if (!logo.classList.contains("pf-logo-compact")) {
       logo.__pfFull = r.width;
@@ -3023,7 +3047,7 @@
     return out;
   }
   const secs = (len) => { const p = String(len || "").split(":").map(Number); return p.some(isNaN) ? 0 : p.reduce((a, b) => a * 60 + b, 0); };
-  const dur = (s) => { const m = Math.round(s / 60); return m < 60 ? m + " min" : Math.floor(m / 60) + " h " + (m % 60) + " min"; };
+  const dur = (s) => { const m = Math.round(s / 60); return m < 60 ? tr("{m} min", { m }) : tr("{h} h {m} min", { h: Math.floor(m / 60), m: m % 60 }); };
 
   let maker = null;
   let makerFrom = null;
@@ -3056,7 +3080,7 @@
     const queue = API.readQueue().filter((q) => q.section === "queue");
     const st = { source: np.videoId ? "now" : queue.length ? "queue" : "liked", playlist: null, length: 50, fresh: true,
       results: [], keep: new Set(), round: 0, shown: [], lists: null, seeds: null, mine: null, gen: 0 };
-    const dlg = h("div", { class: "pf-dialog", role: "dialog", "aria-modal": "true", "aria-label": "Make a playlist" });
+    const dlg = h("div", { class: "pf-dialog", role: "dialog", "aria-modal": "true", "aria-label": tr("Make a playlist") });
     maker = h("div", { class: "pf-scrim pf-ui", onclick: (e) => { if (e.target === maker) closeMaker(); } }, dlg);
     document.body.append(maker);
     requestAnimationFrame(() => maker && maker.classList.add("pf-open"));
@@ -3067,7 +3091,7 @@
       dlg.textContent = "";
       dlg.append(
         h("div", { class: "pf-dlg-head" }, h("div", { class: "pf-head" }, h("div", { class: "pf-title", text: title }), sub ? h("div", { class: "pf-sub", text: sub }) : null),
-          h("button", { class: "pf-btn pf-icon-btn", "aria-label": "Close", onclick: closeMaker }, icon(ICON.close))),
+          h("button", { class: "pf-btn pf-icon-btn", "aria-label": tr("Close"), onclick: closeMaker }, icon(ICON.close))),
         h("div", { class: "pf-dlg-body" }, body),
         h("div", { class: "pf-dlg-foot" }, foot));
       // each step starts with its main button focused (the dialog is rebuilt, so focus would otherwise be lost)
@@ -3083,11 +3107,11 @@
       return st.mine;
     }
     function start() {
-      const pickList = h("select", { class: "pf-select", "aria-label": "Playlist" }, h("option", { value: "", text: "Loading your playlists…" }));
+      const pickList = h("select", { class: "pf-select", "aria-label": tr("Playlist") }, h("option", { value: "", text: tr("Loading your playlists…") }));
       if (st.source === "playlist") {
         loadMine().then((list) => {
           pickList.textContent = "";
-          if (!list.length) pickList.append(h("option", { value: "", text: "No playlists found" }));
+          if (!list.length) pickList.append(h("option", { value: "", text: tr("No playlists found") }));
           for (const p of list) pickList.append(h("option", { value: p.playlistId, text: p.title }));
           if (st.playlist) pickList.value = st.playlist.playlistId;
           const sel = list.find((p) => p.playlistId === pickList.value) || list[0];
@@ -3095,30 +3119,30 @@
         });
         pickList.addEventListener("change", () => { st.playlist = (st.mine || []).find((p) => p.playlistId === pickList.value) || null; });
       }
-      const lens = [25, 50, 100].map((n) => h("button", { class: "pf-chip", text: n + " songs", "aria-pressed": String(st.length === n),
+      const lens = [25, 50, 100].map((n) => h("button", { class: "pf-chip", text: trn("{n} song", "{n} songs", n), "aria-pressed": String(st.length === n),
         onclick: (e) => { st.length = n; for (const c of lens) c.setAttribute("aria-pressed", String(c === e.currentTarget)); } }));
       const fresh = h("input", { type: "checkbox", role: "switch" });
       fresh.checked = st.fresh;
       fresh.addEventListener("change", () => { st.fresh = fresh.checked; });
-      frame("Make a playlist", "Built from YouTube Music's own radio for each song it starts from, ranked by what they have in common.",
-        [h("div", { class: "pf-label", text: "Start from" }),
-          choice("now", picked ? "The song you picked" : "The song playing now",
-            np.title ? np.title + (np.artist ? " · " + np.artist : "") : picked ? "From YouTube Music's menu" : "Nothing is playing", !np.videoId),
-          choice("queue", "Your queue", queue.length ? queue.length + " songs" : "The queue is empty", !queue.length),
-          choice("playlist", "One of your playlists", null),
+      frame(tr("Make a playlist"), tr("Built from YouTube Music's own radio for each song it starts from, ranked by what they have in common."),
+        [h("div", { class: "pf-label", text: tr("Start from") }),
+          choice("now", picked ? tr("The song you picked") : tr("The song playing now"),
+            np.title ? np.title + (np.artist ? " · " + np.artist : "") : picked ? tr("From YouTube Music's menu") : tr("Nothing is playing"), !np.videoId),
+          choice("queue", tr("Your queue"), queue.length ? trn("{n} song", "{n} songs", queue.length) : tr("The queue is empty"), !queue.length),
+          choice("playlist", tr("One of your playlists"), null),
           st.source === "playlist" ? pickList : null,
-          choice("liked", "Your liked songs", "Leaning towards the ones you liked most recently"),
-          h("div", { class: "pf-label", text: "Length" }), h("div", { class: "pf-chips" }, lens),
+          choice("liked", tr("Your liked songs"), tr("Leaning towards the ones you liked most recently")),
+          h("div", { class: "pf-label", text: tr("Length") }), h("div", { class: "pf-chips" }, lens),
           h("label", { class: "pf-row", style: "padding-left:0;padding-right:0" },
-            h("span", { class: "pf-row-text" }, "Only new songs", h("small", { text: "Leave out the songs it starts from" })),
+            h("span", { class: "pf-row-text" }, tr("Only new songs"), h("small", { text: tr("Leave out the songs it starts from") })),
             h("span", { class: "pf-switch" }, fresh, h("i")))],
-        [h("button", { class: "pf-btn", text: "Cancel", onclick: closeMaker }),
-          h("button", { class: "pf-btn pf-filled", onclick: () => generate(false) }, icon(ICON.sparkle, 18), "Make it")]);
+        [h("button", { class: "pf-btn", text: tr("Cancel"), onclick: closeMaker }),
+          h("button", { class: "pf-btn pf-filled", onclick: () => generate(false) }, icon(ICON.sparkle, 18), tr("Make it"))]);
     }
     function progress(text, frac) {
       const bar = h("i", { style: "width:" + Math.round(frac * 100) + "%" });
-      frame("Making your playlist", null, [h("div", { class: "pf-progress" }, bar), h("div", { class: "pf-status", text })],
-        [h("button", { class: "pf-btn", text: "Cancel", onclick: () => { st.gen++; start(); } })]);
+      frame(tr("Making your playlist"), null, [h("div", { class: "pf-progress" }, bar), h("div", { class: "pf-status", text })],
+        [h("button", { class: "pf-btn", text: tr("Cancel"), onclick: () => { st.gen++; start(); } })]);
     }
     async function seedsFor() {
       if (st.source === "now") return np.videoId ? [{ videoId: np.videoId, title: np.title, artist: np.artist, w: 1 }] : [];
@@ -3134,10 +3158,10 @@
       const gone = () => gen !== st.gen || !maker;
       try {
         if (!again || !st.lists) {
-          progress("Looking at what it starts from…", 0.05);
+          progress(tr("Looking at what it starts from…"), 0.05);
           const all = await seedsFor();
           if (gone()) return;
-          if (!all.length) { start(); toast("There's nothing to start from there"); return; }
+          if (!all.length) { start(); toast(tr("There's nothing to start from there")); return; }
           const n = st.length >= 100 ? 10 : 8;
           let seeds = st.source === "now" ? all : pickSeeds(all, Math.min(n, all.length), st.source === "liked");
           const lists = [];
@@ -3145,7 +3169,8 @@
           const fetchOne = async (s, w) => {
             try { const rows = await radio(s.videoId); if (rows.length) lists.push({ w, rows }); } catch (e) {}
             done++;
-            if (!gone()) progress(`Listening to the radio of ${done} of ${seeds.length} songs…`, 0.1 + 0.8 * (done / seeds.length));
+            if (!gone()) progress(trn("Listening to the radio of {done} of {n} song…", "Listening to the radio of {done} of {n} songs…", seeds.length, { done }),
+              0.1 + 0.8 * (done / seeds.length));
           };
           if (st.source === "now") {
             // one song: its radio, then the radios of a few songs from it, for a wider mix
@@ -3171,7 +3196,7 @@
         const results = rank(st.lists, st.seeds, { length: st.length, fresh: st.fresh, round: st.round, from: st.from,
           exclude: again ? st.shown.slice(-st.length * 2) : [] });
         if (gone()) return;
-        if (!results.length) { start(); toast("YouTube Music didn't suggest anything for that; try another starting point"); return; }
+        if (!results.length) { start(); toast(tr("YouTube Music didn't suggest anything for that; try another starting point")); return; }
         st.results = results;
         st.keep = new Set(results.map((r) => r.videoId));
         st.shown.push(...results.map((r) => r.videoId));
@@ -3179,28 +3204,28 @@
       } catch (e) {
         if (gone()) return;
         start();
-        toast("Couldn't make it: " + (e && e.message ? e.message : "YouTube Music didn't answer"));
+        toast(tr("Couldn't make it: {reason}", { reason: e && e.message ? e.message : tr("YouTube Music didn't answer") }));
       }
     }
     function defaultName() {
-      if (st.source === "now") return "Mix from " + (np.title || "this song");
-      if (st.source === "queue") return "Mix from my queue";
-      if (st.source === "playlist") return "More like " + ((st.playlist && st.playlist.title) || "my playlist");
-      return "More of what I like";
+      if (st.source === "now") return np.title ? tr("Mix from {title}", { title: np.title }) : tr("Mix from this song");
+      if (st.source === "queue") return tr("Mix from my queue");
+      if (st.source === "playlist") return st.playlist && st.playlist.title ? tr("More like {title}", { title: st.playlist.title }) : tr("More like my playlist");
+      return tr("More of what I like");
     }
     function review() {
-      const name = h("input", { class: "pf-field", type: "text", maxlength: "150", "aria-label": "Name" });
+      const name = h("input", { class: "pf-field", type: "text", maxlength: "150", "aria-label": tr("Name") });
       name.value = st.name || defaultName();
       name.addEventListener("input", () => { st.name = name.value; });
       const summary = h("div", { class: "pf-summary" });
       const count = () => {
         const kept = st.results.filter((r) => st.keep.has(r.videoId));
         const total = kept.reduce((a, r) => a + secs(r.length), 0);
-        summary.textContent = kept.length + " songs" + (total ? " · about " + dur(total) : "");
+        summary.textContent = total ? trn("{n} song · about {time}", "{n} songs · about {time}", kept.length, { time: dur(total) }) : trn("{n} song", "{n} songs", kept.length);
         save.disabled = addBtn.disabled = !kept.length;
       };
       const rows = st.results.map((r) => {
-        const box = h("input", { type: "checkbox", class: "pf-check", "aria-label": "Keep " + r.title });
+        const box = h("input", { type: "checkbox", class: "pf-check", "aria-label": tr("Keep {title}", { title: r.title }) });
         box.checked = st.keep.has(r.videoId);
         const li = h("li", { class: "pf-song" + (box.checked ? "" : " pf-off") },
           box, h("img", { alt: "", loading: "lazy", referrerpolicy: "no-referrer", src: r.thumb || "" }),
@@ -3214,19 +3239,19 @@
       const save = h("button", { class: "pf-btn pf-filled", onclick: async () => {
         save.disabled = true;
         const title = (name.value || defaultName()).trim().slice(0, 150);
-        const r = await API.playlistCreate({ title, description: "Made with YTM Starcast", privacy: "PRIVATE", videoIds: kept() }).catch(() => null);
-        if (r && r.ok) saved(r.playlistId, title); else { save.disabled = false; toast("YouTube Music didn't save it. Are you signed in?"); }
-      } }, "Save as a playlist");
-      const addBtn = h("button", { class: "pf-btn pf-tonal", onclick: () => addTo() }, "Add to one of mine…");
-      frame("Your new playlist", "Untick anything you don't want. Again gives a different mix from the same start.",
+        const r = await API.playlistCreate({ title, description: tr("Made with YTM Starcast"), privacy: "PRIVATE", videoIds: kept() }).catch(() => null);
+        if (r && r.ok) saved(r.playlistId, title); else { save.disabled = false; toast(tr("YouTube Music didn't save it. Are you signed in?")); }
+      } }, tr("Save as a playlist"));
+      const addBtn = h("button", { class: "pf-btn pf-tonal", onclick: () => addTo() }, tr("Add to one of mine…"));
+      frame(tr("Your new playlist"), tr("Untick anything you don't want. Again gives a different mix from the same start."),
         [name, summary, h("ul", { class: "pf-list" }, rows)],
-        [h("button", { class: "pf-btn pf-icon-btn", "aria-label": "Back", title: "Back", onclick: start }, icon(ICON.back)),
-          h("button", { class: "pf-btn", onclick: () => generate(true) }, icon(ICON.refresh, 18), "Again"),
+        [h("button", { class: "pf-btn pf-icon-btn", "aria-label": tr("Back"), title: tr("Back"), onclick: start }, icon(ICON.back)),
+          h("button", { class: "pf-btn", onclick: () => generate(true) }, icon(ICON.refresh, 18), tr("Again")),
           h("span", { class: "pf-grow" }), addBtn, save]);
       count();
       async function addTo() {
         const list = await loadMine();
-        const sel = h("select", { class: "pf-select", "aria-label": "Playlist" });
+        const sel = h("select", { class: "pf-select", "aria-label": tr("Playlist") });
         for (const p of list) sel.append(h("option", { value: p.playlistId, text: p.title }));
         const go = h("button", { class: "pf-btn pf-filled", disabled: !list.length, onclick: async () => {
           go.disabled = true;
@@ -3237,20 +3262,21 @@
             ok = !!(r && r.ok);
           }
           const p = list.find((x) => x.playlistId === pl);
-          if (ok) saved(pl, p ? p.title : "your playlist", true);
-          else { go.disabled = false; toast("YouTube Music didn't add them. You can only add to your own playlists."); }
-        } }, "Add " + kept().length + " songs");
-        frame("Add to one of your playlists", "Songs already in it are skipped.",
-          [list.length ? sel : h("div", { class: "pf-status", text: "No playlists of yours were found." })],
-          [h("button", { class: "pf-btn", text: "Back", onclick: review }), go]);
+          if (ok) saved(pl, p ? p.title : "", true);
+          else { go.disabled = false; toast(tr("YouTube Music didn't add them. You can only add to your own playlists.")); }
+        } }, trn("Add {n} song", "Add {n} songs", kept().length));
+        frame(tr("Add to one of your playlists"), tr("Songs already in it are skipped."),
+          [list.length ? sel : h("div", { class: "pf-status", text: tr("No playlists of yours were found.") })],
+          [h("button", { class: "pf-btn", text: tr("Back"), onclick: review }), go]);
       }
     }
     function saved(playlistId, title, added) {
-      frame(added ? "Added" : "Saved", (added ? "The songs are in “" : "“") + title + (added ? "”." : "” is in your library."),
-        [h("div", { class: "pf-status", text: "It's private; change that in YouTube Music if you want to share it." })],
-        [h("button", { class: "pf-btn", text: "Done", onclick: closeMaker }),
-          h("button", { class: "pf-btn pf-filled", onclick: async () => { closeMaker(); const r = await API.startPlaylist(playlistId, false); if (!r || !r.ok) toast("Couldn't start it; find it in your library"); } },
-            icon(ICON.play, 18), "Play it")]);
+      frame(added ? tr("Added") : tr("Saved"),
+        added ? (title ? tr("The songs are in “{title}”.", { title }) : tr("The songs are in your playlist.")) : tr("“{title}” is in your library.", { title }),
+        [h("div", { class: "pf-status", text: tr("It's private; change that in YouTube Music if you want to share it.") })],
+        [h("button", { class: "pf-btn", text: tr("Done"), onclick: closeMaker }),
+          h("button", { class: "pf-btn pf-filled", onclick: async () => { closeMaker(); const r = await API.startPlaylist(playlistId, false); if (!r || !r.ok) toast(tr("Couldn't start it; find it in your library")); } },
+            icon(ICON.play, 18), tr("Play it"))]);
     }
     start();
   }
@@ -3388,9 +3414,12 @@
   // the quick menu's tile: one press for the next one
   function vizTile() {
     const state = h("small");
-    const b = h("button", { class: "pf-tile", type: "button", title: "Cover visualizer (experimental): press for the next one" },
-      h("span", { class: "pf-tile-ico" }, icon(ICON.viz, 22)), h("span", { class: "pf-tile-text" }, "Visualizer", state));
-    const paint = () => { b.setAttribute("aria-checked", String(vizMode !== "off")); b.setAttribute("aria-label", "Cover visualizer: " + vizMode); state.textContent = VIZ_MODES.find((x) => x[0] === vizMode)[1]; };
+    const b = h("button", { class: "pf-tile", type: "button", title: tr("Cover visualizer (experimental): press for the next one") },
+      h("span", { class: "pf-tile-ico" }, icon(ICON.viz, 22)), h("span", { class: "pf-tile-text" }, tr("Visualizer"), state));
+    const paint = () => {
+      const mode = tr(VIZ_MODES.find((x) => x[0] === vizMode)[1]);
+      b.setAttribute("aria-checked", String(vizMode !== "off")); b.setAttribute("aria-label", tr("Cover visualizer: {mode}", { mode })); state.textContent = mode;
+    };
     b.addEventListener("click", () => {
       const i = VIZ_MODES.findIndex((x) => x[0] === vizMode);
       setViz(VIZ_MODES[(i + 1) % VIZ_MODES.length][0]);
@@ -3400,10 +3429,10 @@
     return b;
   }
   function vizChooser() {
-    const chips = VIZ_MODES.map(([m, label]) => h("button", { class: "pf-chip", text: label, "aria-pressed": String(vizMode === m),
-      onclick: () => { setViz(m); for (const c of chips) c.setAttribute("aria-pressed", String(c.textContent === label)); } }));
-    return h("div", { class: "pf-viz-pick" }, h("div", { class: "pf-row-text" }, "Cover visualizer (experimental)",
-      h("small", { text: "Around the big cover in the player page. Pulse and Bars follow the music once a press on the page lets it be heard here" })),
+    const chips = VIZ_MODES.map(([m, label]) => h("button", { class: "pf-chip", text: tr(label), "data-mode": m, "aria-pressed": String(vizMode === m),
+      onclick: () => { setViz(m); for (const c of chips) c.setAttribute("aria-pressed", String(c.dataset.mode === m)); } }));
+    return h("div", { class: "pf-viz-pick" }, h("div", { class: "pf-row-text" }, tr("Cover visualizer (experimental)"),
+      h("small", { text: tr("Around the big cover in the player page. Pulse and Bars follow the music once a press on the page lets it be heard here") })),
       h("div", { class: "pf-chips" }, chips));
   }
 
@@ -3532,6 +3561,23 @@
     for (const k of ["a", "b", "c", "arc", "star"]) st.removeProperty("--pf-logo-" + k);
     if (ruleApplied) { ruleApplied = false; if (Math.abs(getRate() - 1) > 0.01) setRateRaw(1); }
   }
+  // The language changed: everything Refine drew leaves and comes back in it (open menus and dialogs close). The speed
+  // stays as it is, and so does the sound.
+  function redrawWords() {
+    if (!partOn) return;
+    const keep = ruleApplied;
+    ruleApplied = false;
+    partOn = false;
+    takeDown();
+    ruleApplied = keep;
+    partOn = true;
+    colorFor = "";
+    restorePalette();
+    applyAll();
+    syncPlaying();
+    syncNav();
+  }
+  I18N.onChange(redrawWords);
   function setPart(v) {
     if (v === partOn) return;
     partOn = v;

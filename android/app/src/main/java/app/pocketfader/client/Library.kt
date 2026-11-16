@@ -25,7 +25,7 @@ data class SyncedList(
     val owned: Boolean,
     val syncedAt: Long,
 ) {
-    fun toSearchItem() = SearchItem(title, subtitle.ifBlank { "${tracks.size} songs" }, thumb, null, id, "playlist")
+    fun toSearchItem() = SearchItem(title, subtitle.ifBlank { trn("{n} song", "{n} songs", tracks.size) }, thumb, null, id, "playlist")
 }
 
 /** A song you listened to (on this phone or on the computer), for the recommendations. */
@@ -321,14 +321,14 @@ object Library {
             try {
                 if (!Remote.state.value.ytm) {
                     _status.value = null
-                    if (!quiet) Remote.notify("Syncing needs YouTube Music open on the computer.")
+                    if (!quiet) Remote.notify(tr("Syncing needs YouTube Music open on the computer."))
                     return@launch
                 }
                 val before = fingerprint()
                 val first = _syncedAt.value == 0L
-                _status.value = "Sending your changes…"
+                _status.value = tr("Sending your changes…")
                 flushPending()
-                _status.value = "Syncing your liked songs…"
+                _status.value = tr("Syncing your liked songs…")
                 runCatching { Remote.playlistItems(SearchItem("Liked music", "", null, null, "LM", "playlist"), limit = 5000) }
                     .getOrNull()?.mapNotNull { it.toLocal() }
                     // an empty answer when there were likes is more likely a hiccup than every like removed: keep what we have
@@ -350,11 +350,11 @@ object Library {
                     id != null && id != "LM" && id != "SE"
                 }
                 val old = _playlists.value.associateBy { it.id }
-                if (lists.isEmpty() && old.isNotEmpty()) throw ApiException(0, "YouTube Music returned no playlists; kept the ones already here")
+                if (lists.isEmpty() && old.isNotEmpty()) throw ApiException(0, tr("YouTube Music returned no playlists; kept the ones already here"))
                 val out = ArrayList<SyncedList>()
                 for ((i, p) in lists.withIndex()) {
                     val id = p.playlistId ?: p.browseId?.removePrefix("VL") ?: continue
-                    _status.value = "Syncing playlists (${i + 1} of ${lists.size})…"
+                    _status.value = tr("Syncing playlists ({done} of {total})…", "done" to i + 1, "total" to lists.size)
                     val tracks = runCatching { Remote.playlistItems(p, limit = 3000) }.getOrNull()
                     if (tracks == null) {
                         old[id]?.let { out.add(it.copy(title = p.title, thumb = p.thumb ?: it.thumb)) }   // keep the last copy
@@ -370,18 +370,18 @@ object Library {
                 }
                 _playlists.value = out
                 _keep.update { keep -> keep.filter { k -> out.any { it.id == k } }.toHashSet() }
-                _status.value = "Syncing your home page…"
+                _status.value = tr("Syncing your home page…")
                 runCatching { Remote.home() }.getOrNull()?.takeIf { it.isNotEmpty() }?.let { _home.value = it }
                 _syncedAt.value = System.currentTimeMillis()
                 synchronized(this@Library) { save() }
                 _problem.value = null
                 val changed = fingerprint() != before
-                if (!quiet || first) Remote.notify("Library synced: ${out.size} playlists, ${_liked.value.size} liked songs")
-                else if (changed) Remote.notify("Library updated from the computer: ${out.size} playlists, ${_liked.value.size} liked songs")
+                if (!quiet || first) Remote.notify(tr("Library synced: {playlists}, {liked}", "playlists" to trn("{n} playlist", "{n} playlists", out.size), "liked" to trn("{n} liked song", "{n} liked songs", _liked.value.size)))
+                else if (changed) Remote.notify(tr("Library updated from the computer: {playlists}, {liked}", "playlists" to trn("{n} playlist", "{n} playlists", out.size), "liked" to trn("{n} liked song", "{n} liked songs", _liked.value.size)))
                 if (changed || !quiet) Recommend.invalidate()
                 AutoDownload.soon()
             } catch (e: Exception) {
-                if (quiet) _problem.value = e.friendly() else Remote.notify("Sync stopped: ${e.friendly()}")
+                if (quiet) _problem.value = e.friendly() else Remote.notify(tr("Sync stopped: {error}", "error" to e.friendly()))
             } finally {
                 _status.value = null
                 syncing = false

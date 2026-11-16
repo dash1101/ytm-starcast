@@ -171,7 +171,7 @@ internal fun HomeTab(onOpen: (SearchItem) -> Unit) {
     when {
         shelves == null && err != null -> Message(err)
         shelves == null -> Loading()
-        shelves.isEmpty() -> Message("Nothing on your home page yet.")
+        shelves.isEmpty() -> Message(tr("Nothing on your home page yet."))
         else -> ShelvesList(shelves, onOpen)
     }
 }
@@ -185,7 +185,7 @@ internal fun ShelvesList(shelves: List<Shelf>, onOpen: (SearchItem) -> Unit) {
     LazyColumn(Modifier.fillMaxSize().edgeFade(homeState), state = homeState) {
         itemsIndexed(shelves, key = { i, it -> "$i-${it.title}" }) { _, shelf ->
             Column {
-                PageSectionTitle(shelf.title, Modifier.arrive(arrival).padding(start = 16.dp, end = 16.dp, top = 18.dp, bottom = 10.dp))
+                PageSectionTitle(tr(shelf.title), Modifier.arrive(arrival).padding(start = 16.dp, end = 16.dp, top = 18.dp, bottom = 10.dp))
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -215,11 +215,11 @@ internal fun PlaylistsTab(onOpen: (SearchItem) -> Unit) {
     // the covers glide in once the playlists are there (and again when the list changes)
     val arrival = rememberPageArrival(lists)
     Column(Modifier.fillMaxSize()) {
-        PageHeaderTonal(Icons.Filled.Add, "New playlist", onClick = { creating = true }, modifier = Modifier.padding(16.dp))
+        PageHeaderTonal(Icons.Filled.Add, tr("New playlist"), onClick = { creating = true }, modifier = Modifier.padding(16.dp))
         when {
             lists == null && err != null -> Message(err)
             lists == null -> Loading()
-            lists.isEmpty() -> Message("No playlists yet.")
+            lists.isEmpty() -> Message(tr("No playlists yet."))
             else -> androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
                 columns = androidx.compose.foundation.lazy.grid.GridCells.Adaptive(150.dp),
                 state = gridState,
@@ -236,13 +236,13 @@ internal fun PlaylistsTab(onOpen: (SearchItem) -> Unit) {
         }
     }
     if (creating) {
-        TextPrompt("New playlist", "", "Playlist name", "Create", onDismiss = { creating = false }) { name ->
+        TextPrompt(tr("New playlist"), "", tr("Playlist name"), tr("Create"), onDismiss = { creating = false }) { name ->
             creating = false
             scope.launch {
                 val ok = LibraryStore.attempt {
                     Remote.playlistOp(JSONObject().put("type", "playlistCreate").put("title", name)).optBoolean("ok")
                 }
-                Remote.notify(if (ok) "Created “$name”" else "Couldn't create the playlist")
+                Remote.notify(if (ok) tr("Created “{name}”", "name" to name) else tr("Couldn't create the playlist"))
                 if (ok) LibraryStore.refreshPlaylists()
             }
         }
@@ -292,7 +292,7 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
                     copy != null -> copy.map { it.toSearchItem() }
                     // a public playlist or album works without the account
                     pid != null && !pid.startsWith("MPRE") -> Streams.playlist(pid).map { it.toSearchItem() }
-                    else -> throw failure ?: ApiException(0, "Albums open through YouTube Music on the computer, which isn't connected.")
+                    else -> throw failure ?: ApiException(0, tr("Albums open through YouTube Music on the computer, which isn't connected."))
                 }
             }
             if (!editing && fresh != tracks) tracks = fresh
@@ -322,7 +322,7 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
                 successor?.setVideoId?.let { b.put("before", it) }
                 Remote.playlistOp(b).optBoolean("ok")
             }
-            if (!ok) { tracks = list; Remote.notify("Couldn't move that track") } else LibraryStore.playlists = null
+            if (!ok) { tracks = list; Remote.notify(tr("Couldn't move that track")) } else LibraryStore.playlists = null
         }
     }
 
@@ -338,23 +338,23 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
                         .put("setVideoId", gone.setVideoId ?: "").put("videoId", gone.videoId ?: "")
                 ).optBoolean("ok")
             }
-            if (!ok) { tracks = list; Remote.notify("Couldn't remove it") } else { Remote.notify("Removed from playlist"); LibraryStore.playlists = null }
+            if (!ok) { tracks = list; Remote.notify(tr("Couldn't remove it")) } else { Remote.notify(tr("Removed from playlist")); LibraryStore.playlists = null }
         }
     }
 
     Column(modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            ShapeIconButton(Icons.Filled.ArrowBack, "Back", onClick = onBack)
+            ShapeIconButton(Icons.Filled.ArrowBack, tr("Back"), onClick = onBack)
             Text(
                 title, Modifier.weight(1f).padding(start = 4.dp), style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
             if (editable) {
                 Box {
-                    ShapeIconButton(Icons.Filled.MoreVert, "More", onClick = { menu = true }, active = menu)
+                    ShapeIconButton(Icons.Filled.MoreVert, tr("More"), onClick = { menu = true }, active = menu)
                     DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                        DropdownMenuItem(text = { Text("Rename") }, leadingIcon = { Icon(Icons.Filled.Edit, null) }, onClick = { menu = false; dialog = "rename" })
-                        DropdownMenuItem(text = { Text("Delete playlist") }, leadingIcon = { Icon(Icons.Filled.Delete, null) }, onClick = { menu = false; dialog = "delete" })
+                        DropdownMenuItem(text = { Text(tr("Rename")) }, leadingIcon = { Icon(Icons.Filled.Edit, null) }, onClick = { menu = false; dialog = "rename" })
+                        DropdownMenuItem(text = { Text(tr("Delete playlist")) }, leadingIcon = { Icon(Icons.Filled.Delete, null) }, onClick = { menu = false; dialog = "delete" })
                     }
                 }
             }
@@ -368,7 +368,7 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
         when {
             list == null && error != null -> Message(error ?: "")
             list == null -> Loading()
-            list.isEmpty() -> Message("Nothing in here yet.")
+            list.isEmpty() -> Message(tr("Nothing in here yet."))
             else -> LazyColumn(Modifier.fillMaxSize().edgeFade(listState), state = listState) {
                 item(key = "head") {
                     Column(Modifier.fillMaxWidth().arrive(arrival).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -382,7 +382,7 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
                             )
                         }
                         Text(
-                            if (list.size == 1) "1 track" else "${list.size} tracks",
+                            trn("{n} track", "{n} tracks", list.size),
                             Modifier.padding(top = if (by != null) 2.dp else 12.dp),
                             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -410,7 +410,7 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
                                 enabled = canPlay,
                             )
                             PageHeaderTonal(
-                                Icons.Filled.Shuffle, "Shuffle",
+                                Icons.Filled.Shuffle, tr("Shuffle"),
                                 onClick = {
                                     if (here) playOnPhone(songs, songs.indices.random(), shuffle = true) else albumId?.let { Remote.startPlaylist(it, true) }
                                     AppNav.showPlayer()
@@ -423,7 +423,7 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
                             val kept = saveId != null && offline.any { it.id == "pl:$saveId" }
                             PageHeaderIcon(
                                 if (kept) Icons.Filled.DownloadDone else Icons.Filled.Download,
-                                if (kept) "Kept on this phone. Download again to update" else "Download all and keep this playlist on the phone",
+                                if (kept) tr("Kept on this phone. Download again to update") else tr("Download all and keep this playlist on the phone"),
                                 onClick = {
                                     if (saveId != null) OfflineLists.saveFrom(saveId, title, item.thumb ?: list.firstOrNull()?.thumb, songs)
                                     else Downloads.enqueue(songs)
@@ -433,7 +433,7 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
                             if (editable) {
                                 // a round button: "Edit" in words made this row too wide for a phone
                                 PageHeaderIcon(
-                                    if (editing) Icons.Filled.Check else Icons.Filled.Edit, if (editing) "Done editing" else "Edit playlist",
+                                    if (editing) Icons.Filled.Check else Icons.Filled.Edit, if (editing) tr("Done editing") else tr("Edit playlist"),
                                     onClick = { editing = !editing }, on = editing,
                                 )
                             }
@@ -448,11 +448,11 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
                                     .padding(start = 14.dp, end = 6.dp, top = 2.dp, bottom = 2.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Text("Keep on this phone", Modifier.padding(end = 10.dp), style = MaterialTheme.typography.bodyMedium)
+                                Text(tr("Keep on this phone"), Modifier.padding(end = 10.dp), style = MaterialTheme.typography.bodyMedium)
                                 androidx.compose.material3.Switch(checked = pid in keep, onCheckedChange = null)
                             }
                             if (pid in keep && Settings.prefs.value.dlWifiOnly && Downloads.metered()) {
-                                Text("Downloads start on Wi-Fi.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(tr("Downloads start on Wi-Fi."), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
                     }
@@ -465,9 +465,9 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
                     ) {
                         if (editing) {
                             val tint = LocalContentColor.current
-                            ShapeIconButton(Icons.Filled.KeyboardArrowUp, "Move up", onClick = { move(i, -1) }, tint = tint, enabled = i > 0)
-                            ShapeIconButton(Icons.Filled.KeyboardArrowDown, "Move down", onClick = { move(i, 1) }, tint = tint, enabled = i < list.size - 1)
-                            ShapeIconButton(Icons.Filled.Close, "Remove", onClick = { remove(i) }, tint = tint)
+                            ShapeIconButton(Icons.Filled.KeyboardArrowUp, tr("Move up"), onClick = { move(i, -1) }, tint = tint, enabled = i > 0)
+                            ShapeIconButton(Icons.Filled.KeyboardArrowDown, tr("Move down"), onClick = { move(i, 1) }, tint = tint, enabled = i < list.size - 1)
+                            ShapeIconButton(Icons.Filled.Close, tr("Remove"), onClick = { remove(i) }, tint = tint)
                         } else {
                             SongMenuButton(t)
                         }
@@ -479,25 +479,29 @@ internal fun PlaylistDetail(item: SearchItem, onBack: () -> Unit, modifier: Modi
     }
 
     if (dialog == "rename") {
-        TextPrompt("Rename playlist", title, "Name", "Rename", onDismiss = { dialog = "" }) { name ->
+        TextPrompt(tr("Rename playlist"), title, tr("Name"), tr("Rename"), onDismiss = { dialog = "" }) { name ->
             dialog = ""
             scope.launch {
                 val ok = LibraryStore.attempt {
                     Remote.playlistOp(JSONObject().put("type", "playlistRename").put("playlistId", pid ?: "").put("name", name)).optBoolean("ok")
                 }
-                if (ok) { title = name; LibraryStore.playlists = null; Remote.notify("Renamed") } else Remote.notify("Couldn't rename it")
+                if (ok) { title = name; LibraryStore.playlists = null; Remote.notify(tr("Renamed")) } else Remote.notify(tr("Couldn't rename it"))
             }
         }
     }
     if (dialog == "delete") {
-        ConfirmDialog("Delete this playlist?", "“$title” will be removed from your YouTube Music library. This can't be undone.", "Delete",
-            onDismiss = { dialog = "" }) {
+        ConfirmDialog(
+            tr("Delete this playlist?"),
+            tr("“{title}” will be removed from your YouTube Music library. This can't be undone.", "title" to title),
+            tr("Delete"),
+            onDismiss = { dialog = "" },
+        ) {
             dialog = ""
             scope.launch {
                 val ok = LibraryStore.attempt {
                     Remote.playlistOp(JSONObject().put("type", "playlistDelete").put("playlistId", pid ?: "")).optBoolean("ok")
                 }
-                if (ok) { LibraryStore.playlists = null; Remote.notify("Playlist deleted"); onBack() } else Remote.notify("Couldn't delete it")
+                if (ok) { LibraryStore.playlists = null; Remote.notify(tr("Playlist deleted")); onBack() } else Remote.notify(tr("Couldn't delete it"))
             }
         }
     }
@@ -566,6 +570,7 @@ internal fun PageSongRow(
     current: Boolean = false, playing: Boolean = false, trailing: @Composable () -> Unit = {},
 ) {
     val scheme = MaterialTheme.colorScheme
+    val nowPlaying = tr("Now playing")
     Row(
         modifier.fillMaxWidth().arrive(arrival)
             .padding(horizontal = 8.dp).clip(PfShape.Sm)
@@ -582,7 +587,7 @@ internal fun PageSongRow(
                 Box(
                     Modifier.size(thumbDp.dp)
                         .background(scheme.primaryContainer.copy(alpha = 0.72f), if (round) PfShape.Full else PfShape.Xs)
-                        .semantics { contentDescription = "Now playing" },
+                        .semantics { contentDescription = nowPlaying },
                     contentAlignment = Alignment.Center,
                 ) { EqBars(scheme.onPrimaryContainer, playing, Modifier.size(20.dp)) }
             }
@@ -658,7 +663,7 @@ internal fun PageCoverTile(
  * colour, a soft square that rounds into a circle while it is pressed (or a pointer is over it), and a little dip.
  */
 @Composable
-internal fun PageHeaderPlay(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true, description: String = "Play") {
+internal fun PageHeaderPlay(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true, description: String = tr("Play")) {
     val reduce = LocalReduceMotion.current
     val src = remember { MutableInteractionSource() }
     val pressed by src.collectIsPressedAsState()

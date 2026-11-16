@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Built by tools/i18n.py from i18n/*.json; don't edit it -->
+<resources>
+    <string name="widget_desc_now_wide">En cours de lecture : pochette, titre, progression, commandes et volume</string>
+    <string name="widget_desc_now_bar">Une fine barre de lecture avec les commandes</string>
+    <string name="widget_desc_cover">La pochette de ce qui est en lecture, avec lecture et pause</string>
+    <string name="widget_desc_volume">Le volume de l\'appareil où la musique est lue</string>
+    <string name="widget_desc_actions">Actions rapides : j\'ai de la chance, minuteur de mise en veille, pause des autres lecteurs, basculer entre téléphone et ordinateur</string>
+    <string name="widget_name_now_wide">En cours de lecture</string>
+    <string name="widget_name_now_bar">En cours de lecture (compact)</string>
+    <string name="widget_name_cover">Pochette</string>
+    <string name="widget_name_actions">Actions rapides</string>
+    <string name="widget_desc_beacon">Si votre musique s\'affiche sur Discord, avec un interrupteur et un masquage pendant une heure</string>
+    <string name="widget_desc_upnext">Les prochains titres de la file d\'attente ; appuyez sur l\'un d\'eux pour le lire</string>
+    <string name="widget_name_beacon">Statut Discord</string>
+    <string name="widget_name_upnext">À suivre</string>
+</resources>

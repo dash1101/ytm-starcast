@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Built by tools/i18n.py from i18n/*.json; don't edit it -->
+<resources>
+    <string name="widget_desc_now_wide">Что играет: обложка, название, прогресс, кнопки и громкость</string>
+    <string name="widget_desc_now_bar">Компактная панель «Сейчас играет» с кнопками управления</string>
+    <string name="widget_desc_cover">Обложка того, что играет, с кнопкой воспроизведения и паузы</string>
+    <string name="widget_desc_volume">Громкость там, где играет музыка</string>
+    <string name="widget_desc_actions">Быстрые действия: «Мне повезёт», таймер сна, пауза других плееров, переключение между телефоном и компьютером</string>
+    <string name="widget_name_now_wide">Сейчас играет</string>
+    <string name="widget_name_now_bar">Сейчас играет (компактно)</string>
+    <string name="widget_name_cover">Обложка</string>
+    <string name="widget_name_volume">Громкость</string>
+    <string name="widget_name_actions">Быстрые действия</string>
+    <string name="widget_desc_beacon">Показывается ли ваша музыка в Discord, с переключателем и скрытием на час</string>
+    <string name="widget_desc_upnext">Следующие песни в очереди; нажмите на песню, чтобы включить её</string>
+    <string name="widget_name_beacon">Статус в Discord</string>
+    <string name="widget_name_upnext">Далее в очереди</string>
+</resources>

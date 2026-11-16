@@ -27,11 +27,22 @@
   function takeCfg(reply) {
     if (!reply || typeof reply !== "object") return;
     const c = reply.cfg && typeof reply.cfg === "object" ? reply.cfg : {};
+    if (typeof c.lang === "string") takeLang(c.lang);
     const next = {};
     for (const k of PARTS) next[k] = c[k] !== false;   // missing = on
     if (cfg && PARTS.every((k) => cfg[k] === next[k])) return;
     cfg = next;
     window.postMessage({ __vmr: "cfg", cfg }, "*");
+  }
+
+  // The language setting, as the app last said ("auto" or a code): the page's scripts use it at once, and it is kept
+  // for the toolbar popup and the next page.
+  let lang = null;
+  function takeLang(l) {
+    if (typeof l !== "string" || l.length > 8 || l === lang) return;
+    lang = l;
+    window.postMessage({ __vmr: "lang", lang }, "*");
+    try { chrome.storage.local.set({ lang }); } catch (e) {}
   }
 
   // main world -> server
@@ -48,6 +59,7 @@
     } else if (d.__vmr === "ready" || d.__vmr === "cfg-get") {
       // a page script that started after the last change asks what is on
       if (cfg) window.postMessage({ __vmr: "cfg", cfg }, "*");
+      if (lang) window.postMessage({ __vmr: "lang", lang }, "*");
     } else if (d.__vmr === "starcast" && typeof d.id === "string") {
       starcastForPage(d.id.slice(0, 40), d);
     } else if (d.__vmr === "palette") {
@@ -148,6 +160,7 @@
       const s = await r.json().catch(() => null);
       if (!r.ok || !s || typeof s !== "object") return { error: "failed" };
       if (s.parts && typeof s.parts === "object") takeCfg({ cfg: s.parts });
+      if (typeof s.language === "string") takeLang(s.language);
       return { status: s, twin: twin() };
     } catch (e) {
       return { error: "offline" };
@@ -156,6 +169,20 @@
   // The page script marks the page when another copy of the extension is loaded as well (see ytm_main.js).
   function twin() {
     try { return !!document.documentElement.getAttribute("data-starcast-twin"); } catch (e) { return false; }
+  }
+  // Refine's panel: the language setting, shared with every app (only a known one; the app checks it again).
+  async function setLanguage(value) {
+    if (typeof value !== "string" || !/^[a-zA-Z-]{2,5}$/.test(value)) return { error: "bad_request" };
+    try {
+      const r = await call("/ext/language", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ language: value }) });
+      if (r.status === 404) return { error: "old_app", app: await appInfo() };
+      const j = await r.json().catch(() => null);
+      if (!r.ok || !j || typeof j.language !== "string") return { error: "failed" };
+      takeLang(j.language);
+      return { language: j.language };
+    } catch (e) {
+      return { error: "offline" };
+    }
   }
   // Only the three switches, only as true/false (the "Computer audio" switch itself can't be changed from here).
   async function setParts(parts) {
@@ -324,6 +351,7 @@
       : d.op === "soundSet" ? (sndPressed() ? await soundSet(d.kind, d.body) : { error: "needs_press" })
       : d.op === "save" ? (savePressed() ? await saveSong(d.videoId) : { error: "needs_press" })
       : d.op === "saveStatus" ? await saveStatus(d.job)
+      : d.op === "language" ? await setLanguage(d.language)
       : { error: "bad_request" };
     window.postMessage({ __vmr: "starcast-result", id, data }, "*");
   }

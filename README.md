@@ -24,6 +24,7 @@ the remote or computer audio switched off, the apps hide their controls.
 - Works with the **normal system volume** (PipeWire / PulseAudio on Linux, the Windows volume on Windows). No special audio software.
 - The phone side is just a web page: **any phone, tablet or laptop with a browser**. Add it to the home screen and it behaves like an app. There is also a native [Android app](android/README.md).
 - Also controls **any media player** on the computer (Spotify, VLC, Firefox, phone sessions via KDE Connect…) through MPRIS on Linux.
+- **In 10 languages**: English, Español, Français, Deutsch, Português (Brasil), Italiano, Русский, 日本語, 한국어 and 简体中文. One **Language** setting (in the web app, the Android app, the desktop window and Refine) is shared by every app: *Automatic* follows each device's own language. See [Languages](docs/TRANSLATING.md).
 - Private by design: it only listens where you tell it to, and exposed modes are protected by an access token.
 - Zero dependencies on Linux: just Python's standard library.
 

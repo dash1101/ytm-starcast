@@ -37,6 +37,7 @@ from .updater import Updater, for_old_apps
 from .config import DEFAULT_PORT, JsonFile, config_dir
 from .opener import Opener, music_url, valid_id
 from .audio import AudioFetcher, Saver, TYPES as AUDIO_TYPES, parse_range
+from .i18n import trKey, validate as validate_language
 
 STATIC = Path(__file__).parent / "static"
 EQ_MIN, EQ_MAX = -12.0, 12.0
@@ -51,8 +52,9 @@ COOKIE = "pf_token"
 # Tailscale's addresses (IPv4 and IPv6)
 TAILNET = (ipaddress.ip_network("100.64.0.0/10"), ipaddress.ip_network("fd7a:115c:a1e0::/48"))
 # GET /api/connect: what each kind of address is called, in the order they are offered
-CONNECT_KINDS = {"tailscale-name": "Tailscale name", "tailscale": "Tailscale address", "lan": "Home network",
-                 "proxy": "Web address", "address": "Address", "local": "This computer"}
+# (English: the apps show them in their own language, by kind or through these words)
+CONNECT_KINDS = {"tailscale-name": trKey("Tailscale name"), "tailscale": trKey("Tailscale address"), "lan": trKey("Home network"),
+                 "proxy": trKey("Web address"), "address": trKey("Address"), "local": trKey("This computer")}
 APP_NAME = "YTM Starcast"
 
 # The parts of YTM Starcast that can be switched on and off. All on unless switched off.
@@ -267,6 +269,7 @@ class App:
             "limits": {"eq_min": EQ_MIN, "eq_max": EQ_MAX},
             "sleep": {"remainingSec": self.sleep_left()},
             "parts": self.parts(),
+            "language": self.language(),
             "extension": self.extension_brief(),
         }
 
@@ -332,10 +335,26 @@ class App:
         return after
 
     def ext_cfg(self):
-        """The switches the browser extension acts on, sent with every poll and state reply. (An app from before
-        the switches sends none, which the extension reads as "all on".)"""
+        """The switches the browser extension acts on, sent with every poll and state reply, and the language setting
+        ("lang"). (An app from before the switches sends none, which the extension reads as "all on".)"""
         p = self.parts()
-        return {k: p[k] for k in EXT_PARTS}
+        return {**{k: p[k] for k in EXT_PARTS}, "lang": self.language()}
+
+    # ---- the language setting, shared by every app: "auto" (each device's own language) or a language's code ----
+    def language(self):
+        v = self.prefs.load().get("language")
+        try:
+            return validate_language(v)
+        except ValueError:
+            return "auto"
+
+    def set_language(self, value):
+        """Store the language setting (ValueError for an unknown one); open YouTube Music tabs hear about it at once."""
+        value = validate_language(value)
+        if value != self.language():
+            self.prefs.merge({"language": value})
+            self.bridge.wake_polls()
+        return value
 
     def discord_summary(self, parts=None):
         """Discord status in a few words, for the extension's toolbar popup and Refine's panel (from what
@@ -790,7 +809,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/ext/status":   # the extension's toolbar popup and Refine's panel
             parts = app.parts()
             return self._json(200, {"app": APP_NAME, "version": __version__, "parts": parts,
-                                    "discord": app.discord_summary(parts)})
+                                    "discord": app.discord_summary(parts), "language": app.language()})
         if path == "/api/parts":
             return self._json(200, {"parts": app.parts()})
         if path == "/api/ytm/state":
@@ -817,7 +836,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/beacon":   # Discord status (the route keeps the name it had when YTM Beacon was separate)
             return self._json(200, app.beacon.status())
         if path == "/api/prefs":
-            return self._json(200, {**app.prefs.load(), "parts": app.parts()})
+            return self._json(200, {**app.prefs.load(), "parts": app.parts(), "language": app.language()})
         if path == "/api/state":
             return self._json(200, app.state())
         if path == "/api/outputs":
@@ -921,6 +940,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json(400, {"error": str(e)})
             return self._json(200 if ok else 502, {"ok": bool(ok)} if ok else
                               {"error": "couldn't open it", "message": "It couldn't be opened on the computer."})
+        if path == "/ext/language":   # Refine's panel: the language setting (shared with every app)
+            try:
+                return self._json(200, {"language": app.set_language(body.get("language"))})
+            except ValueError as e:
+                return self._json(400, {"error": str(e)})
         if path in ("/api/parts", "/ext/parts"):
             # The extension may switch the remote, Discord status and Refine, never the computer's audio controls.
             try:
@@ -1019,7 +1043,13 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(200, {"ok": True})
 
         if path == "/api/prefs":
-            # "parts" is checked like POST /api/parts (and only the switches sent change); everything else is stored as is
+            # "parts" is checked like POST /api/parts (and only the switches sent change), "language" must be a known
+            # one; everything else is stored as is
+            if "language" in body:
+                try:
+                    app.set_language(body.pop("language"))
+                except ValueError as e:
+                    return self._json(400, {"error": str(e)})
             if "parts" in body:
                 try:
                     patch = validate_parts(body.pop("parts"))
@@ -1027,7 +1057,7 @@ class Handler(BaseHTTPRequestHandler):
                     return self._json(400, {"error": "parts: " + str(e)})
                 app.set_parts(patch)
             out = app.prefs.merge(body) if body else app.prefs.load()
-            return self._json(200, {**out, "parts": app.parts()})
+            return self._json(200, {**out, "parts": app.parts(), "language": app.language()})
 
         if path == "/api/engine":
             fn = app.engine.actions.get(body.get("action"))

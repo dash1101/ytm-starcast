@@ -1,0 +1,10 @@
+{
+  "appDescription": {
+    "description": "The extension's description in the browser's extension list.",
+    "message": "YouTube Musicのお供：スマホからのリモコン、Discordステータスへの音楽表示、もっと便利なYouTube Music。"
+  },
+  "toggleDiscord": {
+    "description": "The keyboard shortcut that switches the Discord status on or off.",
+    "message": "Discordに音楽を表示する / 表示をやめる"
+  }
+}

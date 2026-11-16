@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Built by tools/i18n.py from i18n/*.json; don't edit it -->
+<resources>
+    <string name="widget_desc_now_wide">Was läuft: Cover, Titel, Fortschritt, Steuerung und Lautstärke</string>
+    <string name="widget_desc_now_bar">Eine schmale Wiedergabeleiste mit Steuerung</string>
+    <string name="widget_desc_cover">Das Cover von dem, was läuft, mit Play und Pause</string>
+    <string name="widget_desc_volume">Die Lautstärke dort, wo Musik läuft</string>
+    <string name="widget_desc_actions">Schnellaktionen: Auf gut Glück, Sleep-Timer, andere Player pausieren, zwischen Handy und Computer wechseln</string>
+    <string name="widget_name_now_wide">Läuft gerade</string>
+    <string name="widget_name_now_bar">Läuft gerade (schmal)</string>
+    <string name="widget_name_volume">Lautstärke</string>
+    <string name="widget_name_actions">Schnellaktionen</string>
+    <string name="widget_desc_beacon">Ob deine Musik auf Discord angezeigt wird, mit Schalter und Ausblenden für eine Stunde</string>
+    <string name="widget_desc_upnext">Die nächsten Songs in der Warteschlange; tippe auf einen, um ihn abzuspielen</string>
+    <string name="widget_name_beacon">Discord-Status</string>
+    <string name="widget_name_upnext">Als Nächstes</string>
+</resources>

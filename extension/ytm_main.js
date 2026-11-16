@@ -15,7 +15,8 @@
  */
 (() => {
   "use strict";
-  const EXT_VERSION = "2.8.0";   // keep in step with manifest.json (tests/test_version.py checks)
+  const { tr } = globalThis[Symbol.for("pocketfader.i18n")];
+  const EXT_VERSION = "2.9.0";   // keep in step with manifest.json (tests/test_version.py checks)
 
   // One copy of this script answers commands per page. With two copies of the extension loaded (an older Pocketfader one
   // kept beside this one, or this one twice) every command would otherwise run twice: "next" would skip two songs. Older
@@ -428,7 +429,7 @@
       // shelves ("Trending…") instead of the user's real Listen again / Quick picks.
       const j = await innertube("browse", token ? { continuation: token } : { browseId: "FEmusic_home" }, true);
       for (const c of deepFind(j, "musicCarouselShelfRenderer", [])) {
-        const title = runText(c.header?.musicCarouselShelfBasicHeaderRenderer?.title) || "More";
+        const title = runText(c.header?.musicCarouselShelfBasicHeaderRenderer?.title) || tr("More");
         const items = (c.contents || [])
           .map((x) => extractItem(x.musicTwoRowItemRenderer || x.musicResponsiveListItemRenderer))
           .filter(Boolean);
@@ -473,11 +474,11 @@
     const shelves = [];
     for (const sh of deepFind(j, "musicShelfRenderer", [])) {
       const items = (sh.contents || []).map((c) => extractItem(c.musicResponsiveListItemRenderer)).filter(Boolean);
-      if (items.length) shelves.push({ title: runText(sh.title) || "Songs", items });
+      if (items.length) shelves.push({ title: runText(sh.title) || tr("Songs"), items });
     }
     for (const sh of deepFind(j, "musicCarouselShelfRenderer", [])) {
       const items = (sh.contents || []).map((c) => extractItem(c.musicTwoRowItemRenderer || c.musicResponsiveListItemRenderer)).filter(Boolean);
-      const title = runText(sh.header && sh.header.musicCarouselShelfBasicHeaderRenderer && sh.header.musicCarouselShelfBasicHeaderRenderer.title) || "More";
+      const title = runText(sh.header && sh.header.musicCarouselShelfBasicHeaderRenderer && sh.header.musicCarouselShelfBasicHeaderRenderer.title) || tr("More");
       if (items.length) shelves.push({ title, items });
     }
     const we = h.playButton && h.playButton.buttonRenderer && h.playButton.buttonRenderer.command && h.playButton.buttonRenderer.command.watchEndpoint;
@@ -955,7 +956,7 @@
     const j = await innertube("playlist/delete", { playlistId: plId(c.playlistId) }, true);
     return { ok: !!j && j.status === "STATUS_SUCCEEDED", status: (j && j.status) || null };
   }
-  const queueSave = (c) => playlistCreate({ title: c.title || "Saved queue",
+  const queueSave = (c) => playlistCreate({ title: c.title || tr("Saved queue"),
     videoIds: readQueue().filter((q) => q.section === "queue").map((q) => q.videoId) });
 
   /* Clears the queue by driving YTM's own queue Action menu → "Dismiss queue".

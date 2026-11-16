@@ -148,7 +148,7 @@ object OfflineLists {
         }
         save()
         Downloads.enqueue(wanted)
-        Remote.notify("“$title” is kept on this phone, in Search → This phone")
+        Remote.notify(tr("“{title}” is kept on this phone, in Search → This phone", "title" to title))
     }
 
     /** A new playlist of your own (empty) -> its id. */
@@ -202,13 +202,12 @@ fun OfflineListsRow(onOpen: (String) -> Unit, arrival: Arrival? = null) {
     var creating by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth().padding(top = 14.dp)) {
         Row(Modifier.fillMaxWidth().arrive(arrival).padding(start = 16.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            PageSectionTitle("Offline playlists", Modifier.weight(1f))
-            TextButton(onClick = { creating = true }) { Icon(Icons.Filled.Add, null, Modifier.size(18.dp)); Text(" New") }
+            PageSectionTitle(tr("Offline playlists"), Modifier.weight(1f))
+            TextButton(onClick = { creating = true }) { Icon(Icons.Filled.Add, null, Modifier.size(18.dp)); Text(" " + tr("New")) }
         }
         if (lists.isEmpty()) {
             Text(
-                "“Download all” on a playlist or album keeps it here as a whole, in its order. You can also make your own from " +
-                    "the songs you've downloaded.",
+                tr("“Download all” on a playlist or album keeps it here as a whole, in its order. You can also make your own from the songs you've downloaded."),
                 Modifier.arrive(arrival).padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -222,7 +221,7 @@ fun OfflineListsRow(onOpen: (String) -> Unit, arrival: Arrival? = null) {
                     val there = l.songs.count { it.videoId in have }
                     PageCoverTile(
                         l.cover, l.title,
-                        if (there == l.songs.size) "${l.songs.size} songs" else "$there of ${l.songs.size} on the phone",
+                        if (there == l.songs.size) trn("{n} song", "{n} songs", l.songs.size) else tr("{done} of {total} on the phone", "done" to there, "total" to l.songs.size),
                         onClick = { onOpen(l.id) }, modifier = Modifier.width(132.dp), arrival = arrival, sizeDp = 132,
                     )
                 }
@@ -230,7 +229,7 @@ fun OfflineListsRow(onOpen: (String) -> Unit, arrival: Arrival? = null) {
         }
     }
     if (creating) {
-        TextPrompt("New offline playlist", "", "Name", "Create", onDismiss = { creating = false }) { name ->
+        TextPrompt(tr("New offline playlist"), "", tr("Name"), tr("Create"), onDismiss = { creating = false }) { name ->
             creating = false
             onOpen(OfflineLists.create(name))
         }
@@ -259,16 +258,16 @@ fun OfflineListView(id: String, onBack: () -> Unit, modifier: Modifier = Modifie
     val playingSong by rememberPlayingSong()
     Column(modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            ShapeIconButton(Icons.Filled.ArrowBack, "Back", onClick = onBack)
+            ShapeIconButton(Icons.Filled.ArrowBack, tr("Back"), onClick = onBack)
             Text(
                 l.title, Modifier.weight(1f).padding(start = 4.dp), style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
             androidx.compose.foundation.layout.Box {
-                ShapeIconButton(Icons.Filled.MoreVert, "More", onClick = { menu = true }, active = menu)
+                ShapeIconButton(Icons.Filled.MoreVert, tr("More"), onClick = { menu = true }, active = menu)
                 DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-                    if (l.own) DropdownMenuItem(text = { Text("Rename") }, leadingIcon = { Icon(Icons.Filled.Edit, null) }, onClick = { menu = false; dialog = "rename" })
-                    DropdownMenuItem(text = { Text("Delete playlist") }, leadingIcon = { Icon(Icons.Filled.Delete, null) }, onClick = { menu = false; dialog = "delete" })
+                    if (l.own) DropdownMenuItem(text = { Text(tr("Rename")) }, leadingIcon = { Icon(Icons.Filled.Edit, null) }, onClick = { menu = false; dialog = "rename" })
+                    DropdownMenuItem(text = { Text(tr("Delete playlist")) }, leadingIcon = { Icon(Icons.Filled.Delete, null) }, onClick = { menu = false; dialog = "delete" })
                 }
             }
         }
@@ -278,27 +277,27 @@ fun OfflineListView(id: String, onBack: () -> Unit, modifier: Modifier = Modifie
                     Thumb(l.cover, 180, 24)
                     val bytes = l.songs.sumOf { have[it.videoId]?.size ?: 0L }
                     Text(
-                        (if (l.songs.size == 1) "1 song" else "${l.songs.size} songs") + (if (bytes > 0) " · " + formatBytes(bytes) else "") +
-                            if (l.own) "" else " · saved from YouTube Music",
+                        trn("{n} song", "{n} songs", l.songs.size) + (if (bytes > 0) " · " + formatBytes(bytes) else "") +
+                            if (l.own) "" else " · " + tr("saved from YouTube Music"),
                         Modifier.padding(top = 12.dp), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Row(Modifier.padding(top = 14.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                         PageHeaderPlay(onClick = { playOnPhone(l.songs, 0); AppNav.showPlayer() }, enabled = l.songs.isNotEmpty())
                         PageHeaderTonal(
-                            Icons.Filled.Shuffle, "Shuffle",
+                            Icons.Filled.Shuffle, tr("Shuffle"),
                             onClick = { playOnPhone(l.songs, l.songs.indices.random(), shuffle = true); AppNav.showPlayer() },
                             enabled = l.songs.isNotEmpty(),
                         )
-                        if (l.own) PageHeaderTonal(Icons.Filled.Add, "Add", onClick = { dialog = "add" })
+                        if (l.own) PageHeaderTonal(Icons.Filled.Add, tr("Add"), onClick = { dialog = "add" })
                     }
                     if (missing.isNotEmpty()) {
                         TextButton(onClick = { Downloads.enqueue(missing) }, Modifier.padding(top = 6.dp)) {
-                            Icon(Icons.Filled.Download, null, Modifier.size(18.dp)); Text(" Download ${missing.size} missing")
+                            Icon(Icons.Filled.Download, null, Modifier.size(18.dp)); Text(" " + trn("Download {n} missing", "Download {n} missing", missing.size))
                         }
                     }
                     if (l.own && l.songs.isEmpty()) {
                         Text(
-                            "Add songs you've downloaded, or use ⋮ → Add to an offline playlist on any song.",
+                            tr("Add songs you've downloaded, or use ⋮ → Add to an offline playlist on any song."),
                             Modifier.padding(top = 8.dp), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -311,15 +310,15 @@ fun OfflineListView(id: String, onBack: () -> Unit, modifier: Modifier = Modifie
                 ) {
                     val progress = active[s.videoId]
                     when {
-                        s.videoId in have -> Icon(Icons.Filled.DownloadDone, "On this phone", Modifier.size(18.dp), tint = MaterialTheme.colorScheme.primary)
+                        s.videoId in have -> Icon(Icons.Filled.DownloadDone, tr("On this phone"), Modifier.size(18.dp), tint = MaterialTheme.colorScheme.primary)
                         progress != null -> androidx.compose.material3.CircularProgressIndicator(
                             progress = { progress }, modifier = Modifier.size(18.dp), strokeWidth = 2.dp,
                         )
-                        else -> Icon(Icons.Filled.Download, "Not downloaded yet", Modifier.size(18.dp), tint = LocalContentColor.current)
+                        else -> Icon(Icons.Filled.Download, tr("Not downloaded yet"), Modifier.size(18.dp), tint = LocalContentColor.current)
                     }
                     if (l.own) {
                         ShapeIconButton(
-                            Icons.Filled.Close, "Take out of this playlist",
+                            Icons.Filled.Close, tr("Take out of this playlist"),
                             onClick = { s.videoId?.let { OfflineLists.removeSong(l.id, it) } }, tint = LocalContentColor.current,
                         )
                     } else {
@@ -331,7 +330,7 @@ fun OfflineListView(id: String, onBack: () -> Unit, modifier: Modifier = Modifie
         }
     }
     when (dialog) {
-        "rename" -> TextPrompt("Rename", l.title, "Name", "Rename", onDismiss = { dialog = "" }) { name ->
+        "rename" -> TextPrompt(tr("Rename"), l.title, tr("Name"), tr("Rename"), onDismiss = { dialog = "" }) { name ->
             dialog = ""
             OfflineLists.rename(l.id, name)
         }
@@ -353,21 +352,21 @@ private fun DeletePrompt(l: OfflineList, onDismiss: () -> Unit, onDelete: (withS
         onDismissRequest = onDismiss,
         shape = PfShape.Xl,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        title = { Text("Delete “${l.title}”?") },
+        title = { Text(tr("Delete “{title}”?", "title" to l.title)) },
         text = {
             Column {
-                Text("The playlist goes. Its songs stay in Downloaded unless you remove them too.")
+                Text(tr("The playlist goes. Its songs stay in Downloaded unless you remove them too."))
                 if (l.songs.isNotEmpty()) Row(
                     Modifier.padding(top = 10.dp).clip(PfShape.Sm).clickable { withSongs = !withSongs }.padding(end = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Checkbox(checked = withSongs, onCheckedChange = { withSongs = it })
-                    Text("Also remove its songs from this phone (ones in another offline playlist stay)")
+                    Text(tr("Also remove its songs from this phone (ones in another offline playlist stay)"))
                 }
             }
         },
-        confirmButton = { PageDialogConfirm("Delete", onClick = { onDelete(withSongs) }, danger = true) },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { PageDialogConfirm(tr("Delete"), onClick = { onDelete(withSongs) }, danger = true) },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Cancel")) } },
     )
 }
 
@@ -381,10 +380,10 @@ private fun PickDownloadsDialog(exclude: Set<String>, onDismiss: () -> Unit, onP
         onDismissRequest = onDismiss,
         shape = PfShape.Xl,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        title = { Text("Add downloaded songs") },
+        title = { Text(tr("Add downloaded songs")) },
         text = {
             if (choices.isEmpty()) {
-                Text("Every downloaded song is in this playlist already. Download more from search, a playlist or the queue (⋮ → Download).")
+                Text(tr("Every downloaded song is in this playlist already. Download more from search, a playlist or the queue (⋮ → Download)."))
             } else {
                 LazyColumn(Modifier.heightIn(max = 420.dp)) {
                     items(choices.size, key = { choices[it].videoId }) { i ->
@@ -409,12 +408,12 @@ private fun PickDownloadsDialog(exclude: Set<String>, onDismiss: () -> Unit, onP
         },
         confirmButton = {
             PageDialogConfirm(
-                if (picked.isEmpty()) "Add" else "Add ${picked.size}",
+                if (picked.isEmpty()) tr("Add") else trn("Add {n}", "Add {n}", picked.size),
                 onClick = { onPick(choices.filter { it.videoId in picked }.map { it.toLocal().copy(uri = null) }) },
                 enabled = picked.isNotEmpty(),
             )
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Cancel")) } },
     )
 }
 
@@ -425,10 +424,10 @@ fun AddToOfflineDialog(song: LocalItem, onDone: () -> Unit) {
     val own = lists.filter { it.own }
     var creating by remember { mutableStateOf(false) }
     if (creating) {
-        TextPrompt("New offline playlist", "", "Name", "Create", onDismiss = { creating = false }) { name ->
+        TextPrompt(tr("New offline playlist"), "", tr("Name"), tr("Create"), onDismiss = { creating = false }) { name ->
             val id = OfflineLists.create(name)
             OfflineLists.add(id, listOf(song))
-            Remote.notify("Added to “$name”")
+            Remote.notify(tr("Added to “{name}”", "name" to name))
             onDone()
         }
         return
@@ -437,11 +436,11 @@ fun AddToOfflineDialog(song: LocalItem, onDone: () -> Unit) {
         onDismissRequest = onDone,
         shape = PfShape.Xl,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        title = { Text("Add to an offline playlist") },
+        title = { Text(tr("Add to an offline playlist")) },
         text = {
             LazyColumn(Modifier.heightIn(max = 360.dp)) {
                 item(key = "new") {
-                    PageDialogRow("New offline playlist", onClick = { creating = true }, icon = Icons.Filled.Add)
+                    PageDialogRow(tr("New offline playlist"), onClick = { creating = true }, icon = Icons.Filled.Add)
                 }
                 items(own.size, key = { own[it].id }) { i ->
                     val l = own[i]
@@ -449,13 +448,13 @@ fun AddToOfflineDialog(song: LocalItem, onDone: () -> Unit) {
                         l.title, withThumb = true, thumb = l.cover,
                         onClick = {
                             OfflineLists.add(l.id, listOf(song))
-                            Remote.notify("Added to “${l.title}”")
+                            Remote.notify(tr("Added to “{name}”", "name" to l.title))
                             onDone()
                         },
                     )
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDone) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = onDone) { Text(tr("Cancel")) } },
     )
 }

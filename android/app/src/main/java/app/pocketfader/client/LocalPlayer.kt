@@ -115,7 +115,7 @@ object LocalPlayer {
                     // Throwable, not Exception: the lookup runs YouTube's own script, which can run out of stack or
                     // memory on an old device, and an Error on this thread would close the whole app
                     if (e is Error) CrashLog.note("looking up a song's audio", e)
-                    throw java.io.IOException(e.message ?: "Couldn't get this song", e)
+                    throw java.io.IOException(e.message ?: tr("Couldn't get this song"), e)
                 }
                 var s = spec.withUri(Uri.parse(r.url))
                 if (r.headers.isNotEmpty()) s = s.withAdditionalHeaders(r.headers)
@@ -195,15 +195,15 @@ object LocalPlayer {
         failures++
         if (failures >= 3 || !p.hasNextMediaItem()) {
             Remote.notify(
-                if (failures >= 3) "Stopped: songs aren't loading. Check the connection (downloaded songs still play)."
-                else "Couldn't play “${cur?.title ?: "this song"}”: ${error.message ?: error.errorCodeName}"
+                if (failures >= 3) tr("Stopped: songs aren't loading. Check the connection (downloaded songs still play).")
+                else tr("Couldn't play “{title}”: {error}", "title" to (cur?.title ?: tr("this song")), "error" to (error.message ?: error.errorCodeName))
             )
             failures = 0
             retried = null
             p.pause()            // left stopped; play tries again (toggle() prepares an idle player)
             return
         }
-        Remote.notify("Skipped “${cur?.title ?: "a song"}”: it couldn't be played")
+        Remote.notify(tr("Skipped “{title}”: it couldn't be played", "title" to (cur?.title ?: tr("a song"))))
         p.seekToNextMediaItem()
         p.prepare()
         p.play()
@@ -271,7 +271,7 @@ object LocalPlayer {
         if (title.isNotBlank()) { playItems(listOf(LocalItem(videoId, null, title, artist, art))); return }
         scope.launch {
             val item = withContext(Dispatchers.IO) { runCatching { Streams.details(videoId) }.getOrNull() }
-                ?: LocalItem(videoId, null, "Loading…", "", null)
+                ?: LocalItem(videoId, null, tr("Loading…"), "", null)
             playItems(listOf(item))
         }
     }

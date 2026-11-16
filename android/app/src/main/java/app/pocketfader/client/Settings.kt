@@ -23,6 +23,7 @@ class PocketfaderApp : Application() {
         CrashLog.init(this)       // first, so an error while starting is written down too
         AppVersion.init(this)
         Settings.init(this)
+        I18n.use(this, Settings.prefs.value.language)
         Downloads.init(this)
         OfflineLists.init(this)
         PlaylistCache.init(this)
@@ -98,6 +99,10 @@ data class Prefs(
     val autoUpdate: Boolean = true,
     // start screen
     val startTab: String = "playing",        // playing | search | settings
+    // language: "auto" (the phone's) or a code from I18n.LANGUAGES; shared with the computer ("language" in its prefs).
+    // languageSeen: the computer's setting when last read, so a change made on another device is taken over once.
+    val language: String = "auto",
+    val languageSeen: String = "",
 )
 
 /** App settings: persisted in private storage and observable from the UI, the activity and the service. */
@@ -123,6 +128,7 @@ object Settings {
         Prefs(
             playOn = it.playOn, standalone = it.standalone, autoSync = it.autoSync, autoDlLiked = it.autoDlLiked,
             smartDownloads = it.smartDownloads, dlWifiOnly = it.dlWifiOnly, autoDlLimitMb = it.autoDlLimitMb,
+            language = it.language, languageSeen = it.languageSeen,
         )
     }
 
@@ -158,6 +164,7 @@ object Settings {
             dlQuality = s("dlQuality", d.dlQuality),
             autoDlLimitMb = i("autoDlLimitMb", d.autoDlLimitMb),
             discordFromPhone = b("discordFromPhone", d.discordFromPhone),
+            language = s("language", d.language), languageSeen = s("languageSeen", d.languageSeen),
         )
     }
 
@@ -188,6 +195,7 @@ object Settings {
             .putInt("smartDownloads", p.smartDownloads).putBoolean("dlWifiOnly", p.dlWifiOnly).putString("dlQuality", p.dlQuality)
             .putInt("autoDlLimitMb", p.autoDlLimitMb)
             .putBoolean("discordFromPhone", p.discordFromPhone)
+            .putString("language", p.language).putString("languageSeen", p.languageSeen)
             .apply()
     }
 }

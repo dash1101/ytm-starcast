@@ -58,7 +58,7 @@ object Lrclib {
         return JSONObject()
             .put("found", true).put("source", "lrclib")
             .put("sources", JSONArray().put(JSONObject().put("id", "lrclib").put("label", "LRCLIB").put("found", true).put("synced", isSynced)))
-            .put("lyrics", JSONObject().put("synced", isSynced).put("lines", lines).put("credit", "Lyrics from LRCLIB"))
+            .put("lyrics", JSONObject().put("synced", isSynced).put("lines", lines).put("credit", tr("Lyrics from LRCLIB")))
     }
 
     /** "[01:02.34] words" lines (a line may carry several timestamps) to (seconds, words), in time order. */

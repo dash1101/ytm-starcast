@@ -42,7 +42,7 @@ fun PartOffNote(title: String, text: String, part: String, online: Boolean, modi
                 Text(title, Modifier.padding(start = 10.dp), style = MaterialTheme.typography.titleMedium)
             }
             Text(text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Button(onClick = { scope.launch { Remote.setPart(part, true) } }, enabled = online) { Text("Turn it on") }
+            Button(onClick = { scope.launch { Remote.setPart(part, true) } }, enabled = online) { Text(tr("Turn it on")) }
         }
     }
 }
@@ -57,9 +57,8 @@ fun RemoteOffPage(s: RemoteState, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         PartOffNote(
-            "The YouTube Music remote is off",
-            "It's switched off on the computer, so this app doesn't show or control what plays there. " +
-                "You can still play music on this phone with the button at the top.",
+            tr("The YouTube Music remote is off"),
+            tr("It's switched off on the computer, so this app doesn't show or control what plays there. You can still play music on this phone with the button at the top."),
             "remote", s.online, Modifier.widthIn(max = 560.dp),
         )
         // the computer's volume is a part of its own, and can stay on
@@ -71,7 +70,7 @@ fun RemoteOffPage(s: RemoteState, modifier: Modifier = Modifier) {
             ) {
                 Column(Modifier.padding(horizontal = 8.dp, vertical = 12.dp)) {
                     Text(
-                        s.volume.device.ifBlank { "Computer volume" }, Modifier.padding(horizontal = 8.dp),
+                        s.volume.device.ifBlank { tr("Computer volume") }, Modifier.padding(horizontal = 8.dp),
                         style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     VolumeRow(s.volume)
@@ -85,8 +84,8 @@ fun RemoteOffPage(s: RemoteState, modifier: Modifier = Modifier) {
 @Composable
 fun AudioOffNote(online: Boolean, modifier: Modifier = Modifier) {
     PartOffNote(
-        "Computer audio is off",
-        "The computer's volume, output devices and equalizer are switched off in YTM Starcast, so they aren't shown here.",
+        tr("Computer audio is off"),
+        tr("The computer's volume, output devices and equalizer are switched off in YTM Starcast, so they aren't shown here."),
         "audio", online, modifier,
     )
 }

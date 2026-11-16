@@ -255,14 +255,14 @@ object Widgets {
     private fun nowPlaying(ctx: Context, v: RemoteViews, kind: WidgetKind, s: RemoteState) {
         val now = s.now
         val has = now != null && now.title.isNotBlank()
-        v.setTextViewText(R.id.title, if (has) now!!.title else "Nothing playing")
+        v.setTextViewText(R.id.title, if (has) now!!.title else tr("Nothing playing"))
         v.setTextViewText(
             R.id.artist,
             when {
                 has -> now!!.artist
-                !s.configured && !Remote.local -> "Open YTM Starcast to connect"
-                !Remote.local && !s.remoteOn -> "The YouTube Music remote is off"
-                else -> "Tap to open YTM Starcast"
+                !s.configured && !Remote.local -> tr("Open YTM Starcast to connect")
+                !Remote.local && !s.remoteOn -> tr("The YouTube Music remote is off")
+                else -> tr("Tap to open YTM Starcast")
             },
         )
         val c = art.cover
@@ -306,7 +306,7 @@ object Widgets {
             else -> 0xFFFFB84D.toInt()
         }
         v.setInt(R.id.b_dot_bg, "setColorFilter", tone)
-        v.setTextViewText(R.id.b_status, if (b == null) "Checking…" else beaconSummary(b))
+        v.setTextViewText(R.id.b_status, if (b == null) tr("Checking…") else beaconSummary(b))
         v.setTextViewText(R.id.b_song, b?.song?.let { (if (it.playing) "▶ " else "⏸ ") + it.title + if (it.artist.isNotBlank()) " · " + it.artist else "" } ?: "")
         val usable = b != null && b.reachable && b.headline != "unsupported"
         v.setInt(R.id.b_toggle_bg, "setColorFilter", if (usable) acc else 0xFF45474F.toInt())
@@ -326,7 +326,7 @@ object Widgets {
         val songs = s.queue.filter { it.section == "queue" }
         val cur = songs.indexOfFirst { it.selected }
         val next = songs.drop(if (cur >= 0) cur + 1 else 0)
-        v.setTextViewText(R.id.u_count, if (next.isEmpty()) "" else "${next.size} songs")
+        v.setTextViewText(R.id.u_count, if (next.isEmpty()) "" else trn("{n} song", "{n} songs", next.size))
         v.setViewVisibility(R.id.u_empty, if (next.isEmpty()) android.view.View.VISIBLE else android.view.View.GONE)
         for ((i, ids) in rowIds.withIndex()) {
             val t = next.getOrNull(i)
@@ -354,13 +354,13 @@ object Widgets {
         v.setTextViewText(
             R.id.label,
             when {
-                phone -> "Phone volume"
-                off -> "Computer audio is off"
+                phone -> tr("Phone volume")
+                off -> tr("Computer audio is off")
                 s.volume.device.isNotBlank() -> s.volume.device
-                else -> "Computer volume"
+                else -> tr("Computer volume")
             },
         )
-        v.setTextViewText(R.id.percent, if (!phone && (off || !s.volume.available)) "–" else if (muted) "Muted" else "$pct%")
+        v.setTextViewText(R.id.percent, if (!phone && (off || !s.volume.available)) "–" else if (muted) tr("Muted") else "$pct%")
         v.setProgressBar(R.id.level, 100, if (muted) 0 else pct, false)
         v.setImageViewResource(R.id.mute_icon, if (muted || pct == 0) R.drawable.ic_w_mute else R.drawable.ic_w_vol_up)
         v.setOnClickPendingIntent(R.id.mute, pi(ctx, WidgetActions.A_MUTE))
@@ -383,9 +383,9 @@ object Widgets {
         v.setOnClickPendingIntent(R.id.act_pauseall, pi(ctx, WidgetActions.A_PAUSE_OTHERS))
         v.setOnClickPendingIntent(R.id.act_switch, pi(ctx, WidgetActions.A_SWITCH))
         v.setImageViewResource(R.id.act_switch_icon, if (phone) R.drawable.ic_w_computer else R.drawable.ic_w_phone)
-        v.setTextViewText(R.id.act_switch_label, if (phone) "Play on computer" else "Play on phone")
+        v.setTextViewText(R.id.act_switch_label, if (phone) tr("Play on computer") else tr("Play on phone"))
         val left = s.sleepLeft
-        v.setTextViewText(R.id.act_sleep_label, if (left > 0) "Sleep ${(left + 59) / 60} min" else "Sleep 30 min")
+        v.setTextViewText(R.id.act_sleep_label, trn("Sleep {n} min", "Sleep {n} min", if (left > 0) (left + 59) / 60 else 30))
     }
 
     // ---------------------------------------------------------------- the cover, prepared for a widget

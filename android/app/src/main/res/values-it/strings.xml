@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Built by tools/i18n.py from i18n/*.json; don't edit it -->
+<resources>
+    <string name="widget_desc_now_wide">Cosa è in riproduzione: copertina, titolo, avanzamento, controlli e volume</string>
+    <string name="widget_desc_now_bar">Una barra sottile con il brano in riproduzione e i controlli</string>
+    <string name="widget_desc_cover">La copertina di ciò che è in riproduzione, con play e pausa</string>
+    <string name="widget_desc_volume">Il volume del dispositivo su cui suona la musica</string>
+    <string name="widget_desc_actions">Azioni rapide: mi sento fortunato, timer di spegnimento, metti in pausa gli altri player, passa tra telefono e computer</string>
+    <string name="widget_name_now_wide">In riproduzione</string>
+    <string name="widget_name_now_bar">In riproduzione (compatto)</string>
+    <string name="widget_name_cover">Copertina</string>
+    <string name="widget_name_actions">Azioni rapide</string>
+    <string name="widget_desc_beacon">Se la tua musica è visibile su Discord, con un interruttore e l\'opzione per nasconderla per un\'ora</string>
+    <string name="widget_desc_upnext">I prossimi brani in coda; toccane uno per riprodurlo</string>
+    <string name="widget_name_beacon">Stato Discord</string>
+    <string name="widget_name_upnext">Prossimi brani</string>
+</resources>

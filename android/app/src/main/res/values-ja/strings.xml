@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Built by tools/i18n.py from i18n/*.json; don't edit it -->
+<resources>
+    <string name="widget_desc_now_wide">再生中の曲：カバー、曲名、進行状況、操作ボタン、音量</string>
+    <string name="widget_desc_now_bar">操作ボタン付きのコンパクトな再生中バー</string>
+    <string name="widget_desc_cover">再生中のカバーと再生・一時停止</string>
+    <string name="widget_desc_volume">音楽を再生している場所の音量</string>
+    <string name="widget_desc_actions">クイック操作：おまかせ、スリープタイマー、他のプレーヤーを一時停止、スマホとパソコンの切り替え</string>
+    <string name="widget_name_now_wide">再生中</string>
+    <string name="widget_name_now_bar">再生中（コンパクト）</string>
+    <string name="widget_name_cover">カバー</string>
+    <string name="widget_name_volume">音量</string>
+    <string name="widget_name_actions">クイック操作</string>
+    <string name="widget_desc_beacon">Discordに音楽を表示しているかどうか。スイッチと1時間非表示付き</string>
+    <string name="widget_desc_upnext">キューの次の曲。タップすると再生します</string>
+    <string name="widget_name_beacon">Discordステータス</string>
+    <string name="widget_name_upnext">次の曲</string>
+</resources>

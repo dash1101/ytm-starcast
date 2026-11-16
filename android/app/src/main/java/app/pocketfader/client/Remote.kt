@@ -150,7 +150,7 @@ object Remote {
             // The song can only go on there through the computer's YouTube Music remote. While that is switched off the
             // computer would refuse it, so the phone keeps playing instead of stopping for nothing.
             if (carryOver && !before.remoteOn) {
-                notify("The YouTube Music remote is switched off on the computer. Turn it on in Settings → Parts to continue the song there.")
+                notify(tr("The YouTube Music remote is switched off on the computer. Turn it on in Settings → Parts to continue the song there."))
                 return
             }
             val cur = LocalPlayer.current()
@@ -282,6 +282,7 @@ object Remote {
         val outs = if (wantOutputs && full) runCatching { parseOutputs(a.get("/api/outputs")) }.getOrNull() else null
         val settling = SystemClock.elapsedRealtime() < settleUntil
         val parts = if (st == null || SystemClock.elapsedRealtime() < partsSettleUntil) _state.value.parts else parseParts(st)
+        st?.optString("language", "")?.takeIf { it.isNotEmpty() }?.let { syncLanguage(it) }
         val remoteOn = parts?.remote != false
         val nowJson = if (remoteOn) ytm.optJSONObject("now") else null
         val now = parseNow(nowJson)
@@ -359,7 +360,7 @@ object Remote {
         scope.launch {
             try {
                 val r = a.post("/api/ytm", body)
-                if (r.optBoolean("opened")) notify("Opening YouTube Music on the computer…")
+                if (r.optBoolean("opened")) notify(tr("Opening YouTube Music on the computer…"))
                 if (r.has("error")) notify(ytmErrorText(r.optString("error")))
                 onResult?.invoke(r)
             } catch (e: Exception) {
@@ -372,7 +373,7 @@ object Remote {
 
     /** Opens YouTube Music in the computer's browser, so music can start when no tab was open. */
     fun openYtm() {
-        notify("Opening YouTube Music on the computer…")
+        notify(tr("Opening YouTube Music on the computer…"))
         runApi { it.post("/api/ytm", JSONObject().put("type", "open")) }
     }
 
@@ -380,6 +381,33 @@ object Remote {
 
     fun setServerPref(key: String, value: Boolean) {
         runApi { it.post("/api/prefs", JSONObject().put(key, value)) }
+    }
+
+    // ---- the language (one setting for every app, kept by the computer)
+
+    /** The language chosen on this phone: used at once, and the computer keeps it for every app. */
+    fun setLanguage(pref: String) {
+        if (pref !in I18n.SETTINGS) return
+        val online = api != null && _state.value.online
+        // languageSeen "" when the computer can't be told now: it is told the next time it answers (syncLanguage)
+        Settings.update { it.copy(language = pref, languageSeen = if (online) pref else "") }
+        I18n.use(pref)
+        if (online) runApi { it.post("/api/prefs", JSONObject().put("language", pref)) }
+    }
+
+    /** What the computer says the language is: a change made on another device is taken over here. */
+    private fun syncLanguage(server: String) {
+        if (server !in I18n.SETTINGS) return
+        val p = Settings.prefs.value
+        if (server == p.languageSeen) return
+        if (p.languageSeen.isEmpty() && p.language != "auto" && server != p.language) {
+            // chosen here before the computer heard of it: the computer takes this phone's choice
+            Settings.update { it.copy(languageSeen = p.language) }
+            runApi { it.post("/api/prefs", JSONObject().put("language", p.language)) }
+        } else {
+            Settings.update { it.copy(language = server, languageSeen = server) }
+            I18n.use(server)
+        }
     }
 
     // ---- parts (each part of YTM Starcast has its own switch on the computer)
@@ -405,7 +433,7 @@ object Remote {
             } catch (e: Exception) {
                 partsSettleUntil = 0L
                 _state.update { it.copy(parts = before) }
-                notify("Couldn't switch that: ${e.friendly()}")
+                notify(tr("Couldn't switch that: {error}", "error" to e.friendly()))
             }
             boost()
             scope.launch { runCatching { pollOnce(a) } }
@@ -421,15 +449,15 @@ object Remote {
 
     /** Asks the computer to open the extension's folder or a browser's extensions page; returns what to tell the user. */
     suspend fun openOnComputer(body: JSONObject): String {
-        val a = api ?: return "Not connected to a computer"
+        val a = api ?: return tr("Not connected to a computer")
         return withContext(Dispatchers.IO) {
             try {
                 a.post("/api/extension/open", body, 8000)
-                "Opened on the computer"
+                tr("Opened on the computer")
             } catch (e: ApiException) {
-                e.message ?: "Couldn't open it on the computer"
+                e.message ?: tr("Couldn't open it on the computer")
             } catch (e: Exception) {
-                "Couldn't reach the computer"
+                tr("Couldn't reach the computer")
             }
         }
     }
@@ -450,13 +478,13 @@ object Remote {
                 val names = r.optJSONArray("paused")
                 notify(
                     when {
-                        !r.optBoolean("supported", true) -> "This computer can't pause other players from here."
-                        names == null || names.length() == 0 -> "Nothing else was playing."
-                        else -> "Paused " + (0 until names.length()).joinToString(", ") { names.optString(it) }
+                        !r.optBoolean("supported", true) -> tr("This computer can't pause other players from here.")
+                        names == null || names.length() == 0 -> tr("Nothing else was playing.")
+                        else -> tr("Paused {players}", "players" to (0 until names.length()).joinToString(", ") { names.optString(it) })
                     }
                 )
             } catch (e: Exception) {
-                notify("Couldn't pause: ${e.friendly()}")
+                notify(tr("Couldn't pause: {error}", "error" to e.friendly()))
             }
         }
     }
@@ -474,21 +502,21 @@ object Remote {
      */
     fun lucky() {
         if (!local && _state.value.ytm) {
-            command(JSONObject().put("type", "lucky")) { r -> r.optString("picked").takeIf { it.isNotBlank() }?.let { notify("Playing $it") } }
+            command(JSONObject().put("type", "lucky")) { r -> r.optString("picked").takeIf { it.isNotBlank() }?.let { notify(tr("Playing {title}", "title" to it)) } }
             return
         }
         scope.launch {
             val pick = Recommend.lucky()
             kotlinx.coroutines.withContext(Dispatchers.Main) {
                 when {
-                    pick == null -> notify("Nothing to pick from yet. Play a few songs first.")
+                    pick == null -> notify(tr("Nothing to pick from yet. Play a few songs first."))
                     local || api == null -> {
                         if (!local) setPlayOn("phone", carryOver = false)
                         LocalPlayer.setAutoplay(true)
                         LocalPlayer.playItems(listOf(pick))
-                        notify("Playing ${pick.title}")
+                        notify(tr("Playing {title}", "title" to pick.title))
                     }
-                    else -> { play(pick.videoId!!); notify("Playing ${pick.title}") }
+                    else -> { play(pick.videoId!!); notify(tr("Playing {title}", "title" to pick.title)) }
                 }
             }
         }
@@ -526,7 +554,7 @@ object Remote {
         _state.update { s -> s.copy(now = s.now?.let { now -> if (now.videoId == videoId) now.copy(liked = on) else now }) }
         if (local) LocalPlayer.publish()
         if (connected) command(JSONObject().put("type", "like").put("videoId", videoId).put("action", if (on) "like" else "remove"))
-        else if (on) notify("Liked. It'll be added to your YouTube Music likes at the next sync.")
+        else if (on) notify(tr("Liked. It'll be added to your YouTube Music likes at the next sync."))
     }
 
     fun setRepeat(mode: String) {
@@ -563,13 +591,13 @@ object Remote {
             val cur = _state.value.queue.indexOfFirst { it.selected }
             LocalPlayer.move(t.index, if (t.index > cur) cur + 1 else cur)
         } else command(ref(t).put("type", "queueMoveNext"))
-        notify("Playing next: ${t.title}")
+        notify(tr("Playing next: {title}", "title" to t.title))
     }
 
     /** Copies a track (typically an autoplay suggestion) onto the end of the real queue. */
     fun queueAddEnd(t: Track) {
         if (local) t.toLocal()?.let { LocalPlayer.addEnd(it) } else command(ref(t).put("type", "queueAddEnd"))
-        notify("Added to your queue: ${t.title}")
+        notify(tr("Added to your queue: {title}", "title" to t.title))
     }
 
     /**
@@ -602,20 +630,20 @@ object Remote {
                     else synced ?: Streams.playlist(playlistId)
                 }.recoverCatching { synced ?: Streams.playlist(playlistId) }.getOrNull().orEmpty()
                 kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                    if (list.isEmpty()) notify("Couldn't load that playlist on the phone.")
+                    if (list.isEmpty()) notify(tr("Couldn't load that playlist on the phone."))
                     else LocalPlayer.playItems(list, if (shuffle) list.indices.random() else 0, shuffle)
                 }
             }
             return
         }
         command(JSONObject().put("type", "startPlaylist").put("playlistId", playlistId).put("shuffle", shuffle))
-        notify(if (shuffle) "Shuffling playlist" else "Starting playlist")
+        notify(if (shuffle) tr("Shuffling playlist") else tr("Starting playlist"))
     }
 
     fun startMix(videoId: String) {
         if (local) { LocalPlayer.setAutoplay(true); LocalPlayer.playVideo(videoId); return }
         command(JSONObject().put("type", "startMix").put("videoId", videoId))
-        notify("Starting radio")
+        notify(tr("Starting radio"))
     }
 
     /** Add a song from search / a playlist / a shelf to the current queue, next or at the end. */
@@ -623,19 +651,19 @@ object Remote {
         val vid = item.videoId ?: return
         if (local) {
             item.toLocal()?.let { if (next) LocalPlayer.addNext(it) else LocalPlayer.addEnd(it) }
-            notify(if (next) "Playing next: ${item.title}" else "Added to your queue: ${item.title}")
+            notify(if (next) tr("Playing next: {title}", "title" to item.title) else tr("Added to your queue: {title}", "title" to item.title))
             return
         }
         command(
             JSONObject().put("type", "queueAdd").put("videoId", vid)
                 .put("query", item.title + " " + item.subtitle).put("mode", if (next) "next" else "end")
         )
-        notify(if (next) "Playing next: ${item.title}" else "Added to your queue: ${item.title}")
+        notify(if (next) tr("Playing next: {title}", "title" to item.title) else tr("Added to your queue: {title}", "title" to item.title))
     }
 
     // ---- calls that need an answer (run these on Dispatchers.IO)
 
-    private fun need(): PfApi = api ?: throw ApiException(0, "Not connected to a computer.")
+    private fun need(): PfApi = api ?: throw ApiException(0, tr("Not connected to a computer."))
 
     private fun ytmCall(body: JSONObject, timeoutMs: Int = 25000): JSONObject {
         val r = need().post("/api/ytm", body, timeoutMs)
@@ -732,9 +760,9 @@ object Remote {
         try {
             val r = need().post("/api/beacon/migrate", JSONObject(), 120000)
             val ok = r.optBoolean("ok", !r.has("error"))
-            ok to (r.str("message") ?: if (ok) "Done." else "Couldn't move over (${r.str("error") ?: "no reason given"}).")
+            ok to (r.str("message") ?: if (ok) tr("Done.") else tr("Couldn't move over ({error}).", "error" to (r.str("error") ?: tr("no reason given"))))
         } catch (e: ApiException) {
-            false to (e.body?.str("message") ?: "Couldn't move over: ${e.friendly()}")
+            false to (e.body?.str("message") ?: tr("Couldn't move over: {error}", "error" to e.friendly()))
         }
 
     fun beaconVisibility(show: Boolean, minutes: Int? = null) {
@@ -842,11 +870,12 @@ object Remote {
         val name = info.optString("name", "YTM Starcast").ifBlank { "YTM Starcast" }.replaceFirstChar { it.uppercase() }
         val v = info.optString("version")
         val dev = st.optJSONObject("volume")?.optString("device").orEmpty()
-        return buildString {
-            append("Connected to $name")
+        val what = buildString {
+            append(name)
             if (v.isNotBlank()) append(" $v")
             if (dev.isNotBlank()) append(" · $dev")
         }
+        return tr("Connected to {name}", "name" to what)
     }
 }
 
@@ -854,31 +883,31 @@ object Remote {
 internal fun ytmErrorText(code: String): String {
     val c = code.substringBefore(':').trim()
     return when {
-        c == "extension_offline" -> "YouTube Music isn't open on the computer."
-        c == "extension_timeout" || c == "timeout" -> "YouTube Music didn't answer in time. Try again."
+        c == "extension_offline" -> tr("YouTube Music isn't open on the computer.")
+        c == "extension_timeout" || c == "timeout" -> tr("YouTube Music didn't answer in time. Try again.")
         c.startsWith("no_shuffle_button") || c.startsWith("no_repeat_button") ->
-            "Couldn't find that button on YouTube Music. In your browser, reload the YTM Starcast extension, then refresh the YouTube Music tab."
-        c == "part_off" -> "The YouTube Music remote is switched off. Turn it on in Settings → Parts."
-        c == "autoplay_off_while_looping" -> "Turn loop off first: YouTube Music ignores autoplay while the queue is looping."
-        c == "autoplay_not_applied" -> "YouTube Music didn't change autoplay. Try once more, or switch it in the browser."
-        c == "no_autoplay_toggle" -> "Couldn't find YouTube Music's autoplay switch."
-        c == "like_not_applied" || c == "like_failed" -> "YouTube Music didn't accept the like. Make sure you're signed in there."
-        c == "no_like_button" -> "Couldn't find the like button on the YouTube Music page."
-        c == "order_mismatch" || c == "queue_changed" -> "The queue changed while moving that song. Try again."
-        c == "endpoint_not_accepted" -> "YouTube Music didn't start it. Try again."
-        c == "no_player" -> "YouTube Music's player isn't ready yet."
-        c == "no_app" -> "The YouTube Music page isn't ready yet."
-        c == "row_not_found" -> "Couldn't find that song on the YouTube Music page."
-        c == "not_in_queue" -> "That song isn't in the queue any more."
-        c == "move_too_large" -> "That move is too big to do in one go."
-        c == "cannot_move_played_or_current" -> "Songs already played (or playing) can't be moved."
-        c == "menu_item_missing" -> "YouTube Music's menu didn't offer that here."
-        c == "no_menu" || c == "no_menu_button" -> "Couldn't open that song's menu on the YouTube Music page."
-        c == "nothing_to_pick" -> "Couldn't find something to play."
-        c == "artist_not_found" -> "Couldn't find that artist on YouTube Music."
-        c == "no_lyrics" -> "No lyrics for this song."
-        c == "unknown_type" -> "The YouTube Music tab runs an older version of the extension: reload it in the browser."
-        c.isEmpty() -> "Something went wrong."
+            tr("Couldn't find that button on YouTube Music. In your browser, reload the YTM Starcast extension, then refresh the YouTube Music tab.")
+        c == "part_off" -> tr("The YouTube Music remote is switched off. Turn it on in Settings → Parts.")
+        c == "autoplay_off_while_looping" -> tr("Turn loop off first: YouTube Music ignores autoplay while the queue is looping.")
+        c == "autoplay_not_applied" -> tr("YouTube Music didn't change autoplay. Try once more, or switch it in the browser.")
+        c == "no_autoplay_toggle" -> tr("Couldn't find YouTube Music's autoplay switch.")
+        c == "like_not_applied" || c == "like_failed" -> tr("YouTube Music didn't accept the like. Make sure you're signed in there.")
+        c == "no_like_button" -> tr("Couldn't find the like button on the YouTube Music page.")
+        c == "order_mismatch" || c == "queue_changed" -> tr("The queue changed while moving that song. Try again.")
+        c == "endpoint_not_accepted" -> tr("YouTube Music didn't start it. Try again.")
+        c == "no_player" -> tr("YouTube Music's player isn't ready yet.")
+        c == "no_app" -> tr("The YouTube Music page isn't ready yet.")
+        c == "row_not_found" -> tr("Couldn't find that song on the YouTube Music page.")
+        c == "not_in_queue" -> tr("That song isn't in the queue any more.")
+        c == "move_too_large" -> tr("That move is too big to do in one go.")
+        c == "cannot_move_played_or_current" -> tr("Songs already played (or playing) can't be moved.")
+        c == "menu_item_missing" -> tr("YouTube Music's menu didn't offer that here.")
+        c == "no_menu" || c == "no_menu_button" -> tr("Couldn't open that song's menu on the YouTube Music page.")
+        c == "nothing_to_pick" -> tr("Couldn't find something to play.")
+        c == "artist_not_found" -> tr("Couldn't find that artist on YouTube Music.")
+        c == "no_lyrics" -> tr("No lyrics for this song.")
+        c == "unknown_type" -> tr("The YouTube Music tab runs an older version of the extension: reload it in the browser.")
+        c.isEmpty() -> tr("Something went wrong.")
         else -> c.replace('_', ' ').replaceFirstChar { it.uppercase() }.take(160)
     }
 }

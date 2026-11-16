@@ -152,10 +152,11 @@ fun StatusCorner(clock: Boolean, battery: Boolean, modifier: Modifier = Modifier
         if (battery) {
             val b = rememberBattery(ctx)
             if (b != null) {
+                val desc = if (b.charging) tr("Charging, {n}%", "n" to b.percent) else tr("Battery {n}%", "n" to b.percent)
                 BatteryGlyph(
                     b, color,
                     Modifier.padding(start = if (clock) 6.dp else 0.dp)
-                        .semantics { contentDescription = if (b.charging) "Charging, ${b.percent}%" else "Battery ${b.percent}%" },
+                        .semantics { contentDescription = desc },
                 )
                 Text("${b.percent}%", style = MaterialTheme.typography.labelMedium, color = color)
             }

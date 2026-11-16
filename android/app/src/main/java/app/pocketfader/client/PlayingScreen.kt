@@ -192,7 +192,7 @@ fun PlayerPanel(s: RemoteState, modifier: Modifier = Modifier) {
                 ) { (title, artist) ->
                     Column {
                         Text(
-                            title.takeIf { it.isNotBlank() } ?: "Nothing playing",
+                            title.takeIf { it.isNotBlank() } ?: tr("Nothing playing"),
                             style = MaterialTheme.typography.headlineMedium.glow(),
                             fontWeight = FontWeight.ExtraBold,
                             maxLines = 2,
@@ -220,7 +220,7 @@ fun PlayerPanel(s: RemoteState, modifier: Modifier = Modifier) {
                 val vid = videoId
                 if (vid != null && saved.none { it.videoId == vid }) {
                     PressIconButton(
-                        Icons.Filled.Download, if (vid in busy) "Downloading" else "Download to this phone", 48, 24,
+                        Icons.Filled.Download, if (vid in busy) tr("Downloading") else tr("Download to this phone"), 48, 24,
                         MaterialTheme.colorScheme.onSurfaceVariant, false, vid !in busy,
                     ) { now?.let { n -> Downloads.enqueue(LocalItem(vid, null, n.title, n.artist, n.art, n.duration)) } }
                 }
@@ -230,7 +230,7 @@ fun PlayerPanel(s: RemoteState, modifier: Modifier = Modifier) {
                 val liked = now?.liked == true
                 val primary = MaterialTheme.colorScheme.primary
                 PressIconButton(
-                    if (liked) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, if (liked) "Unlike" else "Like", 48, 24,
+                    if (liked) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp, if (liked) tr("Unlike") else tr("Like"), 48, 24,
                     tint = if (liked) primary else MaterialTheme.colorScheme.onSurfaceVariant, glow = liked, enabled = true,
                 ) { Remote.like(videoId, !liked) }
             }
@@ -239,9 +239,9 @@ fun PlayerPanel(s: RemoteState, modifier: Modifier = Modifier) {
         if (!hasTrack) {
             Text(
                 when {
-                    s.source == "phone" -> "Nothing is playing on this phone. Search for a song, or play something you downloaded (Search → This phone)."
-                    s.online -> "Start something on the computer. Open YouTube Music with the YTM Starcast extension, or any player."
-                    else -> "Waiting for the computer…"
+                    s.source == "phone" -> tr("Nothing is playing on this phone. Search for a song, or play something you downloaded (Search → This phone).")
+                    s.online -> tr("Start something on the computer. Open YouTube Music with the YTM Starcast extension, or any player.")
+                    else -> tr("Waiting for the computer…")
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -443,23 +443,23 @@ private fun Transport(now: Now?, bridge: Boolean, enabled: Boolean) {
     ) {
         val shuffle = now?.shuffle == true
         ShapeIconButton(
-            Icons.Filled.Shuffle, if (shuffle) "Shuffle on" else "Shuffle off", onClick = { tap(); Remote.setShuffle(!shuffle) },
+            Icons.Filled.Shuffle, if (shuffle) tr("Shuffle on") else tr("Shuffle off"), onClick = { tap(); Remote.setShuffle(!shuffle) },
             modifier = Modifier.iconGlow(on, shuffle && bridge && enabled, 34), tint = off, active = shuffle, enabled = bridge && enabled, activeTint = on,
         )
         ShapeIconButton(
-            Icons.Filled.SkipPrevious, "Previous", onClick = { tap(); Remote.transport("prev") },
+            Icons.Filled.SkipPrevious, tr("Previous"), onClick = { tap(); Remote.transport("prev") },
             sizeDp = 60, iconDp = 34, tint = plain, enabled = enabled,
         )
         PlayButton(playing, enabled) { tap(); Remote.transport("playpause") }
         ShapeIconButton(
-            Icons.Filled.SkipNext, "Next", onClick = { tap(); Remote.transport("next") },
+            Icons.Filled.SkipNext, tr("Next"), onClick = { tap(); Remote.transport("next") },
             sizeDp = 60, iconDp = 34, tint = plain, enabled = enabled,
         )
         val repeat = now?.repeat ?: "NONE"
         val looping = repeat != "NONE"
         ShapeIconButton(
             if (repeat == "ONE") Icons.Filled.RepeatOne else Icons.Filled.Repeat,
-            when (repeat) { "ALL" -> "Loop queue"; "ONE" -> "Loop track"; else -> "Loop off" },
+            when (repeat) { "ALL" -> tr("Loop queue"); "ONE" -> tr("Loop track"); else -> tr("Loop off") },
             onClick = { tap(); Remote.setRepeat(when (repeat) { "NONE" -> "ALL"; "ALL" -> "ONE"; else -> "NONE" }) },
             modifier = Modifier.iconGlow(on, looping && bridge && enabled, 34), tint = off, active = looping, enabled = bridge && enabled, activeTint = on,
         )
@@ -484,7 +484,7 @@ private fun PlayButton(playing: Boolean, enabled: Boolean, onClick: () -> Unit) 
     ) {
         Box(contentAlignment = Alignment.Center) {
             androidx.compose.animation.Crossfade(playing, animationSpec = androidx.compose.animation.core.tween(if (reduce) 0 else Motion.Short, easing = Motion.Ease), label = "pp") { p ->
-                Icon(if (p) Icons.Filled.Pause else Icons.Filled.PlayArrow, if (p) "Pause" else "Play", Modifier.size(42.dp))
+                Icon(if (p) Icons.Filled.Pause else Icons.Filled.PlayArrow, if (p) tr("Pause") else tr("Play"), Modifier.size(42.dp))
             }
         }
     }
@@ -548,7 +548,7 @@ fun PhoneVolumeRow(modifier: Modifier = Modifier) {
 fun VolumeRow(v: VolumeState, modifier: Modifier = Modifier) {
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = { Remote.setMuted(!v.muted) }, enabled = v.available) {
-            Icon(if (v.muted || v.percent == 0) Icons.Filled.VolumeOff else Icons.Filled.VolumeUp, if (v.muted) "Unmute" else "Mute")
+            Icon(if (v.muted || v.percent == 0) Icons.Filled.VolumeOff else Icons.Filled.VolumeUp, if (v.muted) tr("Unmute") else tr("Mute"))
         }
         var dragging by remember { mutableStateOf(false) }
         Slider(
@@ -599,7 +599,7 @@ fun PlayingPage(s: RemoteState, modifier: Modifier = Modifier) {
         androidx.compose.runtime.snapshotFlow { tab == 2 }.first { it }
         if (comments.usable && !comments.loaded && !comments.loading && comments.error == null) comments.loadFirst()
     }
-    val tabLabels = remember(showComments) { if (showComments) listOf("Up next", "Lyrics", "Comments") else listOf("Up next", "Lyrics") }
+    val tabLabels = if (showComments) listOf(tr("Up next"), tr("Lyrics"), tr("Comments")) else listOf(tr("Up next"), tr("Lyrics"))
     val crossed = remember(commentsOff) { if (commentsOff) setOf(2) else emptySet<Int>() }
     val still = !prefs.transitions || prefs.reduceMotion
     // the rows glide in one after another when a tab opens (and the comments' when they arrive), as in Refine
@@ -694,10 +694,10 @@ fun MiniControls(s: RemoteState, onTap: () -> Unit, modifier: Modifier = Modifie
         Row(Modifier.clickable(onClick = onTap).padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             Thumb(now.art, 44)
             Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
-                Text(now.title.ifBlank { "Nothing playing" }, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(now.title.ifBlank { tr("Nothing playing") }, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(now.artist, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
-            ShapeIconButton(Icons.Filled.SkipPrevious, "Previous", onClick = { tap(); Remote.transport("prev") }, sizeDp = 44)
+            ShapeIconButton(Icons.Filled.SkipPrevious, tr("Previous"), onClick = { tap(); Remote.transport("prev") }, sizeDp = 44)
             Surface(
                 onClick = { tap(); Remote.transport("playpause") },
                 shape = RoundedCornerShape(percent = round.roundToInt()),
@@ -708,11 +708,11 @@ fun MiniControls(s: RemoteState, onTap: () -> Unit, modifier: Modifier = Modifie
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     androidx.compose.animation.Crossfade(now.playing, animationSpec = androidx.compose.animation.core.tween(if (reduce) 0 else Motion.Short, easing = Motion.Ease), label = "mini-pp") { p ->
-                        Icon(if (p) Icons.Filled.Pause else Icons.Filled.PlayArrow, if (p) "Pause" else "Play")
+                        Icon(if (p) Icons.Filled.Pause else Icons.Filled.PlayArrow, if (p) tr("Pause") else tr("Play"))
                     }
                 }
             }
-            ShapeIconButton(Icons.Filled.SkipNext, "Next", onClick = { tap(); Remote.transport("next") }, sizeDp = 44)
+            ShapeIconButton(Icons.Filled.SkipNext, tr("Next"), onClick = { tap(); Remote.transport("next") }, sizeDp = 44)
         }
         // a hairline along the bottom shows how far the track is (once a second is plenty at this size)
         val fraction = rememberTrackFraction(now.duration, now.playing, 1000L)

@@ -27,7 +27,7 @@ status, `capabilities.beacon`, the `pf_token` cookie), so apps already on phones
 | `GET /api/state` | `{version, volume, media, engine, capabilities, limits, sleep, parts}` (below). |
 | `GET /api/parts` | `{"parts": {"remote", "discord", "refine", "audio"}}`, each `true` or `false` (see [Parts](#parts)). |
 | `GET /api/ytm/state` | Now-playing in YT-Music shape: `{connected, source: "ytm"\|"media"\|null, now: {title, artist, album, art, playing, position, duration, videoId?, liked?, volume?}, queue: []}`. `source` says whether it came from the extension or the host's media player. Keeps answering while the remote is switched off. |
-| `GET /api/prefs` | Shared client prefs (favourites…), same on every device, plus the current `parts`. |
+| `GET /api/prefs` | Shared client prefs (favourites…), same on every device, plus the current `parts` and `language`. |
 | `GET /api/outputs` | `{outputs: [{name, description, percent, muted, default, kind, form_factor, state}], default}`: every playback device with its own level. `501` when the audio backend can't switch outputs (`capabilities.outputs`). |
 | `GET /api/update[?refresh=1]` | The newest release on GitHub and whether it's newer than this server: `{current, latest, available, notes, url, apk, wheel, self_update}`. The computer does the asking, so phones need no GitHub login. |
 | `GET /api/update/apk` | The newest Android app (checked against the release's `SHA256SUMS.txt`) for the app to install. |
@@ -53,7 +53,8 @@ status, `capabilities.beacon`, the `pf_token` cookie), so apps already on phones
                    "ytm_focus": true},
   "limits": {"eq_min": -12.0, "eq_max": 12.0},
   "sleep": {"remainingSec": 0},
-  "parts": {"remote": true, "discord": true, "refine": true, "audio": true}
+  "parts": {"remote": true, "discord": true, "refine": true, "audio": true},
+  "language": "auto"
 }
 ```
 
@@ -159,7 +160,7 @@ YTM Starcast's four parts can each be switched off. The apps hide what belongs t
 | `POST /api/output/volume` | `{"name", "percent"?: 0-100, "muted"?: bool}` | One output's own level, also when it isn't the default. |
 | `POST /api/eq` | `{"band": "bass\|mid\|high", "db": -12..12}`, `{"enabled": bool}` or `{"preset": "<name>"}` | `501` unless `capabilities.eq`; `enabled` needs `capabilities.eq_toggle` (the built-in equalizer). |
 | `POST /api/engine` | `{"action": "<one of capabilities.engine_actions>"}` | Backend-specific maintenance. |
-| `POST /api/prefs` | any JSON object (merged) | Replies with all prefs and `parts`. |
+| `POST /api/prefs` | any JSON object (merged) | Replies with all prefs, `parts` and `language`. `language` must be `auto` (each device uses its own language) or one of `en`, `es`, `fr`, `de`, `pt-BR`, `it`, `ru`, `ja`, `ko`, `zh-CN` (`400` otherwise); open YouTube Music tabs hear a change at once. |
 
 ## Discord status
 
@@ -282,7 +283,7 @@ times out is dropped, not run later.
 
 | Endpoint | Body | Notes |
 |---|---|---|
-| `GET /ext/poll?i=<tab>` | — | Long poll (≤ 25 s). Replies with a command `{id, type, …}`, or with no `id` when there is none; both carry `"cfg": {"remote", "discord", "refine"}`. A waiting poll is answered at once when one of those switches changes or another tab says goodbye. Each poll also tells Discord status the tab is still open (a paused tab sends nothing else). A tab that hasn't reported since the server started gets `"resend": true` once, at once, and answers by sending its whole state again. |
+| `GET /ext/poll?i=<tab>` | — | Long poll (≤ 25 s). Replies with a command `{id, type, …}`, or with no `id` when there is none; both carry `"cfg": {"remote", "discord", "refine", "lang"}` (`lang`: the language setting). A waiting poll is answered at once when one of those switches or the language changes or another tab says goodbye. Each poll also tells Discord status the tab is still open (a paused tab sends nothing else). A tab that hasn't reported since the server started gets `"resend": true` once, at once, and answers by sending its whole state again. |
 | `POST /ext/state` | `{instance, now: {title, artist, album, art, playing, paused, buffering, position, duration, speed, videoId, ad, …}, queue, ts, …}` (or `partial: true` with only `now`) | What the tab plays. Feeds the remote, the lyrics and Discord status. `now.album` (a string or `null`) and `now.ad` (`true` while an advert plays) are new in extension 2.0. Discord status divides `position` and `duration` by `speed` (the playback rate, 0.25 to 4; anything else counts as 1), so its times run at the pace the song is heard. Replies `{"ok": true, "cfg": {...}}`. The isolated script adds `ext`, the extension's version. An `instance` starting with `phone:` (those names belong to phones) is refused with `400`. |
 | `POST /ext/result` | `{id, data}` | The answer to a command. |
 | `POST /ext/bye` | `{"instance": "<tab>"}` | The tab is closing or leaving the page (sent on `pagehide`, as `text/plain`). The server forgets that tab at once, and clears its Discord card. Replies `{"ok": true}`; `400` without `instance`, or with one starting with `phone:`. |
@@ -290,6 +291,7 @@ times out is dropped, not run later.
 | `POST /ext/discord/settings`, `/ext/discord/visibility`, `/ext/discord/test` | as `/api/beacon/settings`, `/visibility`, `/test` | The extension's copies of those routes (YouTube Music's origin; no token needed from this computer), with the same checks and replies. |
 | `GET /ext/status` | — | For the extension's toolbar button and Refine's panel: `{"app": "YTM Starcast", "version", "parts": {...all four}, "discord": {"headline", "visible", "state"}}`. `headline` uses the values above; it is `off` while `parts.discord` is off. |
 | `POST /ext/parts` | any subset of `remote`, `discord`, `refine` (booleans) | Same as `POST /api/parts`; replies `{"parts": {...}}`. The extension may not switch `audio` (`400`). |
+| `POST /ext/language` | `{"language": "auto" \| code}` | The shared language setting (as in `POST /api/prefs`); replies `{"language": ...}`. |
 | `GET /ext/lyrics` | — | `/api/lyrics` for the extension's live lyrics inside YouTube Music (same parameters and answer). |
 | `POST /ext/save` | `{"videoId"}` | Save to this computer (Refine's Download in a song's menu): the computer saves the song as an audio file in its Music folder (`Music/YTM Starcast`, named "Artist - Title", with the song's details and cover when ffmpeg is installed), using yt-dlp. Replies `202 {"ok": true, "id", "folder"}` at once; `400` for a bad id, `503 {"error": "no_ytdlp"}` without yt-dlp. The same song asked for again while it is being saved gets the same `id`. From the page, the extension's script passes it on only right after a real press on Refine's own Save row. `capabilities.save` says whether this computer can. |
 | `GET /ext/save?id=` | — | How that save is getting on: `{"state": "working"}`, `{"state": "done", "name", "folder"}` (`"already": true` when the file was there) or `{"state": "failed", "error"}`; `404` for an unknown id. |

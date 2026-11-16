@@ -1,12 +1,11 @@
-### What's new in 0.2.8-alpha
+### What's new in 0.2.9-alpha
 
-- **YTM Starcast's logo in the album's colours:** the logo in YouTube Music's top bar, the extension's toolbar button
-  and its popup take the colours of the cover playing (with Refine's album colours off, they keep their usual blue).
-- **No more flicker of the whole page when a song changes:** Refine's new-song animation shared a name with one of its
-  own styles, which laid the page out wrong for about a second.
-- YouTube Music's ⋮ menus scroll with the mouse wheel again.
-- The lyrics window's pin shows whether it is pinned (a filled pin on a tonal background) or not.
-- The logo in the top bar lines up with the menu button.
+- **YTM Starcast in 10 languages:** English, Español, Français, Deutsch, Português (Brasil), Italiano, Русский, 日本語,
+  한국어 and 简体中文. The web app, the Android app, the desktop window, the browser extension's popup and Refine inside
+  YouTube Music all follow one **Language** setting (Settings → Appearance in the apps, Settings in the desktop window,
+  All settings → YTM Starcast in Refine). *Automatic*, the default, uses each device's own language; choosing one uses
+  it on every device. A change shows at once, also in open YouTube Music tabs.
+- Counts read right in every language ("1 song", "2 songs"), including a few places that used to say "1 songs".
 
 ### Updating from 0.2.0-alpha.10 or older
 

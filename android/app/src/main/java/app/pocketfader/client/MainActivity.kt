@@ -223,30 +223,30 @@ private fun PlayOnButton(prefs: Prefs, hasComputer: Boolean, remoteOn: Boolean) 
         IconButton(onClick = { open = true }) {
             Icon(
                 if (phone) Icons.Filled.PhoneAndroid else Icons.Filled.Computer,
-                if (phone) "Playing on this phone" else "Playing on the computer",
+                if (phone) tr("Playing on this phone") else tr("Playing on the computer"),
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
         androidx.compose.material3.DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             androidx.compose.material3.DropdownMenuItem(
-                text = { Text("Play on this phone" + if (phone) "  ✓" else "") },
+                text = { Text(tr("Play on this phone") + if (phone) "  ✓" else "") },
                 leadingIcon = { Icon(Icons.Filled.PhoneAndroid, null) },
                 onClick = { open = false; Remote.setPlayOn("phone", carryOver = false) },
             )
             if (!phone && hasComputer) androidx.compose.material3.DropdownMenuItem(
-                text = { Text("Continue this song on the phone") },
+                text = { Text(tr("Continue this song on the phone")) },
                 leadingIcon = { Icon(Icons.Filled.PhoneAndroid, null) },
                 onClick = { open = false; Remote.setPlayOn("phone", carryOver = true) },
             )
             if (hasComputer) {
                 androidx.compose.material3.DropdownMenuItem(
-                    text = { Text("Play on the computer" + if (!phone) "  ✓" else "") },
+                    text = { Text(tr("Play on the computer") + if (!phone) "  ✓" else "") },
                     leadingIcon = { Icon(Icons.Filled.Computer, null) },
                     onClick = { open = false; Remote.setPlayOn("computer", carryOver = false) },
                 )
                 // carrying the song over needs the computer's YouTube Music remote, so it isn't offered while that is off
                 if (phone && remoteOn) androidx.compose.material3.DropdownMenuItem(
-                    text = { Text("Continue this song on the computer") },
+                    text = { Text(tr("Continue this song on the computer")) },
                     leadingIcon = { Icon(Icons.Filled.Computer, null) },
                     onClick = { open = false; Remote.setPlayOn("computer", carryOver = true) },
                 )
@@ -267,13 +267,13 @@ private fun DestContent(d: Dest, s: RemoteState, cfg: ServerConfig, remoteOff: B
 
 // [icon] for the chosen page, [idle] (outlined) for the others, as Material's navigation does
 private enum class Dest(val key: String, val label: String, val icon: ImageVector, val idle: ImageVector) {
-    Playing("playing", "Playing", Icons.Filled.PlayCircle, Icons.Filled.PlayCircleOutline),
-    Search("search", "Search", Icons.Filled.Search, Icons.Outlined.Search),
-    Settings("settings", "Settings", Icons.Filled.Settings, Icons.Outlined.Settings),
+    Playing("playing", trKey("Playing"), Icons.Filled.PlayCircle, Icons.Filled.PlayCircleOutline),
+    Search("search", trKey("Search"), Icons.Filled.Search, Icons.Outlined.Search),
+    Settings("settings", trKey("Settings"), Icons.Filled.Settings, Icons.Outlined.Settings),
 }
 
 // On wide screens the player is always visible on the left, so the right pane gets its own tabs.
-private enum class Pane(val label: String) { Queue("Queue"), Lyrics("Lyrics"), Comments("Comments"), Search("Search") }
+private enum class Pane(val label: String) { Queue(trKey("Queue")), Lyrics(trKey("Lyrics")), Comments(trKey("Comments")), Search(trKey("Search")) }
 
 @Composable
 private fun WidePaneContent(p: Pane, s: RemoteState, comments: CommentsUi) {
@@ -296,7 +296,7 @@ private fun App(cfg: ServerConfig, s: RemoteState, prefs: Prefs, onSave: (Server
                 androidx.compose.material3.TextButton(
                     onClick = { Settings.update { it.copy(standalone = true, playOn = "phone") }; Remote.configure(cfg) },
                     modifier = Modifier.align(androidx.compose.ui.Alignment.CenterHorizontally).padding(bottom = 12.dp),
-                ) { Text("No computer? Use YTM Starcast on this phone only") }
+                ) { Text(tr("No computer? Use YTM Starcast on this phone only")) }
             }
         }
         return
@@ -386,10 +386,10 @@ private fun App(cfg: ServerConfig, s: RemoteState, prefs: Prefs, onSave: (Server
             // Phones name the page they show; where the page would just be called "YTM Starcast" (tablets, and the
             // player while the remote is off) the app's logo stands in its place.
             val heading: String? = when {
-                showSettings -> "Settings"
+                showSettings -> tr("Settings")
                 wide -> null
-                dest == Dest.Playing -> if (remoteOff) null else "Now playing"
-                else -> dest.label
+                dest == Dest.Playing -> if (remoteOff) null else tr("Now playing")
+                else -> tr(dest.label)
             }
             TopAppBar(
                 colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(containerColor = androidx.compose.ui.graphics.Color.Transparent),
@@ -402,7 +402,7 @@ private fun App(cfg: ServerConfig, s: RemoteState, prefs: Prefs, onSave: (Server
                 },
                 navigationIcon = {
                     when {
-                        showSettings -> IconButton(onClick = { showSettings = false }) { Icon(Icons.Filled.ArrowBack, "Back") }
+                        showSettings -> IconButton(onClick = { showSettings = false }) { Icon(Icons.Filled.ArrowBack, tr("Back")) }
                         // on phones a small logo leads the page's name (not when the logo is the title already)
                         !wide && heading != null -> StarcastTile(26.dp, Modifier.padding(start = 12.dp, end = 8.dp))
                     }
@@ -411,7 +411,7 @@ private fun App(cfg: ServerConfig, s: RemoteState, prefs: Prefs, onSave: (Server
                     // full screen hides the status bar's clock and battery: shown here instead when asked for
                     if (prefs.immersive) StatusCorner(prefs.barClock, prefs.barBattery)
                     if (!showSettings) PlayOnButton(prefs, cfg.isSet, s.remoteOn)
-                    if (wide && !showSettings) IconButton(onClick = { showSettings = true }) { Icon(Icons.Filled.Settings, "Settings") }
+                    if (wide && !showSettings) IconButton(onClick = { showSettings = true }) { Icon(Icons.Filled.Settings, tr("Settings")) }
                 },
             )
         },
@@ -438,7 +438,7 @@ private fun App(cfg: ServerConfig, s: RemoteState, prefs: Prefs, onSave: (Server
             if (!wide && !showSettings) {
                 if (prefs.navStyle == "pill") {
                     PillNav(
-                        dests.map { it.label }, dests.map { it.icon }, dests.indexOf(dest).coerceAtLeast(0),
+                        dests.map { tr(it.label) }, dests.map { it.icon }, dests.indexOf(dest).coerceAtLeast(0),
                         idleIcons = dests.map { it.idle },
                     ) { dest = dests[it] }
                 } else {
@@ -456,8 +456,8 @@ private fun App(cfg: ServerConfig, s: RemoteState, prefs: Prefs, onSave: (Server
                             val on = dest == d
                             NavigationBarItem(
                                 selected = on, onClick = { dest = d },
-                                icon = { Icon(if (on) d.icon else d.idle, d.label) },
-                                label = { Text(d.label, fontWeight = if (on) FontWeight.SemiBold else FontWeight.Medium) },
+                                icon = { Icon(if (on) d.icon else d.idle, tr(d.label)) },
+                                label = { Text(tr(d.label), fontWeight = if (on) FontWeight.SemiBold else FontWeight.Medium) },
                                 colors = itemColors,
                             )
                         }
@@ -480,11 +480,11 @@ private fun App(cfg: ServerConfig, s: RemoteState, prefs: Prefs, onSave: (Server
                 ) {
                     Row(Modifier.padding(start = 16.dp, end = 6.dp, top = 2.dp, bottom = 2.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                         Text(
-                            "A new version is ready: ${UpdateManager.info?.latest}",
+                            tr("A new version is ready: {version}", "version" to UpdateManager.info?.latest),
                             Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
-                        androidx.compose.material3.TextButton(onClick = { SettingsNav.deepLink = "updates"; if (wide) showSettings = true else dest = Dest.Settings }) { Text("Update") }
-                        androidx.compose.material3.TextButton(onClick = { UpdateManager.dismissed = true }) { Text("Later") }
+                        androidx.compose.material3.TextButton(onClick = { SettingsNav.deepLink = "updates"; if (wide) showSettings = true else dest = Dest.Settings }) { Text(tr("Update")) }
+                        androidx.compose.material3.TextButton(onClick = { UpdateManager.dismissed = true }) { Text(tr("Later")) }
                     }
                 }
             }
@@ -497,7 +497,7 @@ private fun App(cfg: ServerConfig, s: RemoteState, prefs: Prefs, onSave: (Server
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
                 ) {
                     Text(
-                        "Can't reach the computer. ${s.error ?: "Trying again…"}",
+                        tr("Can't reach the computer. {error}", "error" to (s.error ?: tr("Trying again…"))),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onErrorContainer,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -523,7 +523,7 @@ private fun App(cfg: ServerConfig, s: RemoteState, prefs: Prefs, onSave: (Server
                             val panes = Pane.values().filter { it != Pane.Comments || showComments }
                             LaunchedEffect(showComments, commentsOff) { if ((!showComments || commentsOff) && pane == Pane.Comments) pane = Pane.Queue }
                             PillTabs(
-                                labels = panes.map { it.label },
+                                labels = panes.map { tr(it.label) },
                                 selected = panes.indexOf(pane).coerceAtLeast(0),
                                 onSelect = { i -> panes.getOrNull(i)?.let { pane = it } },
                                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),

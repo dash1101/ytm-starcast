@@ -12,30 +12,31 @@
 (() => {
   const g = globalThis;
   if (g.__starcastDiscordPanel) return;
+  const { tr, trn, trKey } = g[Symbol.for("pocketfader.i18n")];
 
   const TEXT = {
-    showing: ["Showing on your Discord profile.", "ok"], waiting: ["Getting ready to show…", "wait"],
-    idle: ["Ready. Nothing is playing.", "wait"], off: ["Off. Nothing is shown on Discord.", "off"],
-    snoozed: ["Hidden for a while. It comes back by itself.", "off"],
-    "paused-hidden": ["Not shown while the music is paused.", "wait"],
-    "paused-timeout": ["Hidden after a long pause. It comes back when you press play.", "wait"],
-    filtered: ["Not shown: this song matches one of your never-show words.", "off"],
-    ad: ["Hidden while an advert plays.", "wait"],
-    "discord-down": ["Can't reach Discord. Open the Discord app on this computer.", "bad"],
-    "extension-quiet": ["Waiting to hear from YouTube Music.", "wait"], "extension-missing": ["Waiting to hear from YouTube Music.", "wait"],
-    "beacon-running": ["The old YTM Beacon app is still running. Open YTM Starcast to move over from it.", "bad"],
-    unreachable: ["Discord status isn't answering right now.", "bad"],
+    showing: [trKey("Showing on your Discord profile."), "ok"], waiting: [trKey("Getting ready to show…"), "wait"],
+    idle: [trKey("Ready. Nothing is playing."), "wait"], off: [trKey("Off. Nothing is shown on Discord."), "off"],
+    snoozed: [trKey("Hidden for a while. It comes back by itself."), "off"],
+    "paused-hidden": [trKey("Not shown while the music is paused."), "wait"],
+    "paused-timeout": [trKey("Hidden after a long pause. It comes back when you press play."), "wait"],
+    filtered: [trKey("Not shown: this song matches one of your never-show words."), "off"],
+    ad: [trKey("Hidden while an advert plays."), "wait"],
+    "discord-down": [trKey("Can't reach Discord. Open the Discord app on this computer."), "bad"],
+    "extension-quiet": [trKey("Waiting to hear from YouTube Music."), "wait"], "extension-missing": [trKey("Waiting to hear from YouTube Music."), "wait"],
+    "beacon-running": [trKey("The old YTM Beacon app is still running. Open YTM Starcast to move over from it."), "bad"],
+    unreachable: [trKey("Discord status isn't answering right now."), "bad"],
   };
   const OPTIONS = [
-    ["privateMode", "Private mode", "Only “Listening to YouTube Music”, without the song"],
-    ["showAlbumArt", "Album art", "The song's cover instead of the YouTube Music logo"],
-    ["showProgress", "Progress bar", "Time played and time left"],
-    ["showStateIcon", "Play and pause icon", "A small badge on the cover"],
-    ["showButtons", "“Listen on YouTube Music” button", "Lets friends open the song"],
-    ["showPaused", "Show paused songs", "Keep the card while the music is paused"],
+    ["privateMode", trKey("Private mode"), trKey("Only “Listening to YouTube Music”, without the song")],
+    ["showAlbumArt", trKey("Album art"), trKey("The song's cover instead of the YouTube Music logo")],
+    ["showProgress", trKey("Progress bar"), trKey("Time played and time left")],
+    ["showStateIcon", trKey("Play and pause icon"), trKey("A small badge on the cover")],
+    ["showButtons", trKey("“Listen on YouTube Music” button"), trKey("Lets friends open the song")],
+    ["showPaused", trKey("Show paused songs"), trKey("Keep the card while the music is paused")],
   ];
-  const TIMEOUTS = [[0, "Never"], [5, "5 min"], [15, "15 min"], [30, "30 min"], [60, "1 hour"]];
-  const NAMES = [["name", "YouTube Music"], ["state", "The artist"], ["details", "The song"]];
+  const TIMEOUTS = [[0, trKey("Never")], [5, trKey("5 min")], [15, trKey("15 min")], [30, trKey("30 min")], [60, trKey("1 hour")]];
+  const NAMES = [["name", "YouTube Music"], ["state", trKey("The artist")], ["details", trKey("The song")]];
 
   const CSS = `
   .pfd { display: flex; flex-direction: column; gap: 10px; font: 14px/1.4 inherit; color: var(--pf-text, #e8e2ea); }
@@ -109,7 +110,7 @@
 
   // The card as Discord draws it in a profile, from the activity the app would send now (null: no card).
   function cardPreview(act, settings) {
-    if (!act) return el("div", { class: "pfd-none", text: "No card right now: nothing would be shown on Discord at this moment." });
+    if (!act) return el("div", { class: "pfd-none", text: tr("No card right now: nothing would be shown on Discord at this moment.") });
     const a = act.assets || {};
     const big = safeImg(a.large_image);
     const small = safeImg(a.small_image);
@@ -127,11 +128,11 @@
       bar.firstChild.style.width = (done / tot) * 100 + "%";
       lines.append(el("div", { class: "pfd-prog" }, el("span", { text: clock(done) }), bar, el("span", { text: clock(tot) })));
     }
-    const card = el("div", { class: "pfd-card", "aria-label": "Preview of the Discord card" },
-      el("div", { class: "pfd-h", text: "Listening to YouTube Music" }), el("div", { class: "pfd-b" }, art, lines));
-    for (const b of act.buttons || []) card.append(el("div", { class: "pfd-btn-preview", text: b.label || "Listen" }));
+    const card = el("div", { class: "pfd-card", "aria-label": tr("Preview of the Discord card") },
+      el("div", { class: "pfd-h", text: tr("Listening to YouTube Music") }), el("div", { class: "pfd-b" }, art, lines));
+    for (const b of act.buttons || []) card.append(el("div", { class: "pfd-btn-preview", text: b.label || tr("Listen") }));
     const shown = act.status_display_type === 1 ? (act.state || "YouTube Music") : act.status_display_type === 2 ? (act.details || "YouTube Music") : "YouTube Music";
-    card.append(el("div", { class: "pfd-list", text: "In the member list: Listening to " + shown }));
+    card.append(el("div", { class: "pfd-list", text: tr("In the member list: Listening to {name}", { name: shown }) }));
     return card;
   }
 
@@ -152,8 +153,8 @@
       if (r && r.discord) { st = r.discord; msg.textContent = ""; }
       else if (r && r.error) {
         st = null;
-        msg.textContent = r.error === "old_app" ? "The app on this computer is too old for these options. Update YTM Starcast."
-          : r.error === "offline" ? "YTM Starcast isn't answering on this computer." : "Couldn't ask YTM Starcast. Try again in a moment.";
+        msg.textContent = r.error === "old_app" ? tr("The app on this computer is too old for these options. Update YTM Starcast.")
+          : r.error === "offline" ? tr("YTM Starcast isn't answering on this computer.") : tr("Couldn't ask YTM Starcast. Try again in a moment.");
       }
       sig = sigOf(st);
       if (sig + "|" + msg.textContent !== before) paint();
@@ -164,7 +165,7 @@
       const r = await ask("discordSet", { kind, body });
       busy = false;
       sig = "";   // draw again whatever comes back: the switches were greyed out while it was busy
-      if (r && r.error) msg.textContent = r.error === "needs_press" ? "That didn't go through. Click or tap the option itself." : String(r.error);
+      if (r && r.error) msg.textContent = r.error === "needs_press" ? tr("That didn't go through. Click or tap the option itself.") : String(r.error);
       else msg.textContent = "";
       await refresh();
     }
@@ -179,46 +180,47 @@
     }
     function chips(list, cur, disabled, pick) {
       return el("div", { class: "pfd-chips" }, list.map(([v, l]) => el("button", { class: "pfd-chip", type: "button", "aria-pressed": String(v === cur),
-        disabled: disabled || null, onclick: () => { if (v !== cur) pick(v); } , text: l })));
+        disabled: disabled || null, onclick: () => { if (v !== cur) pick(v); } , text: tr(l) })));
     }
     function paint() {
       root.textContent = "";
-      if (!st) { root.append(el("div", { class: "pfd-status" }, el("i", { class: "pfd-dot", "data-t": "wait" }), el("span", { text: "Asking YTM Starcast…" })), msg); return; }
+      if (!st) { root.append(el("div", { class: "pfd-status" }, el("i", { class: "pfd-dot", "data-t": "wait" }), el("span", { text: tr("Asking YTM Starcast…") })), msg); return; }
       const s = st.settings || {};
       const oldApp = st.beaconApp && st.beaconApp.running;
       const off = busy || oldApp || st.reachable === false;
-      const [txt, tone] = TEXT[st.headline] || ["Discord status isn't ready yet.", "wait"];
-      root.append(el("div", { class: "pfd-status" }, el("i", { class: "pfd-dot", "data-t": tone }), el("span", { text: txt + (st.discord && st.discord.user ? " (as " + st.discord.user + ")" : "") })));
+      const [txt, tone] = TEXT[st.headline] || [trKey("Discord status isn't ready yet."), "wait"];
+      const line = st.discord && st.discord.user ? tr("{status} (as {user})", { status: tr(txt), user: st.discord.user }) : tr(txt);
+      root.append(el("div", { class: "pfd-status" }, el("i", { class: "pfd-dot", "data-t": tone }), el("span", { text: line })));
       root.append(cardPreview(st.preview || null, s));
-      root.append(row("Show on Discord", null, sw(st.visible, off, (on) => change("visibility", { action: on ? "show" : "hide" }))));
+      root.append(row(tr("Show on Discord"), null, sw(st.visible, off, (on) => change("visibility", { action: on ? "show" : "hide" }))));
       if (st.visible) {
-        root.append(el("div", { class: "pfd-txt" }, el("small", { text: "Hide for a while (it comes back by itself)" })),
-          chips([[30, "30 min"], [60, "1 hour"], [180, "3 hours"]], null, off, (m) => change("visibility", { action: "hide", minutes: m })));
+        root.append(el("div", { class: "pfd-txt" }, el("small", { text: tr("Hide for a while (it comes back by itself)") })),
+          chips([[30, trKey("30 min")], [60, trKey("1 hour")], [180, trKey("3 hours")]], null, off, (m) => change("visibility", { action: "hide", minutes: m })));
       } else if (st.snoozeSec > 0) {
         const left = Math.max(1, Math.ceil(st.snoozeSec / 60));
-        root.append(row("Hidden for " + left + " more min", null, el("button", { class: "pfd-chip", type: "button", disabled: off || null,
-          onclick: () => change("visibility", { action: "show" }), text: "Show now" })));
+        root.append(row(trn("Hidden for {n} more min", "Hidden for {n} more min", left), null, el("button", { class: "pfd-chip", type: "button", disabled: off || null,
+          onclick: () => change("visibility", { action: "show" }), text: tr("Show now") })));
       }
-      root.append(el("div", { class: "pfd-sec", text: "What it shows" }));
-      for (const [k, l, sub] of OPTIONS) root.append(row(l, sub, sw(s[k], off || (k !== "privateMode" && s.privateMode && k !== "showPaused"), (on) => change("settings", { [k]: on }))));
+      root.append(el("div", { class: "pfd-sec", text: tr("What it shows") }));
+      for (const [k, l, sub] of OPTIONS) root.append(row(tr(l), tr(sub), sw(s[k], off || (k !== "privateMode" && s.privateMode && k !== "showPaused"), (on) => change("settings", { [k]: on }))));
       if (s.showPaused) {
-        root.append(el("div", { class: "pfd-txt" }, el("small", { text: "Hide a paused song after" })),
+        root.append(el("div", { class: "pfd-txt" }, el("small", { text: tr("Hide a paused song after") })),
           chips(TIMEOUTS, Number(s.pauseTimeoutMinutes) || 0, off, (m) => change("settings", { pauseTimeoutMinutes: m })));
       }
-      root.append(el("div", { class: "pfd-txt" }, el("small", { text: "In the member list, after “Listening to”" })),
+      root.append(el("div", { class: "pfd-txt" }, el("small", { text: tr("In the member list, after “Listening to”") })),
         chips(NAMES, s.statusDisplay || "name", off || s.privateMode, (v) => change("settings", { statusDisplay: v })));
-      root.append(el("div", { class: "pfd-sec", text: "Never show songs matching" }));
+      root.append(el("div", { class: "pfd-sec", text: tr("Never show songs matching") }));
       const words = Array.isArray(s.hideMatching) ? s.hideMatching : [];
       const list = el("div", { class: "pfd-words" }, words.map((w) => el("span", { class: "pfd-word" }, w,
-        el("button", { type: "button", "aria-label": "Remove " + w, disabled: off || null,
+        el("button", { type: "button", "aria-label": tr("Remove {word}", { word: w }), disabled: off || null,
           onclick: () => change("settings", { hideMatching: words.filter((x) => x !== w) }), text: "×" }))));
       if (words.length) root.append(list);
-      const input = el("input", { type: "text", maxlength: "80", placeholder: "A word, an artist, a title…", "aria-label": "A word to never show" });
+      const input = el("input", { type: "text", maxlength: "80", placeholder: tr("A word, an artist, a title…"), "aria-label": tr("A word to never show") });
       const add = () => { const v = input.value.trim(); if (v && !words.includes(v.toLowerCase())) change("settings", { hideMatching: [...words, v] }); };
       input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); add(); } });
-      root.append(el("div", { class: "pfd-add" }, input, el("button", { class: "pfd-chip", type: "button", disabled: off || null, onclick: add, text: "Add" })));
+      root.append(el("div", { class: "pfd-add" }, input, el("button", { class: "pfd-chip", type: "button", disabled: off || null, onclick: add, text: tr("Add") })));
       root.append(el("div", { class: "pfd-chips" }, el("button", { class: "pfd-chip", type: "button", disabled: off || null,
-        onclick: () => change("test", {}), text: "Show a test song for 30 s" })));
+        onclick: () => change("test", {}), text: tr("Show a test song for 30 s") })));
       root.append(msg);
     }
     paint();

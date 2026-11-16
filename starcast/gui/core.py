@@ -11,6 +11,8 @@ import urllib.request
 from pathlib import Path
 
 from ..config import DEFAULT_PORT, JsonFile, config_dir, get_or_create_token
+from .. import i18n
+from ..i18n import tr, trKey
 from ..proc import no_window
 
 SERVICE = "ytm-starcast.service"
@@ -25,12 +27,13 @@ LEGACY_SERVICE = "pocketfader.service"
 LEGACY_DESKTOP_NAME = "pocketfader.desktop"
 LEGACY_RUN_VALUE = "Pocketfader"
 
-# The parts of YTM Starcast that can be switched on and off (server setting "parts"): key, title, what it does.
+# The parts of YTM Starcast that can be switched on and off (server setting "parts"): key, title, what it does
+# (English, shown through tr()).
 PART_ROWS = (
-    ("remote", "YouTube Music remote", "Control YouTube Music in your browser from your phone."),
-    ("discord", "Discord status", "Show the song you're listening to on your Discord profile."),
-    ("refine", "Refine in YouTube Music", "Improvements inside YouTube Music."),
-    ("audio", "Computer audio", "This computer's volume, outputs and equalizer in the apps."),
+    ("remote", trKey("YouTube Music remote"), trKey("Control YouTube Music in your browser from your phone.")),
+    ("discord", trKey("Discord status"), trKey("Show the song you're listening to on your Discord profile.")),
+    ("refine", trKey("Refine in YouTube Music"), trKey("Improvements inside YouTube Music.")),
+    ("audio", trKey("Computer audio"), trKey("This computer's volume, outputs and equalizer in the apps.")),
 )
 PARTS = tuple(k for k, _, _ in PART_ROWS)
 TAILSCALE_TTL = 60
@@ -177,7 +180,37 @@ class Controller:
             "eq": (eng.get("enabled") if caps.get("eq_toggle") else None),
             "now": ((yt.get("now") or {}).get("title") or ""),
             "parts": _clean_parts(st.get("parts")),       # None: an older server without the switches
+            "language": self._server_language(info, headers),
         }
+
+    # ------------------------------------------------------------------ the language setting (shared with the apps)
+    def _server_language(self, info, headers):
+        got = self.http(self._base() + "/api/prefs", headers) or {}
+        v = got.get("language")
+        if v in i18n.SETTINGS:
+            if self.store.load().get("language") != v:
+                self.store.merge({"language": v})     # remembered for when the server isn't running
+            return v
+        return None
+
+    def language(self):
+        """The language setting: the running server's, else the one last seen ("auto" at first)."""
+        info = self.probe()
+        if info:
+            v = self._server_language(info, self._auth(info))
+            if v:
+                return v
+        v = self.store.load().get("language")
+        return v if v in i18n.SETTINGS else "auto"
+
+    def set_language(self, value):
+        """Choose a language ("auto" or a code): kept here, and by the server for every app when it runs."""
+        value = i18n.validate(value)
+        self.store.merge({"language": value})
+        info = self.probe()
+        if info:
+            self.post(self._base() + "/api/prefs", {"language": value}, self._auth(info))
+        return value
 
     # ------------------------------------------------------------------ parts (switches kept by the server)
     def parts(self):
@@ -199,7 +232,7 @@ class Controller:
 
     def addresses(self):
         """[(label, url)] the phone can use, best first: the running server's own list (what it really listens on),
-        or, while it isn't running, what these settings will give."""
+        or, while it isn't running, what these settings will give. The labels are English: tr() them where shown."""
         info = self.probe()
         if info:
             got = self.http(self._base() + "/api/connect?qr=0", self._auth(info))
@@ -216,16 +249,16 @@ class Controller:
             self._ts_seen = (time.monotonic(), self._tailscale_name(), self._ts())
         _, dns, ip = self._ts_seen
         if dns:
-            out.append(("Tailscale name", f"http://{dns}:{port}/"))
+            out.append((trKey("Tailscale name"), f"http://{dns}:{port}/"))
         if ip:
-            out.append(("Tailscale address", f"http://{ip}:{port}/"))
+            out.append((trKey("Tailscale address"), f"http://{ip}:{port}/"))
         if s["lan"]:
             lan = self._lan()
             if lan:
-                out.append(("Home network", f"http://{lan}:{port}{suffix}"))
+                out.append((trKey("Home network"), f"http://{lan}:{port}{suffix}"))
         for h in [x.strip() for x in s["allow_host"].replace(";", ",").split(",") if x.strip()]:
             out.append(("Cloudflare", f"https://{h}/"))
-        out.append(("This computer", f"http://127.0.0.1:{port}/"))
+        out.append((trKey("This computer"), f"http://127.0.0.1:{port}/"))
         return out
 
     def _tailscale_name(self):
@@ -461,18 +494,18 @@ class Controller:
         ok, msg = self._updater.update_self()
         if ok and self.is_running():
             self.restart()
-            msg = "Updated and restarted."
+            msg = tr("Updated and restarted.")
         return ok, msg
 
     # ------------------------------------------------------------------ log
     def log_text(self, lines=150):
         if self.has_systemd():
             rc, out = self.sh(["journalctl", "--user", "-u", SERVICE, "-n", str(lines), "--no-pager"], timeout=8)
-            return out if rc == 0 else out or "No log yet."
+            return out if rc == 0 else out or tr("No log yet.")
         try:
-            return "\n".join(self.log_path().read_text(errors="replace").splitlines()[-lines:]) or "No log yet."
+            return "\n".join(self.log_path().read_text(errors="replace").splitlines()[-lines:]) or tr("No log yet.")
         except OSError:
-            return "No log yet."
+            return tr("No log yet.")
 
     def hostname(self):
         return socket.gethostname()

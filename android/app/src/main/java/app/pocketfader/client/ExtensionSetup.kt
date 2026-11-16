@@ -92,9 +92,9 @@ fun ExtensionSetup(s: RemoteState, arrival: Arrival? = null) {
     val i = info
     if (i == null) {
         Text(
-            if (!checked) "Checking…"
-            else if (!s.online) "Can't reach the computer right now."
-            else "This computer's YTM Starcast is too old to help with this. Update it on the computer first.",
+            if (!checked) tr("Checking…")
+            else if (!s.online) tr("Can't reach the computer right now.")
+            else tr("This computer's YTM Starcast is too old to help with this. Update it on the computer first."),
             modifier = Modifier.arrive(arrival),
             style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -105,10 +105,10 @@ fun ExtensionSetup(s: RemoteState, arrival: Arrival? = null) {
     val good = MaterialTheme.colorScheme.primary
     Text(
         when {
-            ok -> "Connected" + if (i.version.isNotBlank()) " · version ${i.version}" else ""
-            i.connected -> "An older version is running in the browser. Reload it:"
-            i.everConnected -> "Not connected right now. Open YouTube Music in the computer's browser."
-            else -> "Not added to a browser yet. On the computer:"
+            ok -> if (i.version.isNotBlank()) tr("Connected · version {version}", "version" to i.version) else tr("Connected")
+            i.connected -> tr("An older version is running in the browser. Reload it:")
+            i.everConnected -> tr("Not connected right now. Open YouTube Music in the computer's browser.")
+            else -> tr("Not added to a browser yet. On the computer:")
         },
         modifier = Modifier.arrive(arrival),
         style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold,
@@ -116,31 +116,33 @@ fun ExtensionSetup(s: RemoteState, arrival: Arrival? = null) {
     )
     val open: (JSONObject) -> Unit = { body -> scope.launch { Remote.notify(Remote.openOnComputer(body)) } }
     if (i.connected && i.outdated) {
-        Step(1, "Reload the extension", Modifier.arrive(arrival)) {
-            Hint("Open the extensions page in the browser that plays YouTube Music, find YTM Starcast (an older copy may still be called \"Pocketfader\") and press its reload button. If a greyed-out YTM Starcast stays beside it afterwards, remove that one.")
+        Step(1, tr("Reload the extension"), Modifier.arrive(arrival)) {
+            Hint(tr("Open the extensions page in the browser that plays YouTube Music, find YTM Starcast (an older copy may still be called \"Pocketfader\") and press its reload button. If a greyed-out YTM Starcast stays beside it afterwards, remove that one."))
             for (b in i.browsers) {
                 OutlinedButton(onClick = { open(JSONObject().put("what", "page").put("browser", b.id)) }, enabled = s.online) {
-                    Text("Open in ${b.name}")
+                    Text(tr("Open in {browser}", "browser" to b.name))
                 }
             }
         }
-        Step(2, "Refresh the YouTube Music tab", Modifier.arrive(arrival)) {}
+        Step(2, tr("Refresh the YouTube Music tab"), Modifier.arrive(arrival)) {}
         return
     }
-    Step(1, "Open the browser's extensions page", Modifier.arrive(arrival)) {
+    Step(1, tr("Open the browser's extensions page"), Modifier.arrive(arrival)) {
         for (b in i.browsers) {
             OutlinedButton(onClick = { open(JSONObject().put("what", "page").put("browser", b.id)) }, enabled = s.online) {
-                Text("Open in ${b.name}")
+                Text(tr("Open in {browser}", "browser" to b.name))
             }
         }
         Hint(
-            if (i.browsers.isNotEmpty()) "Opens it on the computer. Or type its address into the address bar: " +
-                i.browsers.joinToString(", ") { it.page } + "."
-            else "Type chrome://extensions (Brave: brave://extensions, Edge: edge://extensions) into the computer's browser.",
+            if (i.browsers.isNotEmpty()) {
+                tr("Opens it on the computer. Or type its address into the address bar: {pages}.", "pages" to i.browsers.joinToString(", ") { it.page })
+            } else {
+                tr("Type chrome://extensions (Brave: brave://extensions, Edge: edge://extensions) into the computer's browser.")
+            },
         )
     }
-    Step(2, "Turn on Developer mode", Modifier.arrive(arrival)) { Hint("The switch is in the top-right corner of that page.") }
-    Step(3, "Click \"Load unpacked\" and choose this folder", Modifier.arrive(arrival)) {
+    Step(2, tr("Turn on Developer mode"), Modifier.arrive(arrival)) { Hint(tr("The switch is in the top-right corner of that page.")) }
+    Step(3, tr("Click \"Load unpacked\" and choose this folder"), Modifier.arrive(arrival)) {
         SelectionContainer {
             Text(
                 i.folder, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace,
@@ -149,14 +151,14 @@ fun ExtensionSetup(s: RemoteState, arrival: Arrival? = null) {
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = { clipboard.setText(AnnotatedString(i.folder)); Remote.notify("Copied") }) { Text("Copy") }
-            OutlinedButton(onClick = { open(JSONObject().put("what", "folder")) }, enabled = s.online) { Text("Show it on the computer") }
+            OutlinedButton(onClick = { clipboard.setText(AnnotatedString(i.folder)); Remote.notify(tr("Copied")) }) { Text(tr("Copy")) }
+            OutlinedButton(onClick = { open(JSONObject().put("what", "folder")) }, enabled = s.online) { Text(tr("Show it on the computer")) }
         }
-        Hint("You can also drag that folder onto the extensions page.")
+        Hint(tr("You can also drag that folder onto the extensions page."))
     }
-    Step(4, "Open YouTube Music", Modifier.arrive(arrival)) { Hint("Open music.youtube.com in that browser, or refresh its tab if it is already open.") }
+    Step(4, tr("Open YouTube Music"), Modifier.arrive(arrival)) { Hint(tr("Open music.youtube.com in that browser, or refresh its tab if it is already open.")) }
     Text(
-        if (ok) "✓ The extension is connected." else "Waiting for the extension…",
+        if (ok) tr("✓ The extension is connected.") else tr("Waiting for the extension…"),
         modifier = Modifier.arrive(arrival),
         style = MaterialTheme.typography.bodyMedium,
         color = if (ok) good else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -201,15 +203,15 @@ fun ExtensionPrompt(modifier: Modifier = Modifier, onOpen: () -> Unit) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 StarcastTile(36.dp)
                 Text(
-                    "Add the browser extension", Modifier.padding(start = 12.dp), style = MaterialTheme.typography.titleMedium,
+                    tr("Add the browser extension"), Modifier.padding(start = 12.dp), style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
             Text(
-                "YTM Starcast needs its extension in the computer's browser to see and control YouTube Music.",
+                tr("YTM Starcast needs its extension in the computer's browser to see and control YouTube Music."),
                 style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
-            FilledTonalButton(onClick = onOpen) { Text("Show me how") }
+            FilledTonalButton(onClick = onOpen) { Text(tr("Show me how")) }
         }
     }
 }

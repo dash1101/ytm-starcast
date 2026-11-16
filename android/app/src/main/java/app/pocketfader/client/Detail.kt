@@ -88,5 +88,5 @@ fun DetailHost(modifier: Modifier = Modifier) {
 /** For when there's no YouTube Music tab: asks the computer to open it in its browser (the music then starts from here). */
 @Composable
 fun OpenYtmButton(modifier: Modifier = Modifier) {
-    PageHeaderTonal(Icons.Filled.OpenInNew, "Open YouTube Music on the computer", onClick = { Remote.openYtm() }, modifier = modifier)
+    PageHeaderTonal(Icons.Filled.OpenInNew, tr("Open YouTube Music on the computer"), onClick = { Remote.openYtm() }, modifier = modifier)
 }

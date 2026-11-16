@@ -11,7 +11,7 @@
     <span class="logo" aria-hidden="true"><canvas id="logo" width="52" height="52"></canvas></span>
     <div class="name">
       <h1>YTM Starcast</h1>
-      <span>YouTube Music companion</span>
+      <span data-tr>YouTube Music companion</span>
     </div>
     <span id="version" hidden></span>
   </header>
@@ -35,29 +35,31 @@
   </section>
 
   <section class="card list" id="parts" hidden>
-    <div class="sec">Parts</div>
+    <div class="sec" data-tr>Parts</div>
     <label class="row">
-      <span class="txt">YouTube Music remote<small>Search, your library and the queue from your phone</small></span>
+      <span class="txt"><span data-tr>YouTube Music remote</span><small data-tr>Search, your library and the queue from your phone</small></span>
       <span class="switch"><input type="checkbox" role="switch" data-part="remote" checked disabled><i></i></span>
     </label>
     <label class="row">
-      <span class="txt">Discord status<small id="discord">Show what you play on your Discord profile</small></span>
+      <span class="txt"><span data-tr>Discord status</span><small id="discord">Show what you play on your Discord profile</small></span>
       <span class="switch"><input type="checkbox" role="switch" data-part="discord" checked disabled><i></i></span>
     </label>
     <label class="row">
-      <span class="txt">Refine<small>Improvements inside YouTube Music</small></span>
+      <span class="txt">Refine<small data-tr>Improvements inside YouTube Music</small></span>
       <span class="switch"><input type="checkbox" role="switch" data-part="refine" checked disabled><i></i></span>
     </label>
   </section>
 
   <details class="card" id="dc" hidden>
-    <summary>Discord status options</summary>
+    <summary data-tr>Discord status options</summary>
     <div id="dcPanel"></div>
   </details>
 
   <footer>
-    <a id="open" class="filled" href="http://127.0.0.1:8777/" target="_blank" rel="noopener">Open YTM Starcast</a>
+    <a id="open" class="filled" href="http://127.0.0.1:8777/" target="_blank" rel="noopener" data-tr>Open YTM Starcast</a>
   </footer>
+  <script src="i18n_strings.js"></script>
+  <script src="i18n.js"></script>
   <script src="logo.js"></script>
   <script src="discord_ui.js"></script>
   <script src="popup.js"></script>

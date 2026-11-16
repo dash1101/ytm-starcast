@@ -132,9 +132,9 @@ object Comments {
     }
 
     fun friendly(e: Throwable): String = when (e) {
-        is ReCaptchaException -> "YouTube wants a captcha from this phone right now. Try again later."
-        is java.io.IOException -> "Couldn't reach YouTube. Check the phone's internet connection."
-        else -> "Couldn't load the comments" + (e.message?.takeIf { it.isNotBlank() }?.let { " ($it)" } ?: ".")
+        is ReCaptchaException -> tr("YouTube wants a captcha from this phone right now. Try again later.")
+        is java.io.IOException -> tr("Couldn't reach YouTube. Check the phone's internet connection.")
+        else -> e.message?.takeIf { it.isNotBlank() }?.let { tr("Couldn't load the comments ({error})", "error" to it) } ?: tr("Couldn't load the comments.")
     }
 }
 
@@ -267,12 +267,12 @@ private fun Spinner() {
  *  starts glide in one after another. */
 fun LazyListScope.commentItems(ui: CommentsUi, scope: CoroutineScope, arrival: Arrival? = null) {
     when {
-        !ui.usable -> item(key = "c-none") { CommentsNote("Comments show for songs and videos from YouTube Music, not for files on this phone.") }
-        ui.disabled -> item(key = "c-off") { CommentsNote("Comments are turned off for this one.") }
+        !ui.usable -> item(key = "c-none") { CommentsNote(tr("Comments show for songs and videos from YouTube Music, not for files on this phone.")) }
+        ui.disabled -> item(key = "c-off") { CommentsNote(tr("Comments are turned off for this one.")) }
         else -> {
             if (ui.count > 0) item(key = "c-count") {
                 Text(
-                    "%,d comments".format(ui.count),
+                    trn("{count} comment", "{count} comments", ui.count, "count" to "%,d".format(ui.count)),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.arrive(arrival).padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 4.dp),
@@ -288,7 +288,7 @@ fun LazyListScope.commentItems(ui: CommentsUi, scope: CoroutineScope, arrival: A
                         OutlinedButton(onClick = {
                             ui.error = null
                             scope.launch { if (ui.loaded) ui.loadMore() else ui.loadFirst() }
-                        }) { Text("Try again") }
+                        }) { Text(tr("Try again")) }
                     }
                 }
                 ui.next != null -> item(key = "c-more") {
@@ -298,7 +298,7 @@ fun LazyListScope.commentItems(ui: CommentsUi, scope: CoroutineScope, arrival: A
                 }
                 // the first page is looked up a moment after the song starts (or at once, when the tab is opened)
                 !ui.loaded -> item(key = "c-loading") { Spinner() }
-                ui.items.isEmpty() -> item(key = "c-empty") { CommentsNote("No comments yet.") }
+                ui.items.isEmpty() -> item(key = "c-empty") { CommentsNote(tr("No comments yet.")) }
             }
         }
     }
@@ -322,7 +322,7 @@ private fun CommentBody(c: Comment, reply: Boolean, footer: @Composable () -> Un
             if (c.pinned) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Filled.PushPin, null, Modifier.size(12.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(" Pinned", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(" " + tr("Pinned"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -337,7 +337,7 @@ private fun CommentBody(c: Comment, reply: Boolean, footer: @Composable () -> Un
                 )
                 if (c.verified) {
                     Spacer(Modifier.width(4.dp))
-                    Icon(Icons.Filled.CheckCircle, "Verified", Modifier.size(12.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Icon(Icons.Filled.CheckCircle, tr("Verified"), Modifier.size(12.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 if (c.time.isNotBlank()) {
                     Text(
@@ -354,11 +354,11 @@ private fun CommentBody(c: Comment, reply: Boolean, footer: @Composable () -> Un
                 modifier = Modifier.padding(top = 2.dp).clickable { expanded = !expanded },
             )
             Row(Modifier.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                Icon(Icons.Outlined.ThumbUp, "Likes", Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                Icon(Icons.Outlined.ThumbUp, tr("Likes"), Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 if (c.likes.isNotBlank()) Text(c.likes, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 if (c.hearted) {
                     Spacer(Modifier.width(8.dp))
-                    Icon(Icons.Filled.Favorite, "Hearted by the creator", Modifier.size(14.dp), tint = MaterialTheme.colorScheme.error)
+                    Icon(Icons.Filled.Favorite, tr("Hearted by the creator"), Modifier.size(14.dp), tint = MaterialTheme.colorScheme.error)
                 }
             }
             footer()
@@ -373,7 +373,7 @@ private fun CommentRow(c: Comment, ui: CommentsUi, scope: CoroutineScope, modifi
         CommentBody(c, reply = false) {
             if (c.replyCount > 0 && c.replies != null) {
                 TextButton(onClick = { ui.toggleReplies(c, scope) }, modifier = Modifier.height(36.dp)) {
-                    Text(if (r != null) "Hide replies" else if (c.replyCount == 1) "1 reply" else "${c.replyCount} replies")
+                    Text(if (r != null) tr("Hide replies") else trn("{n} reply", "{n} replies", c.replyCount))
                 }
             }
         }
@@ -386,7 +386,7 @@ private fun CommentRow(c: Comment, ui: CommentsUi, scope: CoroutineScope, modifi
                     modifier = Modifier.padding(start = 60.dp, end = 16.dp, top = 6.dp),
                 )
                 r.next != null -> TextButton(onClick = { ui.moreReplies(c, scope) }, modifier = Modifier.padding(start = 48.dp)) {
-                    Text("More replies")
+                    Text(tr("More replies"))
                 }
             }
         }

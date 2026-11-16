@@ -48,6 +48,7 @@ lives in YouTube Music's own page rather than in a separate panel:
 | Live lyrics (item 1 below): word by word, in YouTube Music's own Lyrics tab, or in a window that can be moved, resized, pinned and kept above other windows; they follow you out of the player | Lyrics tab, sidebar, ✦ menu → Lyrics window | Live lyrics, Lyrics follow you, Above other windows when you switch tabs |
 | Speed from the keyboard: Shift+. faster, Shift+, slower | keyboard | Richer speed menu |
 | YTM Starcast's switches: the YouTube Music remote, Discord status and Refine itself, with a line saying what Discord status is doing | All settings → YTM Starcast | — |
+| Language: Refine's own words in the language chosen for YTM Starcast (shared with the apps; Automatic follows the browser) | All settings → YTM Starcast | — |
 | Discord status: on or off and every option, with a preview of the card | the Discord button, All settings → Discord status | — |
 | The computer's sound: volume, output, and the built-in equalizer (on/off, presets, bass, mid, treble), as in YTM Starcast's mixer | All settings → Computer sound | Computer audio (in the apps) |
 

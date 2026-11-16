@@ -85,9 +85,9 @@ fun withAccent(base: ColorScheme, accent: Color, dark: Boolean): ColorScheme {
 }
 
 private val presets = listOf(
-    "Violet" to 0xFF8B5CF6.toInt(), "Blue" to 0xFF3B82F6.toInt(), "Teal" to 0xFF14B8A6.toInt(),
-    "Green" to 0xFF22C55E.toInt(), "Amber" to 0xFFF59E0B.toInt(), "Orange" to 0xFFF97316.toInt(),
-    "Red" to 0xFFEF4444.toInt(), "Pink" to 0xFFEC4899.toInt(), "White" to 0xFFFFFFFF.toInt(), "Black" to 0xFF000000.toInt(),
+    trKey("Violet") to 0xFF8B5CF6.toInt(), trKey("Blue") to 0xFF3B82F6.toInt(), trKey("Teal") to 0xFF14B8A6.toInt(),
+    trKey("Green") to 0xFF22C55E.toInt(), trKey("Amber") to 0xFFF59E0B.toInt(), trKey("Orange") to 0xFFF97316.toInt(),
+    trKey("Red") to 0xFFEF4444.toInt(), trKey("Pink") to 0xFFEC4899.toInt(), trKey("White") to 0xFFFFFFFF.toInt(), trKey("Black") to 0xFF000000.toInt(),
 )
 
 /**
@@ -101,21 +101,20 @@ fun AccentPicker(prefs: Prefs, modifier: Modifier = Modifier) {
     val isPreset = presets.any { it.second == chosen }
     var custom by remember { mutableStateOf(chosen != 0 && !isPreset) }
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Accent colour", style = MaterialTheme.typography.bodyLarge)
+        Text(tr("Accent colour"), style = MaterialTheme.typography.bodyLarge)
         Text(
-            "Used for highlights, the lyric being sung, and buttons. A chosen colour replaces Album colours. It's adjusted " +
-                "automatically if it would be hard to see on your theme.",
+            tr("Used for highlights, the lyric being sung, and buttons. A chosen colour replaces Album colours. It's adjusted automatically if it would be hard to see on your theme."),
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Row(
             Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically,
         ) {
-            FilterChip(colors = refineChipColors(), border = refineChipBorder(chosen == 0), selected = chosen == 0, shape = chipShape(chosen == 0), onClick = { custom = false; Settings.update { it.copy(accent = 0) } }, label = { Text("Auto") })
+            FilterChip(colors = refineChipColors(), border = refineChipBorder(chosen == 0), selected = chosen == 0, shape = chipShape(chosen == 0), onClick = { custom = false; Settings.update { it.copy(accent = 0) } }, label = { Text(tr("Auto")) })
             presets.forEach { (name, argb) ->
-                Swatch(Color(argb), name, selected = chosen == argb) { custom = false; Settings.update { it.copy(accent = argb) } }
+                Swatch(Color(argb), tr(name), selected = chosen == argb) { custom = false; Settings.update { it.copy(accent = argb) } }
             }
-            FilterChip(colors = refineChipColors(), border = refineChipBorder(custom), selected = custom, shape = chipShape(custom), onClick = { custom = true; if (chosen == 0) Settings.update { it.copy(accent = presets[0].second) } }, label = { Text("Custom") })
+            FilterChip(colors = refineChipColors(), border = refineChipBorder(custom), selected = custom, shape = chipShape(custom), onClick = { custom = true; if (chosen == 0) Settings.update { it.copy(accent = presets[0].second) } }, label = { Text(tr("Custom")) })
         }
         if (chosen != 0) {
             val raw = Color(chosen)
@@ -123,8 +122,10 @@ fun AccentPicker(prefs: Prefs, modifier: Modifier = Modifier) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Box(Modifier.size(28.dp).clip(CircleShape).background(shown).border(1.dp, MaterialTheme.colorScheme.outline, CircleShape))
                 Text(
-                    if (contrast(raw, bg) < 4.5f) "Shown a little ${if (bg.luminance() < 0.5f) "lighter" else "darker"} so it stays visible on this theme."
-                    else "Looks good on this theme.",
+                    if (contrast(raw, bg) < 4.5f) {
+                        if (bg.luminance() < 0.5f) tr("Shown a little lighter so it stays visible on this theme.")
+                        else tr("Shown a little darker so it stays visible on this theme.")
+                    } else tr("Looks good on this theme."),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -154,11 +155,11 @@ private fun CustomColor(argb: Int) {
         Settings.update { it.copy(accent = c) }
     }
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text("Hue", style = MaterialTheme.typography.labelMedium)
+        Text(tr("Hue"), style = MaterialTheme.typography.labelMedium)
         Slider(value = hsv[0], onValueChange = { apply(it, hsv[1].coerceAtLeast(0.05f), hsv[2].coerceAtLeast(0.05f)) }, valueRange = 0f..360f)
-        Text("Colourfulness", style = MaterialTheme.typography.labelMedium)
+        Text(tr("Colourfulness"), style = MaterialTheme.typography.labelMedium)
         Slider(value = hsv[1], onValueChange = { apply(hsv[0], it, hsv[2]) }, valueRange = 0f..1f)
-        Text("Brightness", style = MaterialTheme.typography.labelMedium)
+        Text(tr("Brightness"), style = MaterialTheme.typography.labelMedium)
         Slider(value = hsv[2], onValueChange = { apply(hsv[0], hsv[1], it) }, valueRange = 0f..1f)
         OutlinedTextField(
             value = hex,
@@ -167,7 +168,7 @@ private fun CustomColor(argb: Int) {
                 hex = clean
                 if (clean.length == 6) Settings.update { it.copy(accent = (0xFF000000 or clean.toLong(16)).toInt()) }
             },
-            label = { Text("Hex") }, prefix = { Text("#") }, singleLine = true,
+            label = { Text(tr("Hex")) }, prefix = { Text("#") }, singleLine = true,
             modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
         )
     }

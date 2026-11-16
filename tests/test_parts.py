@@ -201,7 +201,7 @@ class PartsApiTests(Base):
             validate_parts("remote")
 
     def test_prefs_route_shows_the_parts_and_checks_them(self):
-        self.assertEqual(self.req("GET", "/api/prefs")[1], {"parts": ALL_ON})
+        self.assertEqual(self.req("GET", "/api/prefs")[1], {"parts": ALL_ON, "language": "auto"})
         code, r, _ = self.req("POST", "/api/prefs", {"pauseOthers": True, "parts": {"refine": False}})
         self.assertEqual(code, 200)
         self.assertEqual((r["pauseOthers"], r["parts"]), (True, {**ALL_ON, "refine": False}))
@@ -250,7 +250,7 @@ class RemoteOffTests(Base):
     def test_the_extensions_reports_and_lyrics_keep_working(self):
         code, r, _ = self.req("POST", "/ext/state", {"instance": "A", "now": {"title": "Song", "playing": True}},
                               {"Origin": YTM})
-        self.assertEqual((code, r), (200, {"ok": True, "cfg": {"remote": False, "discord": True, "refine": True}}))
+        self.assertEqual((code, r), (200, {"ok": True, "cfg": {"remote": False, "discord": True, "refine": True, "lang": "auto"}}))
         st = self.req("GET", "/api/ytm/state")[1]
         self.assertEqual((st["source"], st["now"]["title"]), ("ytm", "Song"))
         code, r, _ = self.req("GET", "/ext/lyrics?title=Song&artist=A")
@@ -284,7 +284,7 @@ class ExtensionWireTests(Base):
         self.app.bridge.push_state({"instance": "tab-1", "now": {}})     # the tab has reported since the start
         for path in ("/ext/poll?i=tab-1", "/ext/poll"):     # with and without a tab name (extensions before 1.14)
             code, r, res = self.req("GET", path, headers={"Origin": YTM})
-            self.assertEqual((code, r), (200, {"cfg": {"remote": True, "discord": True, "refine": True}}), path)
+            self.assertEqual((code, r), (200, {"cfg": {"remote": True, "discord": True, "refine": True, "lang": "auto"}}), path)
             self.assertNotIn("id", r)          # older extensions only act on a reply with an id: they ignore this
             self.assertEqual(res.getheader("Access-Control-Allow-Origin"), YTM)
 
@@ -293,7 +293,7 @@ class ExtensionWireTests(Base):
         t0 = time.time()
         code, r, _ = self.req("GET", "/ext/poll?i=A", headers={"Origin": YTM})
         self.assertLess(time.time() - t0, 2.0)                  # not 25 s later
-        self.assertEqual((code, r), (200, {"cfg": {"remote": True, "discord": True, "refine": True}, "resend": True}))
+        self.assertEqual((code, r), (200, {"cfg": {"remote": True, "discord": True, "refine": True, "lang": "auto"}, "resend": True}))
         self.assertTrue(self.app.bridge.connected)
         self.short_polls()
         self.assertNotIn("resend", self.req("GET", "/ext/poll?i=A")[1])      # once
@@ -308,7 +308,7 @@ class ExtensionWireTests(Base):
         self.assertEqual(code, 200)
         self.assertEqual((cmd["type"], cmd["action"]), ("transport", "next"))
         self.assertTrue(cmd["id"])
-        self.assertEqual(cmd["cfg"], {"remote": True, "discord": True, "refine": True})
+        self.assertEqual(cmd["cfg"], {"remote": True, "discord": True, "refine": True, "lang": "auto"})
         self.assertEqual(self.req("POST", "/ext/result", {"id": cmd["id"], "data": {"ok": True}}, {"Origin": YTM})[0], 200)
         t.join(5)
         self.assertEqual(got["r"][:2], (200, {"ok": True}))
@@ -327,7 +327,7 @@ class ExtensionWireTests(Base):
         t.join(5)
         self.assertFalse(t.is_alive())
         self.assertLess(got["at"] - start, 2.0)                 # not 25 s later
-        self.assertEqual(got["r"], {"cfg": {"remote": True, "discord": True, "refine": False}})
+        self.assertEqual(got["r"], {"cfg": {"remote": True, "discord": True, "refine": False, "lang": "auto"}})
 
     def test_audio_changes_do_not_wake_the_tabs(self):
         before = self.app.bridge._wake
@@ -340,10 +340,10 @@ class ExtensionWireTests(Base):
     def test_state_reply_carries_the_switches(self):
         body = {"instance": "A", "now": {"title": "t", "playing": True}, "queue": [], "ts": 1}
         self.assertEqual(self.req("POST", "/ext/state", body, {"Origin": YTM})[1],
-                         {"ok": True, "cfg": {"remote": True, "discord": True, "refine": True}})
+                         {"ok": True, "cfg": {"remote": True, "discord": True, "refine": True, "lang": "auto"}})
         self.req("POST", "/api/parts", {"discord": False, "audio": False})
         self.assertEqual(self.req("POST", "/ext/state", body, {"Origin": YTM})[1]["cfg"],
-                         {"remote": True, "discord": False, "refine": True})    # never "audio"
+                         {"remote": True, "discord": False, "refine": True, "lang": "auto"})    # never "audio"
 
     def test_odd_tab_ids_in_state_are_tolerated(self):
         for inst in ({"x": 1}, ["a"], 5, "", None):
@@ -368,7 +368,7 @@ class ExtensionWireTests(Base):
         code, r, _ = self.req("GET", "/ext/status", headers={"Origin": "chrome-extension://abcdefghijklmnop"})
         self.assertEqual(code, 200)
         self.assertEqual(r, {"app": "YTM Starcast", "version": __version__, "parts": ALL_ON,
-                             "discord": {"headline": "showing", "visible": True, "state": "connected"}})
+                             "discord": {"headline": "showing", "visible": True, "state": "connected"}, "language": "auto"})
         self.req("POST", "/api/parts", {"discord": False, "remote": False})
         r = self.req("GET", "/ext/status")[1]
         self.assertEqual(r["parts"], {**ALL_ON, "discord": False, "remote": False})

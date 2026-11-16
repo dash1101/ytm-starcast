@@ -43,18 +43,18 @@ fun DownloadsInProgress(modifier: Modifier = Modifier, shown: Int = 5) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val all = sum.count + sum.finished
                 Text(
-                    if (all <= 1) "Downloading 1 song" else "Downloading ${sum.finished + 1} of $all",
+                    if (all <= 1) tr("Downloading 1 song") else tr("Downloading {done} of {total}", "done" to sum.finished + 1, "total" to all),
                     Modifier.weight(1f), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold,
                 )
                 if (sum.count > sum.running) {
-                    TextButton(onClick = { Downloads.cancelPending() }) { Text("Cancel the rest") }
+                    TextButton(onClick = { Downloads.cancelPending() }) { Text(tr("Cancel the rest")) }
                 }
             }
             LinearProgressIndicator(progress = { sum.fraction }, modifier = Modifier.fillMaxWidth().height(6.dp), strokeCap = StrokeCap.Round)
             Text(
                 listOfNotNull(
-                    if (sum.totalBytes > 0) formatBytes(sum.doneBytes) + " of about " + formatBytes(sum.totalBytes) else null,
-                    if (sum.bps > 0) formatSpeed(sum.bps) else "Starting…",
+                    if (sum.totalBytes > 0) tr("{done} of about {total}", "done" to formatBytes(sum.doneBytes), "total" to formatBytes(sum.totalBytes)) else null,
+                    if (sum.bps > 0) formatSpeed(sum.bps) else tr("Starting…"),
                     sum.secondsLeft?.let { formatLeft(it) },
                 ).joinToString(" · "),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -62,13 +62,13 @@ fun DownloadsInProgress(modifier: Modifier = Modifier, shown: Int = 5) {
             for (d in list.take(shown)) DownloadRow(d)
             if (list.size > shown) {
                 Text(
-                    "and ${list.size - shown} more waiting",
+                    trn("and {n} more waiting", "and {n} more waiting", list.size - shown),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             if (Settings.prefs.value.dlWifiOnly && Downloads.metered()) {
                 Text(
-                    "Automatic downloads wait for Wi-Fi; songs you asked for download now.",
+                    tr("Automatic downloads wait for Wi-Fi; songs you asked for download now."),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -91,10 +91,10 @@ private fun DownloadRow(d: DlProgress) {
             }
             Text(
                 when {
-                    d.started == 0L -> "Waiting"
-                    d.total > 0 -> "${(d.fraction * 100).toInt()}% · ${formatBytes(d.done)} of ${formatBytes(d.total)}" +
+                    d.started == 0L -> tr("Waiting")
+                    d.total > 0 -> "${(d.fraction * 100).toInt()}% · " + tr("{done} of {total}", "done" to formatBytes(d.done), "total" to formatBytes(d.total)) +
                         if (d.bps > 0) " · " + formatSpeed(d.bps) else ""
-                    else -> "Finding the audio…"
+                    else -> tr("Finding the audio…")
                 },
                 style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

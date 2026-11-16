@@ -433,10 +433,11 @@ fun WavySeekBar(
         remember { mutableStateOf(0f) }
     }
     val v = value.coerceIn(0f, 1f)
+    val label = tr("Seek")
     Canvas(
         modifier.fillMaxWidth().height(40.dp)
             .semantics {
-                contentDescription = "Seek"
+                contentDescription = label
                 progressBarRangeInfo = ProgressBarRangeInfo(v, 0f..1f)
             }
             .pointerInput(enabled) {

@@ -47,7 +47,7 @@ class PfApi(private val cfg: ServerConfig) {
             val code = conn.responseCode
             if (code != 200) {
                 val msg = conn.errorStream?.bufferedReader()?.use { it.readText() }.orEmpty()
-                throw ApiException(code, runCatching { JSONObject(msg).optString("error") }.getOrNull()?.ifBlank { null } ?: "Download failed ($code)")
+                throw ApiException(code, runCatching { JSONObject(msg).optString("error") }.getOrNull()?.ifBlank { null } ?: tr("Download failed ({code})", "code" to code))
             }
             dest.parentFile?.mkdirs()
             val tmp = java.io.File(dest.path + ".part")
@@ -82,22 +82,22 @@ class PfApi(private val cfg: ServerConfig) {
             }
             val code = conn.responseCode
             if (code in 300..399) {
-                throw ApiException(code, "Sign-in required. Add a Cloudflare Access service token in the connection settings.")
+                throw ApiException(code, tr("Sign-in required. Add a Cloudflare Access service token in the connection settings."))
             }
             val stream = if (code >= 400) conn.errorStream else conn.inputStream
             val text = stream?.bufferedReader()?.use { it.readText() }.orEmpty()
-            if (code == 401) throw ApiException(code, "This server needs an access token.")
+            if (code == 401) throw ApiException(code, tr("This server needs an access token."))
             if (code == 403 && text.trimStart().startsWith("<")) {
-                throw ApiException(code, "Cloudflare Access rejected the service token.")
+                throw ApiException(code, tr("Cloudflare Access rejected the service token."))
             }
             val json = try {
                 if (text.isBlank()) JSONObject() else JSONObject(text)
             } catch (e: JSONException) {
-                throw ApiException(code, "That address didn't answer like a YTM Starcast server.")
+                throw ApiException(code, tr("That address didn't answer like a YTM Starcast server."))
             }
             // replies that carry readable words (e.g. the Discord status while the old YTM Beacon app runs) show them;
             // the others carry only a code, which callers turn into words themselves
-            if (code >= 400) throw ApiException(code, json.optString("message").ifBlank { json.optString("error") }.ifBlank { "Server error ($code)" }, json)
+            if (code >= 400) throw ApiException(code, json.optString("message").ifBlank { json.optString("error") }.ifBlank { tr("Server error ({code})", "code" to code) }, json)
             return json
         } finally {
             conn.disconnect()
@@ -107,10 +107,10 @@ class PfApi(private val cfg: ServerConfig) {
 
 /** Human-readable text for whatever went wrong. */
 fun Throwable.friendly(): String = when (this) {
-    is ApiException -> if (message == "part_off") "That part of YTM Starcast is switched off. Turn it on in Settings → Parts." else message.orEmpty()
-    is java.net.UnknownHostException -> "Can't find that computer. Check the address (and that Tailscale is on, if you use it)."
-    is java.net.SocketTimeoutException -> "The computer didn't answer in time."
-    is java.net.ConnectException -> "Couldn't connect. Is YTM Starcast running and reachable from this phone?"
-    is javax.net.ssl.SSLException -> "Secure connection failed (${message.orEmpty().take(80)})."
+    is ApiException -> if (message == "part_off") tr("That part of YTM Starcast is switched off. Turn it on in Settings → Parts.") else message.orEmpty()
+    is java.net.UnknownHostException -> tr("Can't find that computer. Check the address (and that Tailscale is on, if you use it).")
+    is java.net.SocketTimeoutException -> tr("The computer didn't answer in time.")
+    is java.net.ConnectException -> tr("Couldn't connect. Is YTM Starcast running and reachable from this phone?")
+    is javax.net.ssl.SSLException -> tr("Secure connection failed ({error}).", "error" to message.orEmpty().take(80))
     else -> message ?: javaClass.simpleName
 }

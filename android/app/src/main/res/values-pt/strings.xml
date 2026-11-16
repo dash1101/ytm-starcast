@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Built by tools/i18n.py from i18n/*.json; don't edit it -->
+<resources>
+    <string name="widget_desc_now_wide">O que está tocando: capa, título, progresso, controles e volume</string>
+    <string name="widget_desc_now_bar">Uma barra fina do que está tocando, com controles</string>
+    <string name="widget_desc_cover">A capa do que está tocando, com tocar e pausar</string>
+    <string name="widget_desc_volume">O volume de onde a música está tocando</string>
+    <string name="widget_desc_actions">Ações rápidas: estou com sorte, timer, pausar outros players, alternar entre celular e computador</string>
+    <string name="widget_name_now_wide">Tocando agora</string>
+    <string name="widget_name_now_bar">Tocando agora (fino)</string>
+    <string name="widget_name_cover">Capa</string>
+    <string name="widget_name_actions">Ações rápidas</string>
+    <string name="widget_desc_beacon">Se sua música está aparecendo no Discord, com uma chave e ocultar por uma hora</string>
+    <string name="widget_desc_upnext">As próximas músicas da fila; toque em uma para tocá-la</string>
+    <string name="widget_name_beacon">Status do Discord</string>
+    <string name="widget_name_upnext">A seguir</string>
+</resources>

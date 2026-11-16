@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Built by tools/i18n.py from i18n/*.json; don't edit it -->
+<resources>
+    <string name="widget_desc_now_wide">Lo que suena: portada, título, progreso, controles y volumen</string>
+    <string name="widget_desc_now_bar">Una barra fina de reproducción con controles</string>
+    <string name="widget_desc_cover">La portada de lo que suena, con reproducir y pausar</string>
+    <string name="widget_desc_volume">El volumen de donde suena la música</string>
+    <string name="widget_desc_actions">Acciones rápidas: voy a tener suerte, temporizador, pausar otros reproductores, cambiar entre teléfono y equipo</string>
+    <string name="widget_name_now_wide">Reproduciendo ahora</string>
+    <string name="widget_name_now_bar">Reproduciendo ahora (compacto)</string>
+    <string name="widget_name_cover">Portada</string>
+    <string name="widget_name_volume">Volumen</string>
+    <string name="widget_name_actions">Acciones rápidas</string>
+    <string name="widget_desc_beacon">Si tu música se muestra en Discord, con un interruptor y la opción de ocultarla una hora</string>
+    <string name="widget_desc_upnext">Las próximas canciones de la cola; toca una para reproducirla</string>
+    <string name="widget_name_beacon">Estado de Discord</string>
+    <string name="widget_name_upnext">A continuación</string>
+</resources>

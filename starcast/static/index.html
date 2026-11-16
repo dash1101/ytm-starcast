@@ -417,6 +417,8 @@
   .setrow { display:flex; align-items:center; justify-content:space-between; gap:16px;
             padding:14px 16px; background:var(--card); border-radius:var(--r-sm); margin-bottom:10px; }
   .setrow .k { font-weight:600; } .setrow .d { font-size:12.5px; color:var(--dim); margin-top:2px; }
+  .setrow .langsel { flex:none; height:38px; max-width:46%; border-radius:var(--r-sm); border:1px solid var(--line);
+    background:var(--card2); color:var(--text); padding:0 10px; font:inherit; }
   .setrow .val { color:var(--dim); font-size:13px; font-variant-numeric:tabular-nums; }
   .setrow .srctag { flex:none; font-size:11.5px; font-weight:620; color:var(--dim); background:var(--card2);
                     border-radius:var(--r-full); padding:3px 10px; white-space:nowrap; }
@@ -1001,21 +1003,21 @@
     <div class="brand"><img src="/icon.svg" alt=""><span class="word">Starcast</span></div>
     <div class="navtabs">
     <div id="navpill"></div>
-    <button class="navbtn sel" data-view="playing"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-2 14.5v-9l6 4.5z"/></svg><span>Playing</span></button>
-    <button class="navbtn" data-view="queue"><svg viewBox="0 0 24 24"><path d="M15 6H3v2h12zm0 4H3v2h12zM3 16h8v-2H3zM17 6v8.18A3 3 0 1019 17V8h3V6z"/></svg><span>Queue</span></button>
-    <button class="navbtn" data-view="lyrics" id="nav-lyrics"><svg viewBox="0 0 24 24"><path d="M4 5h16v2H4zm0 4h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg><span>Lyrics</span></button>
-    <button class="navbtn" data-view="search"><svg viewBox="0 0 24 24"><path d="M10 4a6 6 0 104.47 10.03l4.75 4.75 1.41-1.41-4.75-4.75A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z"/></svg><span>Search</span></button>
+    <button class="navbtn sel" data-view="playing"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-2 14.5v-9l6 4.5z"/></svg><span data-tr>Playing</span></button>
+    <button class="navbtn" data-view="queue"><svg viewBox="0 0 24 24"><path d="M15 6H3v2h12zm0 4H3v2h12zM3 16h8v-2H3zM17 6v8.18A3 3 0 1019 17V8h3V6z"/></svg><span data-tr>Queue</span></button>
+    <button class="navbtn" data-view="lyrics" id="nav-lyrics"><svg viewBox="0 0 24 24"><path d="M4 5h16v2H4zm0 4h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/></svg><span data-tr>Lyrics</span></button>
+    <button class="navbtn" data-view="search"><svg viewBox="0 0 24 24"><path d="M10 4a6 6 0 104.47 10.03l4.75 4.75 1.41-1.41-4.75-4.75A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z"/></svg><span data-tr>Search</span></button>
     </div>
     <div class="spacer"></div>
-    <button class="navbtn" data-view="settings"><svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.6 7.6 0 000-1.88l2.03-1.58a.5.5 0 00.12-.64l-1.92-3.32a.5.5 0 00-.6-.22l-2.39.96a7 7 0 00-1.62-.94l-.36-2.54a.5.5 0 00-.5-.42h-3.84a.5.5 0 00-.5.42l-.36 2.54c-.58.24-1.12.56-1.62.94l-2.39-.96a.5.5 0 00-.6.22L2.7 8.84a.5.5 0 00.12.64l2.03 1.58a7.6 7.6 0 000 1.88L2.82 14.5a.5.5 0 00-.12.64l1.92 3.32c.14.24.42.32.6.22l2.39-.96c.5.38 1.04.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.58-.24 1.12-.56 1.62-.94l2.39.96c.18.08.46 0 .6-.22l1.92-3.32a.5.5 0 00-.12-.64l-2.03-1.58zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/></svg><span>Settings</span></button>
+    <button class="navbtn" data-view="settings"><svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.6 7.6 0 000-1.88l2.03-1.58a.5.5 0 00.12-.64l-1.92-3.32a.5.5 0 00-.6-.22l-2.39.96a7 7 0 00-1.62-.94l-.36-2.54a.5.5 0 00-.5-.42h-3.84a.5.5 0 00-.5.42l-.36 2.54c-.58.24-1.12.56-1.62.94l-2.39-.96a.5.5 0 00-.6.22L2.7 8.84a.5.5 0 00.12.64l2.03 1.58a7.6 7.6 0 000 1.88L2.82 14.5a.5.5 0 00-.12.64l1.92 3.32c.14.24.42.32.6.22l2.39-.96c.5.38 1.04.7 1.62.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.58-.24 1.12-.56 1.62-.94l2.39.96c.18.08.46 0 .6-.22l1.92-3.32a.5.5 0 00-.12-.64l-2.03-1.58zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/></svg><span data-tr>Settings</span></button>
     <div id="ndot" class="dot"></div>
   </nav>
 
   <main id="main"></main>
-  <section id="qpane" aria-label="Queue and lyrics"></section>
+  <section id="qpane" aria-label="Queue and lyrics" data-tr-attr="aria-label"></section>
 
   <aside id="rail">
-    <button class="railclose" id="railclose" title="Close"><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
+    <button class="railclose" id="railclose" title="Close" data-tr-attr="title"><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
     <div id="npbar">
       <img id="npbar-art"><div class="t" id="npbar-t"></div>
       <button id="npbar-pp" aria-label="Play"><svg id="npbar-pp-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
@@ -1025,16 +1027,16 @@
       <div class="artstage">
         <div id="np-glow"></div>
         <div class="artwrap">
-          <div id="np-art" class="art idle">Nothing playing</div>
+          <div id="np-art" class="art idle" data-tr>Nothing playing</div>
           <div class="seekpop l" id="seekpop-l"></div>
           <div class="seekpop r" id="seekpop-r"></div>
         </div>
       </div>
       <div class="nptrow">
         <div id="np-t" class="t">Nothing playing</div>
-        <button id="np-like" class="npfav" title="Like on YouTube Music" style="display:none"><svg viewBox="0 0 24 24"><path d="M2 21h4V9H2v12zM23 10a2 2 0 00-2-2h-6.31l.95-4.57.03-.32a1.5 1.5 0 00-.44-1.06L14.17 1 7.59 7.59A2 2 0 007 9v10a2 2 0 002 2h9a2 2 0 001.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg></button>
-        <button id="np-fav" class="npfav" title="Favorite" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 4.4l2.1 4.6 5 .4-3.8 3.3 1.2 4.9L12 15.4 7.5 17.6l1.2-4.9L4.9 9.4l5-.4z" fill="none" stroke="currentColor" stroke-width="1.7"/></svg></button>
-        <button id="np-share" class="npfav" title="Share" style="display:none"><svg viewBox="0 0 24 24"><path d="M18 16a3 3 0 00-2.3 1.1l-6.1-3.5a3 3 0 000-1.2l6-3.5A3 3 0 1015 6l-6 3.5a3 3 0 100 5l6.1 3.6A3 3 0 1018 16z"/></svg></button>
+        <button id="np-like" class="npfav" title="Like on YouTube Music" data-tr-attr="title" style="display:none"><svg viewBox="0 0 24 24"><path d="M2 21h4V9H2v12zM23 10a2 2 0 00-2-2h-6.31l.95-4.57.03-.32a1.5 1.5 0 00-.44-1.06L14.17 1 7.59 7.59A2 2 0 007 9v10a2 2 0 002 2h9a2 2 0 001.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg></button>
+        <button id="np-fav" class="npfav" title="Favorite" data-tr-attr="title" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 4.4l2.1 4.6 5 .4-3.8 3.3 1.2 4.9L12 15.4 7.5 17.6l1.2-4.9L4.9 9.4l5-.4z" fill="none" stroke="currentColor" stroke-width="1.7"/></svg></button>
+        <button id="np-share" class="npfav" title="Share" data-tr-attr="title" style="display:none"><svg viewBox="0 0 24 24"><path d="M18 16a3 3 0 00-2.3 1.1l-6.1-3.5a3 3 0 000-1.2l6-3.5A3 3 0 1015 6l-6 3.5a3 3 0 100 5l6.1 3.6A3 3 0 1018 16z"/></svg></button>
       </div>
       <div id="np-s" class="s"></div>
       <div class="seek">
@@ -1042,9 +1044,9 @@
         <div class="times"><span id="tpos">0:00</span><span id="tdur">0:00</span></div>
       </div>
       <div class="transport">
-        <button id="r-prev" aria-label="Previous" title="Previous" disabled><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3 6l9-6v12z"/></svg></button>
+        <button id="r-prev" aria-label="Previous" title="Previous" data-tr-attr="aria-label title" disabled><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3 6l9-6v12z"/></svg></button>
         <button id="r-pp" aria-label="Play" disabled><svg id="pp-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-        <button id="r-next" aria-label="Next" title="Next" disabled><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l9-6-9-6z"/></svg></button>
+        <button id="r-next" aria-label="Next" title="Next" data-tr-attr="aria-label title" disabled><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l9-6-9-6z"/></svg></button>
       </div>
       <div class="ytvol">
         <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.06A4.5 4.5 0 0016.5 12zM14 3.23v2.06a7 7 0 010 13.42v2.06a9 9 0 000-17.54z"/></svg>
@@ -1052,12 +1054,12 @@
         <span class="p" id="mvolpct"></span>
       </div>
     </div>
-    <div class="railhead"><button class="rtab on" data-rt="queue">Up next</button><button class="rtab" data-rt="lyrics" id="rt-lyrics" style="display:none">Lyrics</button><span class="c" id="qcount"></span></div>
+    <div class="railhead"><button class="rtab on" data-rt="queue" data-tr>Up next</button><button class="rtab" data-rt="lyrics" id="rt-lyrics" style="display:none" data-tr>Lyrics</button><span class="c" id="qcount"></span></div>
     <div class="qmodes" id="qmodes" style="display:none">
-      <button class="qm" id="qm-shuffle" title="Shuffle (double-tap to reshuffle)"><svg viewBox="0 0 24 24"><path d="M10.6 9.2L5.4 4 4 5.4l5.2 5.2 1.4-1.4zM14.5 4l2.0 2-12.5 12.5 1.4 1.4L17.9 7.4l2.1 2.1V4h-5.5zm.4 9.8l-1.4 1.4 3.3 3.3-2.1 2.1H20v-5.5l-2.0 2-3.1-3.3z"/></svg><span>Shuffle</span></button>
-      <button class="qm" id="qm-repeat" title="Loop"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg><span id="qm-repeat-l">Loop off</span></button>
-      <button class="qm" id="qm-auto" title="Autoplay"><svg viewBox="0 0 24 24"><path d="M5 4l9 8-9 8V4zm11 0h3v16h-3z"/></svg><span>Autoplay</span></button>
-      <button class="qm" id="qm-save" title="Save the queue as a playlist"><svg viewBox="0 0 24 24"><path d="M3 6h12v2H3zm0 4h12v2H3zm0 4h8v2H3zm13 0h2v3h3v2h-3v3h-2v-3h-3v-2h3z"/></svg><span>Save</span></button>
+      <button class="qm" id="qm-shuffle" title="Shuffle (double-tap to reshuffle)" data-tr-attr="title"><svg viewBox="0 0 24 24"><path d="M10.6 9.2L5.4 4 4 5.4l5.2 5.2 1.4-1.4zM14.5 4l2.0 2-12.5 12.5 1.4 1.4L17.9 7.4l2.1 2.1V4h-5.5zm.4 9.8l-1.4 1.4 3.3 3.3-2.1 2.1H20v-5.5l-2.0 2-3.1-3.3z"/></svg><span data-tr>Shuffle</span></button>
+      <button class="qm" id="qm-repeat" title="Loop" data-tr-attr="title"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg><span id="qm-repeat-l">Loop off</span></button>
+      <button class="qm" id="qm-auto" title="Autoplay" data-tr-attr="title"><svg viewBox="0 0 24 24"><path d="M5 4l9 8-9 8V4zm11 0h3v16h-3z"/></svg><span data-tr>Autoplay</span></button>
+      <button class="qm" id="qm-save" title="Save the queue as a playlist" data-tr-attr="title"><svg viewBox="0 0 24 24"><path d="M3 6h12v2H3zm0 4h12v2H3zm0 4h8v2H3zm13 0h2v3h3v2h-3v3h-2v-3h-3v-2h3z"/></svg><span data-tr>Save</span></button>
     </div>
     <div class="railbody" id="railbody"></div>
     <div id="lyricsbody"></div>
@@ -1068,15 +1070,15 @@
   <img id="mini-art">
   <div class="mm"><div id="mini-t">Nothing playing</div><div id="mini-s"></div></div>
   <span id="mini-time"></span>
-  <button id="mini-prev" class="mbtn" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3 6l9-6v12z"/></svg></button>
+  <button id="mini-prev" class="mbtn" aria-label="Previous" data-tr-attr="aria-label"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3 6l9-6v12z"/></svg></button>
   <button id="mini-pp" aria-label="Play"><svg id="mini-pp-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-  <button id="mini-next" class="mbtn" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l9-6-9-6z"/></svg></button>
+  <button id="mini-next" class="mbtn" aria-label="Next" data-tr-attr="aria-label"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l9-6-9-6z"/></svg></button>
 </div>
 
 <div id="askwrap"><div class="ask">
   <h3 id="ask-t"></h3><p id="ask-p"></p>
   <input id="ask-in" autocomplete="off" maxlength="150">
-  <div class="btns"><button class="pill ghost" id="ask-no">Cancel</button><button class="pill primary" id="ask-yes">OK</button></div>
+  <div class="btns"><button class="pill ghost" id="ask-no" data-tr>Cancel</button><button class="pill primary" id="ask-yes">OK</button></div>
 </div></div>
 
 <div id="sheet"><div id="sheetcard">
@@ -1091,7 +1093,7 @@
   <div class="hue" id="cp-hue"><div class="knob" id="cp-hueknob"></div></div>
   <div class="cptabs"><button class="cptab sel" data-m="hex">HEX</button><button class="cptab" data-m="rgb">RGB</button><button class="cptab" data-m="hsl">HSL</button></div>
   <div class="cpin" id="cp-inputs"></div>
-  <div class="cpbtns"><button class="pill ghost" id="cp-cancel">Cancel</button><button class="pill primary" id="cp-ok">Done</button></div>
+  <div class="cpbtns"><button class="pill ghost" id="cp-cancel" data-tr>Cancel</button><button class="pill primary" id="cp-ok" data-tr>Done</button></div>
 </div></div>
 
 <div id="topbarhost"></div>
@@ -1107,8 +1109,89 @@
 <div id="toast"></div>
 
 <script>
+/* ---------------- languages ----------------
+   Text is written in English here, inside tr() (trn() with the English for one and for more, for a count; trKey() marks a word kept in
+   a table and translated where it is shown), and in the markup with data-tr / data-tr-attr. The translations are
+   /i18n/<code>.json, built from the repository's i18n/ folder by tools/i18n.py. The setting is shared with the other
+   apps through the computer ("language" in /api/prefs): "auto" (each device's own language) or a language's code. */
+const LANGS = [['en', 'English'], ['es', 'Español'], ['fr', 'Français'], ['de', 'Deutsch'], ['pt-BR', 'Português (Brasil)'],
+  ['it', 'Italiano'], ['ru', 'Русский'], ['ja', '日本語'], ['ko', '한국어'], ['zh-CN', '简体中文']];
+const LANG_CODES = LANGS.map(l => l[0]);
+function langFor(pref, wanted = navigator.languages || [navigator.language]) {
+  if (LANG_CODES.includes(pref)) return pref;
+  for (const w of wanted) {
+    const s = String(w || '').toLowerCase();
+    const hit = LANG_CODES.find(c => c.toLowerCase() === s) || LANG_CODES.find(c => c.split('-')[0].toLowerCase() === s.split('-')[0]);
+    if (hit) return hit;
+  }
+  return 'en';
+}
+function pluralOf(code, n) {
+  n = Math.abs(Math.trunc(Number(n) || 0));
+  if (code === 'ja' || code === 'ko' || code === 'zh-CN') return 'other';
+  if (code === 'ru') { const a = n % 10, b = n % 100;
+    return a === 1 && b !== 11 ? 'one' : a >= 2 && a <= 4 && (b < 12 || b > 14) ? 'few' : 'many'; }
+  if (code === 'fr' || code === 'pt-BR') return n <= 1 ? 'one' : 'other';
+  return n === 1 ? 'one' : 'other';
+}
+// what was used last time (the setting, the language and its words), so the page starts in it before anything loads
+let LANG = { pref: 'auto', code: 'en', table: {} };
+try { const c = JSON.parse(localStorage.getItem('vmr-lang')); if (c && typeof c.table === 'object') LANG = c; } catch (e) {}
+if (LANG.code !== langFor(LANG.pref)) LANG = { pref: LANG.pref, code: langFor(LANG.pref), table: {} };
+document.documentElement.lang = LANG.code;
+const trFill = (s, v) => v ? s.replace(/\{([A-Za-z_]\w*)\}/g, (m, k) => (k in v && v[k] != null ? String(v[k]) : m)) : s;
+/** The text in the language in use; {name}s in it are filled from vars. */
+function tr(text, vars) { const x = LANG.table[text]; return trFill(typeof x === 'string' ? x : String(text), vars); }
+/** A count: "one" is the English for 1, "other" the English for any other number; {n} is the number. */
+function trn(one, other, n, vars) {
+  const x = LANG.table[other];
+  let s = x && typeof x === 'object' ? (x[pluralOf(LANG.code, n)] ?? x.other) : null;
+  if (typeof s !== 'string') s = Number(n) === 1 ? one : other;
+  return trFill(s, { n, ...vars });
+}
+const trKey = text => text;
+/** Translates the static markup: data-tr elements' text, and the attributes data-tr-attr names (the English is kept). */
+function translateDom(root = document) {
+  for (const e of root.querySelectorAll('[data-tr]')) { if (e.dataset.trSrc == null) e.dataset.trSrc = e.textContent; e.textContent = tr(e.dataset.trSrc); }
+  for (const e of root.querySelectorAll('[data-tr-attr]')) for (const a of e.dataset.trAttr.split(/\s+/).filter(Boolean)) {
+    const k = 'trSrc' + a.replace(/(^|-)(\w)/g, (m, d, c) => c.toUpperCase());
+    if (e.dataset[k] == null) e.dataset[k] = e.getAttribute(a) || '';
+    if (e.dataset[k]) e.setAttribute(a, tr(e.dataset[k]));
+  }
+}
+async function loadLanguage(pref) {
+  const code = langFor(pref);
+  let table = {};
+  if (code !== 'en') { const r = await fetch('i18n/' + code + '.json', { cache: 'no-cache' }); if (!r.ok) throw new Error('language ' + r.status); table = await r.json(); }
+  return { pref: LANG_CODES.includes(pref) ? pref : 'auto', code, table };
+}
+/** Takes the language setting the computer has (at start, and whenever it may have changed elsewhere): when that or
+ *  its words differ from what is in use, they are kept and the page is drawn again in them. */
+let langFresh = false;   // the words in use were loaded from the computer since this page opened
+async function syncLanguage(pref) {
+  if (langFresh && pref === LANG.pref && langFor(pref) === LANG.code) return;   // nothing changed (asked every 20 s)
+  let next;
+  try { next = await loadLanguage(pref); } catch (e) { return; }
+  langFresh = true;
+  const was = JSON.stringify(LANG), now = JSON.stringify(next);
+  if (was === now) return;
+  LANG = next;
+  try { localStorage.setItem('vmr-lang', now); } catch (e) {}
+  document.documentElement.lang = LANG.code;
+  translateDom();
+  if (typeof render === 'function') render();
+}
+/** The language setting changed here: the computer keeps it for every app. */
+async function chooseLanguage(pref) {
+  post('/api/prefs', { language: pref });
+  await syncLanguage(pref);
+}
+
 const $ = s => document.querySelector(s);
 const el = (t, c) => { const e = document.createElement(t); if (c) e.className = c; return e; };
+// A settings section's heading: shown in the language in use, and known by its English name (data-sec) to the code
+// that finds sections and puts them in their categories.
+const secH3 = (key, text) => { const h = el('h3'); h.textContent = text || tr(key); h.dataset.sec = key; return h; };
 const PLAY = 'M8 5v14l11-7z', PAUSE = 'M6 5h4v14H6zm8 0h4v14h-4z';
 const ART_FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="#20212a"/><path d="M32 26v20a7 7 0 11-3-5.7V22l18-4v18a7 7 0 11-3-5.7V17z" fill="#4a4c5c"/></svg>');
@@ -1131,7 +1214,7 @@ function askBox(o) {
     $('#ask-t').textContent = o.title || ''; $('#ask-p').textContent = o.text || '';
     $('#ask-p').style.display = o.text ? '' : 'none';
     inp.style.display = o.input ? '' : 'none'; inp.value = o.value || ''; inp.placeholder = o.placeholder || '';
-    yes.textContent = o.ok || 'OK';
+    yes.textContent = o.ok || tr('OK');
     yes.className = 'pill ' + (o.danger ? 'danger' : 'primary');
     const done = v => { w.classList.remove('show'); yes.onclick = no.onclick = w.onclick = inp.onkeydown = null; res(v); };
     yes.onclick = () => { const v = inp.value.trim(); if (o.input && !v) { inp.focus(); return; } done(o.input ? v : true); };
@@ -1146,8 +1229,8 @@ function askBox(o) {
 async function plOp(cmd, okMsg) {
   const r = await ytm(cmd, true);
   if (r && r.ok) { if (okMsg) toast(okMsg); return true; }
-  toast(r && r.error === 'extension_offline' ? "YouTube Music isn't open on the computer"
-      : "Couldn't change the playlist" + (r && r.error ? ': ' + r.error : ''));
+  toast(r && r.error === 'extension_offline' ? tr("YouTube Music isn't open on the computer")
+      : r && r.error ? tr("Couldn't change the playlist: {error}", { error: r.error }) : tr("Couldn't change the playlist"));
   return false;
 }
 
@@ -1185,32 +1268,33 @@ async function post(path, body) {
 // YTM command via the extension relay
 // What went wrong, in words (the extension and server answer with short codes).
 const YTM_ERRORS = {
-  extension_offline: "YouTube Music isn't open on the computer",
-  extension_timeout: "YouTube Music didn't answer in time. Try again.",
-  timeout: "YouTube Music didn't answer in time. Try again.",
-  endpoint_not_accepted: "YouTube Music didn't start it. Try again.",
-  no_player: "YouTube Music's player isn't ready yet",
-  no_app: "The YouTube Music page isn't ready yet",
-  row_not_found: "Couldn't find that song on the YouTube Music page",
-  not_in_queue: "That song isn't in the queue any more",
-  queue_changed: 'The queue changed meanwhile. Try again.',
-  order_mismatch: "The queue didn't end up in that order. Try again.",
-  move_too_large: 'That move is too big to do in one go',
-  cannot_move_played_or_current: "Songs already played (or playing) can't be moved",
-  menu_item_missing: "YouTube Music's menu didn't offer that here",
-  no_menu: "YouTube Music's menu didn't open", no_menu_button: "Couldn't find that song's menu on the YouTube Music page",
-  no_like_button: "Couldn't find the like button on the YouTube Music page",
-  like_failed: "YouTube Music didn't take the like", like_not_applied: "YouTube Music didn't take the like",
-  no_autoplay_toggle: "Couldn't find YouTube Music's autoplay switch",
-  autoplay_off_while_looping: "YouTube Music turns autoplay off while repeat is on",
-  nothing_to_pick: "Couldn't find something to play", artist_not_found: "Couldn't find that artist on YouTube Music",
-  no_lyrics: 'No lyrics for this song', unknown_type: 'This YouTube Music page is running an older version of the YTM Starcast extension: reload it',
-  part_off: 'The YouTube Music remote is switched off. Turn it on in Settings, under Parts.',
+  extension_offline: trKey("YouTube Music isn't open on the computer"),
+  extension_timeout: trKey("YouTube Music didn't answer in time. Try again."),
+  timeout: trKey("YouTube Music didn't answer in time. Try again."),
+  endpoint_not_accepted: trKey("YouTube Music didn't start it. Try again."),
+  no_player: trKey("YouTube Music's player isn't ready yet"),
+  no_app: trKey("The YouTube Music page isn't ready yet"),
+  row_not_found: trKey("Couldn't find that song on the YouTube Music page"),
+  not_in_queue: trKey("That song isn't in the queue any more"),
+  queue_changed: trKey('The queue changed meanwhile. Try again.'),
+  order_mismatch: trKey("The queue didn't end up in that order. Try again."),
+  move_too_large: trKey('That move is too big to do in one go'),
+  cannot_move_played_or_current: trKey("Songs already played (or playing) can't be moved"),
+  menu_item_missing: trKey("YouTube Music's menu didn't offer that here"),
+  no_menu: trKey("YouTube Music's menu didn't open"), no_menu_button: trKey("Couldn't find that song's menu on the YouTube Music page"),
+  no_like_button: trKey("Couldn't find the like button on the YouTube Music page"),
+  like_failed: trKey("YouTube Music didn't take the like"), like_not_applied: trKey("YouTube Music didn't take the like"),
+  no_autoplay_toggle: trKey("Couldn't find YouTube Music's autoplay switch"),
+  autoplay_off_while_looping: trKey("YouTube Music turns autoplay off while repeat is on"),
+  nothing_to_pick: trKey("Couldn't find something to play"), artist_not_found: trKey("Couldn't find that artist on YouTube Music"),
+  no_lyrics: trKey('No lyrics for this song'), unknown_type: trKey('This YouTube Music page is running an older version of the YTM Starcast extension: reload it'),
+  part_off: trKey('The YouTube Music remote is switched off. Turn it on in Settings, under Parts.'),
 };
 function ytmError(code) {
   code = String(code || '');
-  if (/^no_(shuffle|repeat)_button/.test(code)) return "Couldn't find that button. Reload the YTM Starcast extension, then refresh the YouTube Music tab.";
-  return YTM_ERRORS[code] || YTM_ERRORS[code.split(':')[0]] || code.replace(/_/g, ' ');
+  if (/^no_(shuffle|repeat)_button/.test(code)) return tr("Couldn't find that button. Reload the YTM Starcast extension, then refresh the YouTube Music tab.");
+  const known = YTM_ERRORS[code] || YTM_ERRORS[code.split(':')[0]];
+  return known ? tr(known) : code.replace(/_/g, ' ');
 }
 async function ytm(cmd, quiet) {
   let r;
@@ -1227,10 +1311,10 @@ async function ytm(cmd, quiet) {
 // Parts group in Settings stays hidden.
 let parts = null, partsSupported = null, partsHeldUntil = 0, partsSig = '1/1', discordRefresh = null;
 const PARTS = [
-  ['remote', 'YouTube Music remote', 'Search, your library and the queue in this app, through the browser extension.'],
-  ['discord', 'Discord status', 'Shows the song you are listening to on your Discord profile.'],
-  ['refine', 'Refine in YouTube Music', 'Improvements inside YouTube Music in the computer\'s browser.'],
-  ['audio', 'Computer audio', 'The computer\'s volume, outputs and equalizer in this app.'],
+  ['remote', trKey('YouTube Music remote'), trKey('Search, your library and the queue in this app, through the browser extension.')],
+  ['discord', trKey('Discord status'), trKey('Shows the song you are listening to on your Discord profile.')],
+  ['refine', trKey('Refine in YouTube Music'), trKey('Improvements inside YouTube Music in the computer\'s browser.')],
+  ['audio', trKey('Computer audio'), trKey('The computer\'s volume, outputs and equalizer in this app.')],
 ];
 const REMOTE_VIEWS = new Set(['search', 'playlists', 'favorites', 'detail', 'artist']);
 function partOn(k) { return !parts || parts[k] !== false; }
@@ -1263,25 +1347,25 @@ function paintParts() {
   });
 }
 async function setPart(k, on) {
-  const prev = parts, label = (PARTS.find(p => p[0] === k) || [k, k])[1];
+  const prev = parts, label = tr((PARTS.find(p => p[0] === k) || [k, k])[1]);
   parts = Object.assign({}, parts || {}, { [k]: on }); partsHeldUntil = Date.now() + 5000; applyParts();
   const r = await post('/api/parts', { [k]: on });
   if (r && r.parts && typeof r.parts === 'object') {
     partsHeldUntil = Date.now() + 2000; parts = Object.assign({}, r.parts); applyParts();
-    toast(label + (partOn(k) ? ' on' : ' off'));
+    toast(partOn(k) ? tr('{part} on', { part: label }) : tr('{part} off', { part: label }));
   } else {
     parts = prev; partsHeldUntil = 0; applyParts();
-    toast((r && (r.message || r.error)) || "Couldn't reach the computer");
+    toast((r && (r.message || r.error)) || tr("Couldn't reach the computer"));
   }
   if (k === 'discord' && discordRefresh) discordRefresh(true);
 }
 // Settings → Parts: one switch per part. Hidden until the computer confirms it has parts.
 function partsSection() {
-  const sec = el('div', 'setsec partsec'); sec.appendChild(Object.assign(el('h3'), { textContent:'Parts' }));
+  const sec = el('div', 'setsec partsec'); sec.appendChild(secH3(trKey('Parts')));
   for (const [k, l, d] of PARTS) {
     const r = el('div', 'setrow'); r.innerHTML = '<div><div class="k"></div><div class="d"></div></div>';
-    r.querySelector('.k').textContent = l; r.querySelector('.d').textContent = d;
-    const t = el('button', 'toggle' + (partOn(k) ? ' on' : '')); t.dataset.pk = k; t.setAttribute('role', 'switch'); t.setAttribute('aria-label', l);
+    r.querySelector('.k').textContent = tr(l); r.querySelector('.d').textContent = tr(d);
+    const t = el('button', 'toggle' + (partOn(k) ? ' on' : '')); t.dataset.pk = k; t.setAttribute('role', 'switch'); t.setAttribute('aria-label', tr(l));
     t.addEventListener('click', () => setPart(k, !partOn(k)));
     r.appendChild(t); sec.appendChild(r);
   }
@@ -1297,8 +1381,8 @@ function partsSection() {
 // The one line Home shows while the YouTube Music remote is off, with a way back.
 function remoteOffNote() {
   const b = el('div', 'partnote');
-  b.innerHTML = '<div class="m">The YouTube Music remote is switched off.</div>';
-  const btn = el('button', 'pill primary'); btn.textContent = 'Turn it on';
+  b.innerHTML = `<div class="m">${tr('The YouTube Music remote is switched off.')}</div>`;
+  const btn = el('button', 'pill primary'); btn.textContent = tr('Turn it on');
   btn.addEventListener('click', () => { btn.disabled = true; setPart('remote', true); });
   b.appendChild(btn); return b;
 }
@@ -1306,10 +1390,10 @@ function remoteOffNote() {
 /* ==================== the Discord card as Discord shows it, from the activity the computer would send now ==================== */
 function discordCard(act) {
   const wrap = el('div', 'dcwrap');
-  if (!act) { wrap.appendChild(Object.assign(el('div', 'd'), { textContent: 'No card right now: nothing would be shown on Discord at this moment.' })); return wrap; }
+  if (!act) { wrap.appendChild(Object.assign(el('div', 'd'), { textContent: tr('No card right now: nothing would be shown on Discord at this moment.') })); return wrap; }
   const img = (u) => (typeof u === 'string' && /^https:\/\//.test(u) ? u : '');
   const a = act.assets || {}, card = el('div', 'dccard');
-  card.appendChild(Object.assign(el('div', 'dch'), { textContent: 'Listening to YouTube Music' }));
+  card.appendChild(Object.assign(el('div', 'dch'), { textContent: tr('Listening to YouTube Music') }));
   const b = el('div', 'dcb'), art = el('div', 'dcart');
   const pic = el('img'); pic.alt = ''; if (img(a.large_image)) pic.src = img(a.large_image); art.appendChild(pic);
   if (img(a.small_image)) { const s = el('i'); s.style.backgroundImage = 'url("' + img(a.small_image) + '")'; art.appendChild(s); }
@@ -1326,9 +1410,9 @@ function discordCard(act) {
     lines.appendChild(p);
   }
   b.appendChild(art); b.appendChild(lines); card.appendChild(b);
-  for (const bt of act.buttons || []) card.appendChild(Object.assign(el('div', 'dcbtn'), { textContent: bt.label || 'Listen' }));
+  for (const bt of act.buttons || []) card.appendChild(Object.assign(el('div', 'dcbtn'), { textContent: bt.label || tr('Listen') }));
   const shown = act.status_display_type === 1 ? (act.state || 'YouTube Music') : act.status_display_type === 2 ? (act.details || 'YouTube Music') : 'YouTube Music';
-  card.appendChild(Object.assign(el('div', 'dclist'), { textContent: 'In the member list: Listening to ' + shown }));
+  card.appendChild(Object.assign(el('div', 'dclist'), { textContent: tr('In the member list: Listening to {name}', { name: shown }) }));
   wrap.appendChild(card);
   return wrap;
 }
@@ -1339,16 +1423,19 @@ function discordCard(act) {
 let extGuideOpen = false, extKey = null, extScroll = false;
 function extBrief() { return (mixerState && mixerState.extension) || null; }
 function extStatusText(s) {
-  if (!s) return ['Checking…', ''];
-  if (s.connected && s.outdated) return ['An older version is running in the browser. Reload it (steps below).', 'warn'];
-  if (s.connected) return ['Connected' + (s.version ? ' · version ' + s.version : ''), 'ok'];
-  if (s.everConnected) return ["Not connected right now. Open YouTube Music in the computer's browser.", 'warn'];
-  return ['Not added to a browser yet.', 'bad'];
+  if (!s) return [tr('Checking…'), ''];
+  if (s.connected && s.outdated) return [tr('An older version is running in the browser. Reload it (steps below).'), 'warn'];
+  if (s.connected) return [s.version ? tr('Connected · version {version}', { version: s.version }) : tr('Connected'), 'ok'];
+  if (s.everConnected) return [tr("Not connected right now. Open YouTube Music in the computer's browser."), 'warn'];
+  return [tr('Not added to a browser yet.'), 'bad'];
 }
 // Open on another device: the addresses YTM Starcast can be reached at, each with a QR code to scan with a phone.
 let lastConnect = null;
+// what each kind of address is called (the computer's own label, in English, for a kind not known here)
+const CONNECT_KINDS = { 'tailscale-name':trKey('Tailscale name'), tailscale:trKey('Tailscale address'), lan:trKey('Home network'),
+  proxy:trKey('Web address'), address:trKey('Address'), local:trKey('This computer') };
 function connectSection() {
-  const sec = el('div', 'setsec connsec'); sec.appendChild(Object.assign(el('h3'), { textContent:'Open on another device' }));
+  const sec = el('div', 'setsec connsec'); sec.appendChild(secH3(trKey('Open on another device')));
   const body = el('div'); sec.appendChild(body);
   let sig = '';
   const show = (c) => {
@@ -1357,8 +1444,7 @@ function connectSection() {
     const phone = (c.addresses || []).filter(a => a.phone && a.url);
     if (!phone.length) {
       const row = el('div', 'setrow');
-      row.innerHTML = `<div><div class="k">Only this computer can open it</div><div class="d">To use it from your phone,
-        install Tailscale on both (recommended), or start YTM Starcast with --lan for your home network.</div></div>`;
+      row.innerHTML = `<div><div class="k">${tr('Only this computer can open it')}</div><div class="d">${tr('To use it from your phone, install Tailscale on both (recommended), or start YTM Starcast with --lan for your home network.')}</div></div>`;
       body.appendChild(row); return;
     }
     let pick = phone[0];
@@ -1370,17 +1456,17 @@ function connectSection() {
       qr.innerHTML = pick.qr || '';
       side.innerHTML = '';
       const d = el('div', 'd');
-      d.textContent = "Scan the code with your phone's camera, or open one of these addresses on it:";
+      d.textContent = tr("Scan the code with your phone's camera, or open one of these addresses on it:");
       side.appendChild(d);
       for (const a of phone) {
         const b = el('button', 'connaddr' + (a === pick ? ' sel' : ''));
         b.innerHTML = '<span class="k"></span><span class="u"></span>';
-        b.querySelector('.k').textContent = a.label; b.querySelector('.u').textContent = shown(a.url);
+        b.querySelector('.k').textContent = CONNECT_KINDS[a.kind] ? tr(CONNECT_KINDS[a.kind]) : a.label; b.querySelector('.u').textContent = shown(a.url);
         b.addEventListener('click', () => { pick = a; paint(); });
         side.appendChild(b);
       }
-      const cp = el('button', 'pill ghost'); cp.textContent = 'Copy the link';
-      cp.addEventListener('click', () => copyText(pick.url, 'Link copied'));
+      const cp = el('button', 'pill ghost'); cp.textContent = tr('Copy the link');
+      cp.addEventListener('click', () => copyText(pick.url, tr('Link copied')));
       side.appendChild(cp);
     };
     paint();
@@ -1397,20 +1483,20 @@ function connectSection() {
 
 function copyText(text, done) {
   if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(() => toast(done), () => toast("Couldn't copy here"));
+    navigator.clipboard.writeText(text).then(() => toast(done), () => toast(tr("Couldn't copy here")));
     return;
   }
   // plain HTTP (over Tailscale): execCommand still works there
   const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); toast(done); } catch (e) { toast("Couldn't copy here"); }
+  try { document.execCommand('copy'); toast(done); } catch (e) { toast(tr("Couldn't copy here")); }
   document.body.removeChild(ta);
 }
 
 function extensionSection() {
-  const sec = el('div', 'setsec extsec'); sec.appendChild(Object.assign(el('h3'), { textContent:'Browser extension' }));
+  const sec = el('div', 'setsec extsec'); sec.appendChild(secH3(trKey('Browser extension')));
   const head = el('div', 'setrow');
-  head.innerHTML = '<div><div class="k">YTM Starcast extension</div><div class="d"></div></div>';
+  head.innerHTML = `<div><div class="k">${tr('YTM Starcast extension')}</div><div class="d"></div></div>`;
   const btn = el('button', 'pill ghost'); btn.style.height = '38px';
   head.appendChild(btn); sec.appendChild(head);
   const guide = el('div', 'extguide'); sec.appendChild(guide);
@@ -1418,7 +1504,7 @@ function extensionSection() {
   const paintHead = () => {
     const s = info || extBrief(); const [txt, tone] = extStatusText(s);
     const d = head.querySelector('.d'); d.textContent = txt; d.dataset.tone = tone;
-    btn.textContent = extGuideOpen ? 'Hide the steps' : (s && s.connected && !s.outdated ? 'Show the steps' : 'Set it up');
+    btn.textContent = extGuideOpen ? tr('Hide the steps') : (s && s.connected && !s.outdated ? tr('Show the steps') : tr('Set it up'));
   };
   const load = async () => {
     try { const r = await fetch('/api/extension', { cache:'no-store' }); if (r.ok) info = await r.json(); else if (r.status === 404) info = null; }
@@ -1432,14 +1518,14 @@ function extensionSection() {
   const paintLive = () => {
     if (!liveEl || !info) return;
     const ok = info.connected && !info.outdated;
-    liveEl.textContent = ok ? '✓ The extension is connected.' : 'Waiting for the extension…';
+    liveEl.textContent = ok ? tr('✓ The extension is connected.') : tr('Waiting for the extension…');
     liveEl.dataset.tone = ok ? 'ok' : '';
   };
   const openOnComputer = async (body, b) => {
     b.disabled = true;
     const r = await post('/api/extension/open', body);
     b.disabled = false;
-    toast(r && r.ok ? 'Opened on the computer' : ((r && (r.message || r.error)) || "Couldn't reach the computer"));
+    toast(r && r.ok ? tr('Opened on the computer') : ((r && (r.message || r.error)) || tr("Couldn't reach the computer")));
   };
   const step = (n, title, body) => {
     const li = el('li', 'extstep'); li.innerHTML = '<div class="n"></div><div class="b"><div class="k"></div></div>';
@@ -1451,46 +1537,46 @@ function extensionSection() {
       (info ? (info.browsers || []).map(b => b.id).join(',') + '|' + info.folder : '');
     guide.textContent = ''; guide.hidden = !extGuideOpen; liveEl = null;
     if (!extGuideOpen) return;
-    if (!info) { guide.appendChild(Object.assign(el('div', 'd'), { textContent: "This computer's YTM Starcast is too old to help with this. Update it first." })); return; }
+    if (!info) { guide.appendChild(Object.assign(el('div', 'd'), { textContent: tr("This computer's YTM Starcast is too old to help with this. Update it first.") })); return; }
     const ol = el('ol', 'extsteps');
     if (info.connected && info.outdated) {
-      const d1 = el('div', 'd'); d1.textContent = 'Open the extensions page in the browser that plays YouTube Music, find YTM Starcast (an older copy may still be called "Pocketfader") and press its reload button. If a greyed-out YTM Starcast stays beside it afterwards, remove that one.';
-      ol.appendChild(step(1, 'Reload the extension', d1));
-      ol.appendChild(step(2, 'Refresh the YouTube Music tab', null));
+      const d1 = el('div', 'd'); d1.textContent = tr('Open the extensions page in the browser that plays YouTube Music, find YTM Starcast (an older copy may still be called "Pocketfader") and press its reload button. If a greyed-out YTM Starcast stays beside it afterwards, remove that one.');
+      ol.appendChild(step(1, tr('Reload the extension'), d1));
+      ol.appendChild(step(2, tr('Refresh the YouTube Music tab'), null));
     } else {
       // 1. the extensions page
       const b1 = el('div');
       const g = el('div', 'chips');
       for (const br of info.browsers || []) {
-        const b = el('button', 'pill ghost'); b.textContent = 'Open in ' + br.name;
+        const b = el('button', 'pill ghost'); b.textContent = tr('Open in {browser}', { browser: br.name });
         b.addEventListener('click', () => openOnComputer({ what:'page', browser:br.id }, b)); g.appendChild(b);
       }
       const d1 = el('div', 'd');
       d1.textContent = (info.browsers || []).length
-        ? 'Opens it on the computer. Or type its address into the address bar: ' + info.browsers.map(b => b.page).join(', ') + '.'
-        : "Type chrome://extensions (Brave: brave://extensions, Edge: edge://extensions) into the computer's browser.";
+        ? tr('Opens it on the computer. Or type its address into the address bar: {addresses}.', { addresses: info.browsers.map(b => b.page).join(', ') })
+        : tr("Type chrome://extensions (Brave: brave://extensions, Edge: edge://extensions) into the computer's browser.");
       if ((info.browsers || []).length) b1.appendChild(g);
       b1.appendChild(d1);
-      ol.appendChild(step(1, "Open the browser's extensions page", b1));
+      ol.appendChild(step(1, tr("Open the browser's extensions page"), b1));
       // 2. developer mode
-      const d2 = el('div', 'd'); d2.textContent = 'The switch is in the top-right corner of that page.';
-      ol.appendChild(step(2, 'Turn on Developer mode', d2));
+      const d2 = el('div', 'd'); d2.textContent = tr('The switch is in the top-right corner of that page.');
+      ol.appendChild(step(2, tr('Turn on Developer mode'), d2));
       // 3. load unpacked
       const b3 = el('div');
       const path = el('code', 'extpath'); path.textContent = info.folder; b3.appendChild(path);
       const g3 = el('div', 'chips');
-      const copy = el('button', 'pill ghost'); copy.textContent = 'Copy the folder';
+      const copy = el('button', 'pill ghost'); copy.textContent = tr('Copy the folder');
       copy.addEventListener('click', async () => {
-        try { await navigator.clipboard.writeText(info.folder); toast('Copied'); } catch (e) { toast("Couldn't copy here: select the folder above instead"); }
+        try { await navigator.clipboard.writeText(info.folder); toast(tr('Copied')); } catch (e) { toast(tr("Couldn't copy here: select the folder above instead")); }
       });
-      const show = el('button', 'pill ghost'); show.textContent = 'Show it on the computer';
+      const show = el('button', 'pill ghost'); show.textContent = tr('Show it on the computer');
       show.addEventListener('click', () => openOnComputer({ what:'folder' }, show));
       g3.appendChild(copy); g3.appendChild(show); b3.appendChild(g3);
-      const d3 = el('div', 'd'); d3.textContent = 'You can also drag that folder onto the extensions page.'; b3.appendChild(d3);
-      ol.appendChild(step(3, 'Click "Load unpacked" and choose this folder', b3));
+      const d3 = el('div', 'd'); d3.textContent = tr('You can also drag that folder onto the extensions page.'); b3.appendChild(d3);
+      ol.appendChild(step(3, tr('Click "Load unpacked" and choose this folder'), b3));
       // 4. youtube music
-      const d4 = el('div', 'd'); d4.textContent = 'Open music.youtube.com in that browser, or refresh its tab if it is already open.';
-      ol.appendChild(step(4, 'Open YouTube Music', d4));
+      const d4 = el('div', 'd'); d4.textContent = tr('Open music.youtube.com in that browser, or refresh its tab if it is already open.');
+      ol.appendChild(step(4, tr('Open YouTube Music'), d4));
     }
     guide.appendChild(ol);
     liveEl = el('div', 'extlive'); guide.appendChild(liveEl); paintLive();
@@ -1507,14 +1593,14 @@ function extensionSection() {
 // Home, until an extension has ever connected: one line that leads to the steps.
 function extensionNote() {
   const b = el('div', 'partnote');
-  b.innerHTML = "<div class=\"m\">Add the YTM Starcast extension to the computer's browser to use YouTube Music from here.</div>";
-  const btn = el('button', 'pill primary'); btn.textContent = 'Show me how';
+  b.innerHTML = `<div class="m">${tr("Add the YTM Starcast extension to the computer's browser to use YouTube Music from here.")}</div>`;
+  const btn = el('button', 'pill primary'); btn.textContent = tr('Show me how');
   btn.addEventListener('click', () => { extGuideOpen = true; extScroll = true; setView('settings'); });
   b.appendChild(btn); return b;
 }
 
 /* ==================== themes ==================== */
-const THEMES = [['refine','Album colours'],['auto','Auto'],['material','Material You'],['dark','Dark'],['light','Light'],['oled','OLED'],['space','Space'],['sunset','Sunset'],['forest','Forest'],['rose','Rose']];
+const THEMES = [['refine',trKey('Album colours')],['auto',trKey('Auto')],['material','Material You'],['dark',trKey('Dark')],['light',trKey('Light')],['oled','OLED'],['space',trKey('Space')],['sunset',trKey('Sunset')],['forest',trKey('Forest')],['rose',trKey('Rose')]];
 const THEME_SW = { refine:['#140e0f','#2b1f21','#f2a7b3'], auto:['#0a0a0c','#f5f6fa','#8b5cf6'], material:['#1b1b1f','#2f3033','#a8c7fa'], dark:['#0a0a0c','#20212a','#8b5cf6'], light:['#f5f6fa','#e0e3ec','#7c3aed'],
   oled:['#000000','#161619','#8b5cf6'], space:['#080a1e','#1c2150','#6d8bff'],
   sunset:['#190d12','#3b2027','#ff7a52'], forest:['#091311','#193026','#37b978'], rose:['#160a11','#391b2b','#f06baf'] };
@@ -1698,7 +1784,7 @@ let onDetailRenamed = null;   // set by the open playlist page, so a rename show
 const TOP_VIEWS = new Set(['playing', 'queue', 'lyrics', 'search', 'settings']);
 const PLAYER_VIEWS = new Set(['playing', 'queue', 'lyrics']);
 // Search's own tabs (what used to be Home, Library and Favorites)
-const SEARCH_TABS = [['search', 'Search'], ['home', 'For you'], ['playlists', 'Library'], ['favorites', 'Favorites']];
+const SEARCH_TABS = [['search', trKey('Search')], ['home', trKey('For you')], ['playlists', trKey('Library')], ['favorites', trKey('Favorites')]];
 const SEARCH_VIEWS = new Set(SEARCH_TABS.map(t => t[0]));
 let topView = 'playing';
 function topOf(v) {
@@ -1760,7 +1846,7 @@ function searchTabs() {
   bar.setAttribute('role', 'tablist');
   for (const [v, label] of SEARCH_TABS) {
     const b = el('button', 'stab' + (view === v ? ' on' : ''));
-    b.textContent = label; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(view === v));
+    b.textContent = tr(label); b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(view === v));
     b.addEventListener('click', () => { if (view !== v) setView(v); });
     bar.appendChild(b);
   }
@@ -1794,7 +1880,7 @@ function topbar(title, withSearch) {
   // A back arrow on pages inside a tab: the Android back button does the same, but an iPhone home-screen app
   // and a desktop window have none.
   if (!TOP_VIEWS.has(view) && !SEARCH_VIEWS.has(view)) {
-    const back = el('button', 'backbtn'); back.title = 'Back'; back.setAttribute('aria-label', 'Back');
+    const back = el('button', 'backbtn'); back.title = tr('Back'); back.setAttribute('aria-label', tr('Back'));
     back.innerHTML = '<svg viewBox="0 0 24 24"><path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20z"/></svg>';
     back.addEventListener('click', () => {
       if (history.state && history.state.view === view) history.back(); else setView(topView);
@@ -1805,7 +1891,7 @@ function topbar(title, withSearch) {
   setTimeout(hoistTopbar, 0);   // any view that builds a header gets it hoisted on phones
   if (withSearch) {
     const f = el('form'); f.id = 'searchform';
-    f.innerHTML = '<input id="searchbox" placeholder="Search songs, artists, playlists…" autocomplete="off">' +
+    f.innerHTML = `<input id="searchbox" placeholder="${tr('Search songs, artists, playlists…')}" autocomplete="off">` +
                   '<div class="suggests" id="suggests" style="display:none"></div>';
     const box = f.querySelector('#searchbox'), drop = f.querySelector('#suggests');
     const SICON = '<svg viewBox="0 0 24 24"><path d="M10 4a6 6 0 104.47 10.03l4.75 4.75 1.41-1.41-4.75-4.75A6 6 0 0010 4z"/></svg>';
@@ -1881,12 +1967,16 @@ function markNowPlaying() {
   });
 }
 
+// What a search result or list entry is, in words (YouTube Music's own kinds; an unknown one is shown as it comes)
+const KINDS = { album:trKey('Album'), artist:trKey('Artist'), playlist:trKey('Playlist'), video:trKey('Video'), single:trKey('Single'),
+  ep:trKey('EP'), podcast:trKey('Podcast'), episode:trKey('Episode'), favorites:trKey('Favorites') };
+const kindName = k => (KINDS[k] ? tr(KINDS[k]) : k || '');
 function listItem(item, opts) {
   opts = opts || {};
   const li = el('div', 'li');
   const meta = el('div', 'meta');
   const tt = el('div', 't'); tt.textContent = item.title;
-  const ss = el('div', 's'); ss.textContent = item.subtitle || (item.kind !== 'song' ? item.kind : '');
+  const ss = el('div', 's'); ss.textContent = item.subtitle || (item.kind !== 'song' ? kindName(item.kind) : '');
   meta.append(tt, ss);
   li.append(thumbBox(item.thumb), meta);
   li.addEventListener('click', () => activate(item));
@@ -1894,7 +1984,7 @@ function listItem(item, opts) {
   tagSong(li, item);
   if (item.kind === 'artist') li.classList.add('artist');
   if (item.kind === 'song') {
-    const more = el('button', 'more'); more.setAttribute('aria-label', 'More'); more.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 8a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4z"/></svg>';
+    const more = el('button', 'more'); more.setAttribute('aria-label', tr('More')); more.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 8a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4z"/></svg>';
     more.addEventListener('click', e => { e.stopPropagation(); openSheet(item); });
     li.appendChild(more);
   }
@@ -1911,14 +2001,14 @@ function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch
 // `part`: the part (Settings → Parts) a widget belongs to; it leaves Home while that part is off, and comes back
 // in the same place when it is on again.
 const WIDGETS = {
-  quickpicks:  { name:'Quick Picks',  defCols:3, defRows:2, part:'remote', render:(b) => wSection(b, /quick picks/i,  "Quick picks show up when YouTube Music is open on the computer.") },
-  listenagain: { name:'Listen Again', defCols:3, defRows:2, part:'remote', render:(b) => wSection(b, /listen again/i, "No “Listen again” right now.") },
-  speeddial:   { name:'Speed Dial',   defCols:3, defRows:2, part:'remote', render:(b) => wSpeedDial(b) },
-  favorites:   { name:'Favorites',    defCols:1, defRows:2, part:'remote', render:wFavorites },
-  controls:    { name:'Controls',     defCols:1, defRows:2, render:wControls },
-  visualizer:  { name:'Visualizer',   defCols:1, defRows:2, part:'audio', render:wVisualizer },
-  mixer:       { name:'Mixer',        defCols:1, defRows:4, part:'audio', render:(b) => paintMixer(b) },
-  eq:          { name:'Equalizer',    defCols:1, defRows:3, part:'audio', render:wEq },
+  quickpicks:  { name:trKey('Quick Picks'),  defCols:3, defRows:2, part:'remote', render:(b) => wSection(b, /quick picks/i,  tr("Quick picks show up when YouTube Music is open on the computer.")) },
+  listenagain: { name:trKey('Listen Again'), defCols:3, defRows:2, part:'remote', render:(b) => wSection(b, /listen again/i, tr("No “Listen again” right now.")) },
+  speeddial:   { name:trKey('Speed Dial'),   defCols:3, defRows:2, part:'remote', render:(b) => wSpeedDial(b) },
+  favorites:   { name:trKey('Favorites'),    defCols:1, defRows:2, part:'remote', render:wFavorites },
+  controls:    { name:trKey('Controls'),     defCols:1, defRows:2, render:wControls },
+  visualizer:  { name:trKey('Visualizer'),   defCols:1, defRows:2, part:'audio', render:wVisualizer },
+  mixer:       { name:trKey('Mixer'),        defCols:1, defRows:4, part:'audio', render:(b) => paintMixer(b) },
+  eq:          { name:trKey('Equalizer'),    defCols:1, defRows:3, part:'audio', render:wEq },
 };
 function widgetPartOn(id) { const p = WIDGETS[id] && WIDGETS[id].part; return !p || partOn(p); }
 // Start clean — the user adds what they want via Edit.
@@ -1967,12 +2057,12 @@ function wEq(body) { paintMixer(body); const n = body.querySelector('.mx'); if (
 // Compact transport/now-playing control panel widget
 function wControls(body) {
   body.classList.add('wcbody');
-  body.innerHTML = `<div class="wctrl"><img class="art" alt=""><div class="meta"><div class="t">Nothing playing</div><div class="s"></div></div></div>
+  body.innerHTML = `<div class="wctrl"><img class="art" alt=""><div class="meta"><div class="t">${tr('Nothing playing')}</div><div class="s"></div></div></div>
     <div class="wcprog" hidden><span class="pos">0:00</span><div class="bar"><i></i></div><span class="dur">0:00</span></div>
     <div class="wcbtns">
-      <button data-a="prev" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3 6l9-6v12z"/></svg></button>
-      <button class="pp" data-a="playpause" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-      <button data-a="next" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l9-6-9-6z"/></svg></button>
+      <button data-a="prev" aria-label="${tr('Previous')}"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3 6l9-6v12z"/></svg></button>
+      <button class="pp" data-a="playpause" aria-label="${tr('Play')}"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+      <button data-a="next" aria-label="${tr('Next')}"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l9-6-9-6z"/></svg></button>
     </div>`;
   body.querySelectorAll('.wcbtns button').forEach(b => b.addEventListener('click', () => ytm({ type:'transport', action:b.dataset.a }, true)));
   updateControlWidgets();
@@ -1984,7 +2074,7 @@ function updateControlWidgets() {
   document.querySelectorAll('.wcbody').forEach(w => {
     const art = w.querySelector('.wctrl .art'), src = (live && now.art) || ART_FALLBACK;
     if (art && art.dataset.src !== src) { art.dataset.src = src; art.onerror = () => { art.onerror = null; art.src = ART_FALLBACK; }; art.src = src; }
-    put(w.querySelector('.wctrl .t'), live ? (now.title || '') : 'Nothing playing');
+    put(w.querySelector('.wctrl .t'), live ? (now.title || '') : tr('Nothing playing'));
     put(w.querySelector('.wctrl .s'), live ? (now.artist || '') : '');
     const prog = w.querySelector('.wcprog'), dur = (live && now.duration) || 0;
     if (prog) {
@@ -1996,7 +2086,7 @@ function updateControlWidgets() {
     w.querySelectorAll('.wcbtns button').forEach(b => { b.disabled = !live; });
     const pp = w.querySelector('.wcbtns .pp');
     if (pp) { const d = now.playing ? PAUSE : PLAY, path = pp.querySelector('path');
-      if (path.getAttribute('d') !== d) { path.setAttribute('d', d); pp.setAttribute('aria-label', now.playing ? 'Pause' : 'Play'); } }
+      if (path.getAttribute('d') !== d) { path.setAttribute('d', d); pp.setAttribute('aria-label', now.playing ? tr('Pause') : tr('Play')); } }
   });
 }
 // Widget bodies fade at an edge only while there is more to scroll that way: a fixed fade dimmed the first and
@@ -2042,7 +2132,7 @@ function setWidgetCount(body, n) {
   const wt = card.querySelector('.whead .wt'); if (!wt) return;
   let c = wt.querySelector('.wct');
   if (!c) { c = el('span', 'wct'); wt.appendChild(c); }
-  c.textContent = n ? n + (n === 1 ? ' item' : ' items') : '';
+  c.textContent = n ? trn('{n} item', '{n} items', n) : '';
 }
 // Speed Dial = Quick Picks + Listen Again merged (its own feed never reliably shows up)
 async function wSpeedDial(body) {
@@ -2052,15 +2142,15 @@ async function wSpeedDial(body) {
   const seen = new Set();
   const uniq = merged.filter(it => { const id = it.videoId || it.title; if (seen.has(id)) return false; seen.add(id); return true; });
   body.innerHTML = '';
-  if (!uniq.length) { const e = el('div', 'wempty'); e.textContent = 'Nothing to show yet.'; body.appendChild(e); return; }
+  if (!uniq.length) { const e = el('div', 'wempty'); e.textContent = tr('Nothing to show yet.'); body.appendChild(e); return; }
   const row = el('div', 'row'); for (const it of uniq.slice(0, 30)) row.appendChild(tile(it)); body.appendChild(row);
   setWidgetCount(body, uniq.length);
 }
 function wFavorites(body) {
   const pins = lsGet('vmr-pins', []); body.innerHTML = '';
-  if (!pins.length) { const e = el('div', 'wempty'); e.textContent = 'No favorites yet. Tap ☆ on a song or playlist to pin it here.'; body.appendChild(e); return; }
+  if (!pins.length) { const e = el('div', 'wempty'); e.textContent = tr('No favorites yet. Tap ☆ on a song or playlist to pin it here.'); body.appendChild(e); return; }
   const row = el('div', 'row');
-  for (const p of pins) row.appendChild(tile({ title:p.title, subtitle:p.subtitle || (p.kind === 'song' ? 'Song' : 'Playlist'),
+  for (const p of pins) row.appendChild(tile({ title:p.title, subtitle:p.subtitle || (p.kind === 'song' ? tr('Song') : tr('Playlist')),
     thumb:p.thumb, kind:p.kind || 'playlist', videoId:p.videoId, playlistId:p.playlistId, browseId:p.browseId }));
   body.appendChild(row);
 }
@@ -2074,6 +2164,7 @@ function favSave(list) {
 async function favPull() {
   try {
     const r = await fetch('/api/prefs'); const p = await r.json();
+    syncLanguage(p && typeof p.language === 'string' ? p.language : 'auto');
     if (p && Array.isArray(p.pins)) {
       if (JSON.stringify(p.pins) !== JSON.stringify(favList())) {
         lsSet('vmr-pins', p.pins);
@@ -2096,9 +2187,9 @@ function togglePin(item) {
 
 async function renderHome(m) {
   m.innerHTML = '';
-  const bar = topbar('Search', true);
+  const bar = topbar(tr('Search'), true);
   const editing = $('#app').classList.contains('editwidgets');
-  const editBtn = el('button', 'editbtn' + (editing ? ' on' : '')); editBtn.title = editing ? 'Done' : 'Edit layout';
+  const editBtn = el('button', 'editbtn' + (editing ? ' on' : '')); editBtn.title = editing ? tr('Done') : tr('Edit layout');
   editBtn.innerHTML = editing
     ? '<svg viewBox="0 0 24 24"><path d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20 8l-1.4-1.4z"/></svg>'
     : '<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
@@ -2113,15 +2204,14 @@ async function renderHome(m) {
   // copy has to match the affordance — the edit control is an icon-only pencil now
   if (!saved.length && !editing) {
     const box = el('div', 'homeempty');
-    box.innerHTML = '<div class="t">Make Home yours</div><div class="d">Put what you reach for most here: playback controls, the mixer, ' +
-      'your quick picks, favourites. You can move and resize everything later.</div>';
+    box.innerHTML = `<div class="t">${tr('Make Home yours')}</div><div class="d">${tr('Put what you reach for most here: playback controls, the mixer, your quick picks, favourites. You can move and resize everything later.')}</div>`;
     const acts = el('div', 'acts');
-    const starter = el('button', 'pill primary'); starter.textContent = 'Add a starter set';
+    const starter = el('button', 'pill primary'); starter.textContent = tr('Add a starter set');
     starter.addEventListener('click', () => {
       const ids = ['controls', 'mixer', 'quickpicks', 'favorites'].filter(id => WIDGETS[id] && widgetUsable(id) && widgetPartOn(id));
       setLayout(ids.map(id => ({ id, cols: WIDGETS[id].defCols, rows: WIDGETS[id].defRows }))); renderHome(m);
     });
-    const pick = el('button', 'pill ghost'); pick.textContent = 'Choose widgets';
+    const pick = el('button', 'pill ghost'); pick.textContent = tr('Choose widgets');
     pick.addEventListener('click', () => { $('#app').classList.add('editwidgets'); renderHome(m); });
     acts.append(starter, pick); box.appendChild(acts); grid.appendChild(box);
   }
@@ -2131,7 +2221,7 @@ async function renderHome(m) {
     const head = el('div', 'whead');
     const t = el('span', 'wt');
     const handle = el('span', 'whandle'); handle.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 5a2 2 0 11-4 0 2 2 0 014 0zm0 7a2 2 0 11-4 0 2 2 0 014 0zm0 7a2 2 0 11-4 0 2 2 0 014 0zM19 5a2 2 0 11-4 0 2 2 0 014 0zm0 7a2 2 0 11-4 0 2 2 0 014 0zm0 7a2 2 0 11-4 0 2 2 0 014 0z"/></svg>';
-    const label = el('span'); label.textContent = def.name;
+    const label = el('span'); label.textContent = tr(def.name);
     t.append(handle, label); head.appendChild(t);
     const x = el('button', 'wx'); x.innerHTML = '<svg viewBox="0 0 24 24"><path d="M18.3 5.7L12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7l1.4-1.4L10.6 10.6l6.3-6.3z"/></svg>';
     x.addEventListener('click', () => { setLayout(getLayout().filter(z => z.id !== w.id)); renderHome(m); });
@@ -2149,11 +2239,11 @@ async function renderHome(m) {
     const inUse = new Set(getLayout().map(z => z.id));
     const avail = Object.entries(WIDGETS).filter(([id]) => !inUse.has(id) && widgetUsable(id) && widgetPartOn(id));
     const add = el('div', 'setsec'); add.style.marginTop = '24px';
-    add.appendChild(Object.assign(el('h3'), { textContent: avail.length ? 'Add a widget' : 'All widgets added' }));
+    add.appendChild(Object.assign(el('h3'), { textContent: avail.length ? tr('Add a widget') : tr('All widgets added') }));
     const pal = el('div', 'waddgrid');
     for (const [id, def] of avail) {
       const chip = el('button', 'waddchip');
-      chip.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>' + def.name;
+      chip.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>'; chip.append(tr(def.name));
       chip.addEventListener('click', () => { setLayout([...getLayout(), { id, cols: def.defCols, tall:false }]); renderHome(m); });
       pal.appendChild(chip);
     }
@@ -2211,7 +2301,7 @@ function enableWidgetResize(card, rz, grid) {
 }
 
 async function renderSearch(m) {
-  m.innerHTML = ''; m.appendChild(topbar('Search', true)); m.appendChild(searchTabs());
+  m.innerHTML = ''; m.appendChild(topbar(tr('Search'), true)); m.appendChild(searchTabs());
   const res = el('div', 'list'); res.id = 'searchres'; m.appendChild(res);
   setTimeout(() => $('#searchbox')?.focus(), 30);
   recentBlock(res);
@@ -2231,31 +2321,31 @@ async function renderSearch(m) {
 }
 
 function renderFavorites(m) {
-  m.innerHTML = ''; m.appendChild(topbar('Search', true)); m.appendChild(searchTabs());
+  m.innerHTML = ''; m.appendChild(topbar(tr('Search'), true)); m.appendChild(searchTabs());
   const pins = favList();
-  if (!pins.length) { m.appendChild(emptyMsg('Nothing here yet — tap ☆ on a song or playlist to save it.')); return; }
+  if (!pins.length) { m.appendChild(emptyMsg(tr('Nothing here yet — tap ☆ on a song or playlist to save it.'))); return; }
 
   // Favourites behaves like any other playlist: play it, or shuffle it.
   const songs = pins.filter(p => p.videoId);
   const acts = el('div', 'acts'); acts.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px';
   const playAll = (shuffle) => {
-    if (!songs.length) { toast('No songs saved yet'); return; }
+    if (!songs.length) { toast(tr('No songs saved yet')); return; }
     const order = shuffle ? songs.slice().sort(() => Math.random() - 0.5) : songs;
     ytm({ type:'play', videoId: order[0].videoId });
     optimisticNow(order[0]);
     // queue the rest behind it
     order.slice(1, 25).forEach((s, i) => setTimeout(() =>
       ytm({ type:'queueAdd', videoId:s.videoId, query:(s.title || '') + ' ' + (s.subtitle || ''), mode:'end' }, true), 400 * (i + 1)));
-    toast(shuffle ? 'Shuffling favorites' : 'Playing favorites');
+    toast(shuffle ? tr('Shuffling favorites') : tr('Playing favorites'));
   };
-  const pb = el('button', 'pill primary'); pb.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play';
+  const pb = el('button', 'pill primary'); pb.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'; pb.append(tr('Play'));
   pb.addEventListener('click', () => playAll(false));
-  const sb = el('button', 'pill ghost'); sb.innerHTML = '<svg viewBox="0 0 24 24"><path d="M17 3l4 4-4 4V8h-2.5l-2 2-1.4-1.4L13 6.6V5h4V3zM3 6h4l2 2 1.4-1.4L8.8 4.6 7 3H3v3zm14 9v-3l4 4-4 4v-3h-4l-2-2 1.4-1.4L14.2 15H17zM3 15h4l6-6 1.4 1.4L8.8 17H3v-2z"/></svg>Shuffle';
+  const sb = el('button', 'pill ghost'); sb.innerHTML = '<svg viewBox="0 0 24 24"><path d="M17 3l4 4-4 4V8h-2.5l-2 2-1.4-1.4L13 6.6V5h4V3zM3 6h4l2 2 1.4-1.4L8.8 4.6 7 3H3v3zm14 9v-3l4 4-4 4v-3h-4l-2-2 1.4-1.4L14.2 15H17zM3 15h4l6-6 1.4 1.4L8.8 17H3v-2z"/></svg>'; sb.append(tr('Shuffle'));
   sb.addEventListener('click', () => playAll(true));
   acts.append(pb, sb); m.appendChild(acts);
 
   const list = el('div', 'list');
-  for (const p of pins) list.appendChild(listItem({ title:p.title, subtitle:p.subtitle || (p.kind === 'song' ? 'Song' : 'Playlist'),
+  for (const p of pins) list.appendChild(listItem({ title:p.title, subtitle:p.subtitle || (p.kind === 'song' ? tr('Song') : tr('Playlist')),
     thumb:p.thumb, kind:p.kind || 'playlist', videoId:p.videoId, playlistId:p.playlistId, browseId:p.browseId }));
   m.appendChild(list);
 }
@@ -2266,14 +2356,15 @@ function rememberSearch(q) {
   lsSet('vmr-recent', [q, ...recentSearches().filter(x => x.toLowerCase() !== k)].slice(0, 12));
 }
 // What a search looks for: everything, or one kind. The choice stays while you search for other things.
-const SEARCH_FILTERS = [['', 'All', 'results'], ['songs', 'Songs', 'songs'], ['artists', 'Artists', 'artists'],
-                        ['albums', 'Albums', 'albums'], ['playlists', 'Playlists', 'playlists']];
+const SEARCH_FILTERS = [['', trKey('All'), trKey('No results for “{query}”.')], ['songs', trKey('Songs'), trKey('No songs for “{query}”.')],
+                        ['artists', trKey('Artists'), trKey('No artists for “{query}”.')], ['albums', trKey('Albums'), trKey('No albums for “{query}”.')],
+                        ['playlists', trKey('Playlists'), trKey('No playlists for “{query}”.')]];
 const FILTER_KIND = { songs:'song', artists:'artist', albums:'album', playlists:'playlist' };
 let searchFilter = '', searchSeq = 0;
 function filterBar(q) {
-  const bar = el('div', 'searchfilters'); bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Show');
+  const bar = el('div', 'searchfilters'); bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', tr('Show'));
   for (const [id, label] of SEARCH_FILTERS) {
-    const c = el('button', 'recentchip'); c.type = 'button'; c.textContent = label;
+    const c = el('button', 'recentchip'); c.type = 'button'; c.textContent = tr(label);
     c.setAttribute('aria-pressed', String(searchFilter === id));
     c.addEventListener('click', () => { if (searchFilter !== id) { searchFilter = id; doSearch(q); } });
     bar.appendChild(c);
@@ -2298,8 +2389,8 @@ async function doSearch(q) {
   if (filter) items = items.filter(it => it.kind === FILTER_KIND[filter]);
   if (r && r.error) { res.appendChild(emptyMsg(ytmError(r.error) + '.')); return; }
   if (!items.length) {
-    const what = (SEARCH_FILTERS.find(f => f[0] === filter) || SEARCH_FILTERS[0])[2];
-    res.appendChild(emptyMsg('No ' + what + ' for \u201c' + q + '\u201d.')); return;
+    const none = (SEARCH_FILTERS.find(f => f[0] === filter) || SEARCH_FILTERS[0])[2];
+    res.appendChild(emptyMsg(tr(none, { query: q }))); return;
   }
   rememberSearch(q);   // only searches that found something
   for (const it of items) res.appendChild(listItem(it));
@@ -2310,8 +2401,8 @@ function recentBlock(res) {
   if (!recent.length) return;
   const sh = el('div', 'shelf recentblock');
   const head = el('div', 'recenthead');
-  const h = el('h3'); h.textContent = 'Recent searches';
-  const clr = el('button', 'pill ghost'); clr.textContent = 'Clear'; clr.style.height = '32px';
+  const h = el('h3'); h.textContent = tr('Recent searches');
+  const clr = el('button', 'pill ghost'); clr.textContent = tr('Clear'); clr.style.height = '32px';
   clr.addEventListener('click', () => { lsSet('vmr-recent', []); sh.remove(); });
   head.append(h, clr); sh.appendChild(head);
   const chips = el('div', 'recentchips');
@@ -2324,16 +2415,16 @@ function recentBlock(res) {
 }
 
 async function renderPlaylists(m) {
-  m.innerHTML = ''; m.appendChild(topbar('Search', true)); m.appendChild(searchTabs());
+  m.innerHTML = ''; m.appendChild(topbar(tr('Search'), true)); m.appendChild(searchTabs());
   const mkRow = el('div', 'acts'); mkRow.style.padding = '0 4px 12px';
   const mkBtn = el('button', 'pill ghost');
-  mkBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>New playlist';
+  mkBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z"/></svg>'; mkBtn.append(tr('New playlist'));
   mkBtn.addEventListener('click', async () => {
-    const name = await askBox({ title:'New playlist', input:true, placeholder:'Playlist name', ok:'Create' });
+    const name = await askBox({ title:tr('New playlist'), input:true, placeholder:tr('Playlist name'), ok:tr('Create') });
     if (!name) return;
     const r = await ytm({ type:'playlistCreate', title:name }, true);
-    if (r && r.ok) { toast('Created “' + name + '”'); cache.playlists = null; render(); }
-    else toast(r && r.error === 'extension_offline' ? "YouTube Music isn't open on the computer" : "Couldn't create the playlist");
+    if (r && r.ok) { toast(tr('Created “{name}”', { name })); cache.playlists = null; render(); }
+    else toast(r && r.error === 'extension_offline' ? tr("YouTube Music isn't open on the computer") : tr("Couldn't create the playlist"));
   });
   mkRow.appendChild(mkBtn); m.appendChild(mkRow);
   if (!cache.playlists) { m.appendChild(el('div','spinner'));
@@ -2341,10 +2432,10 @@ async function renderPlaylists(m) {
   const row = el('div', 'libgrid');   // even grid so the columns line up
   // a "Favorites" album that collects everything you've starred
   const pins = lsGet('vmr-pins', []);
-  row.appendChild(tile({ title:'Favorites', subtitle: pins.length ? pins.length + ' saved' : 'Nothing saved yet',
+  row.appendChild(tile({ title:tr('Favorites'), subtitle: pins.length ? trn('{n} saved', '{n} saved', pins.length) : tr('Nothing saved yet'),
     kind:'favorites' }));
   if (!cache.playlists.length) { const sh0 = el('div','shelf'); sh0.appendChild(row); m.appendChild(sh0);
-    m.appendChild(emptyMsg('No playlists found.')); return; }
+    m.appendChild(emptyMsg(tr('No playlists found.'))); return; }
   for (const it of cache.playlists) row.appendChild(tile(it));
   const sh = el('div', 'shelf'); sh.appendChild(row); m.appendChild(sh);
 }
@@ -2352,25 +2443,25 @@ async function renderPlaylists(m) {
 async function renderDetail(m, d) {
   m.innerHTML = '';
   // its own header (with the back arrow), so the previous page's title doesn't linger above it
-  m.appendChild(topbar(d.kind === 'album' || (d.browseId || '').startsWith('MPRE') ? 'Album' : 'Playlist'));
+  m.appendChild(topbar(d.kind === 'album' || (d.browseId || '').startsWith('MPRE') ? tr('Album') : tr('Playlist')));
   const head = el('div', 'detailhead');
   const img = el('img', 'art'); img.src = d.thumb || ART_FALLBACK; img.onerror = () => img.src = ART_FALLBACK;
   const info = el('div');
-  info.innerHTML = `<div class="t">${escapeHtml(d.title)}</div><div class="s">${escapeHtml(d.subtitle||'Playlist')}</div>`;
+  info.innerHTML = `<div class="t">${escapeHtml(d.title)}</div><div class="s">${escapeHtml(d.subtitle||tr('Playlist'))}</div>`;
   const acts = el('div', 'acts');
-  const playBtn = el('button', 'pill primary'); playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play';
-  const shufBtn = el('button', 'pill ghost'); shufBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M17 3l4 4-4 4V8h-2.5l-2 2-1.4-1.4L13 6.6V5h4V3zM3 6h4l2 2 1.4-1.4L8.8 4.6 7 3H3v3zm14 9v-3l4 4-4 4v-3h-4l-2-2 1.4-1.4L14.2 15H17zM3 15h4l6-6 1.4 1.4L8.8 17H3v-2z"/></svg>Shuffle';
+  const playBtn = el('button', 'pill primary'); playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'; playBtn.append(tr('Play'));
+  const shufBtn = el('button', 'pill ghost'); shufBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M17 3l4 4-4 4V8h-2.5l-2 2-1.4-1.4L13 6.6V5h4V3zM3 6h4l2 2 1.4-1.4L8.8 4.6 7 3H3v3zm14 9v-3l4 4-4 4v-3h-4l-2-2 1.4-1.4L14.2 15H17zM3 15h4l6-6 1.4 1.4L8.8 17H3v-2z"/></svg>'; shufBtn.append(tr('Shuffle'));
   const pid = d.playlistId || (d.browseId && d.browseId.startsWith('VL') ? d.browseId.slice(2) : null);
-  playBtn.addEventListener('click', () => { ytm({ type:'startPlaylist', playlistId:pid, shuffle:false }); toast('Starting playlist'); setRailTab('queue'); });
-  shufBtn.addEventListener('click', () => { ytm({ type:'startPlaylist', playlistId:pid, shuffle:true }); toast('Shuffling playlist'); setRailTab('queue'); });
+  playBtn.addEventListener('click', () => { ytm({ type:'startPlaylist', playlistId:pid, shuffle:false }); toast(tr('Starting playlist')); setRailTab('queue'); });
+  shufBtn.addEventListener('click', () => { ytm({ type:'startPlaylist', playlistId:pid, shuffle:true }); toast(tr('Shuffling playlist')); setRailTab('queue'); });
   const pinBtn = el('button', 'pill ghost');
   const STAR_ON = '<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17l-6.2 3.3 1.6-6.8L2.2 8.9l6.9-.6z"/></svg>';
   const STAR_OFF = '<svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M12 4.4l2.1 4.6 5 .4-3.8 3.3 1.2 4.9L12 15.4 7.5 17.6l1.2-4.9L4.9 9.4l5-.4z"/></svg>';
-  const setPinLabel = () => pinBtn.innerHTML = (isPinned(d) ? STAR_ON + 'Pinned' : STAR_OFF + 'Favorite');
+  const setPinLabel = () => pinBtn.innerHTML = (isPinned(d) ? STAR_ON + tr('Pinned') : STAR_OFF + tr('Favorite'));
   setPinLabel();
-  pinBtn.addEventListener('click', () => { const on = togglePin(d); setPinLabel(); refreshFavoriteWidgets(); toast(on ? 'Pinned to favorites' : 'Unpinned'); });
+  pinBtn.addEventListener('click', () => { const on = togglePin(d); setPinLabel(); refreshFavoriteWidgets(); toast(on ? tr('Pinned to favorites') : tr('Unpinned')); });
   // overflow menu so narrow screens don't have to fit every action inline
-  const moreBtn = el('button', 'pill ghost more'); moreBtn.title = 'More';
+  const moreBtn = el('button', 'pill ghost more'); moreBtn.title = tr('More');
   moreBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 8a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4zm0 6a2 2 0 100-4 2 2 0 000 4z"/></svg>';
   moreBtn.addEventListener('click', () => openCollectionSheet(d, pid));
   // Editing is offered only for playlists the account owns (their tracks carry a setVideoId).
@@ -2386,7 +2477,7 @@ async function renderDetail(m, d) {
   list.innerHTML = '';
   let items = (r && r.items) || [];
   if (!items.length) {
-    list.appendChild(emptyMsg(r && !r.error ? 'This playlist is empty.' : 'Couldn\'t load the songs' + (r && r.error === 'timeout' ? ' in time. Try again.' : '. Is YouTube Music open on the computer?')));
+    list.appendChild(emptyMsg(r && !r.error ? tr('This playlist is empty.') : r && r.error === 'timeout' ? tr("Couldn't load the songs in time. Try again.") : tr("Couldn't load the songs. Is YouTube Music open on the computer?")));
     return;
   }
   const editable = !!pid && items.some(i => i.setVideoId);
@@ -2409,9 +2500,9 @@ async function renderDetail(m, d) {
       const ss = el('div', 's'); ss.textContent = it.subtitle || '';
       meta.append(tt, ss);
       li.append(thumbBox(it.thumb), meta,
-        mkBtn('up', I.up, 'Move up', () => movePl(i, -1), i === 0),
-        mkBtn('down', I.down, 'Move down', () => movePl(i, 1), i === items.length - 1),
-        mkBtn('del', I.del, 'Remove from playlist', () => removePl(i)));
+        mkBtn('up', I.up, tr('Move up'), () => movePl(i, -1), i === 0),
+        mkBtn('down', I.down, tr('Move down'), () => movePl(i, 1), i === items.length - 1),
+        mkBtn('del', I.del, tr('Remove from playlist'), () => removePl(i)));
       list.appendChild(li);
     });
   };
@@ -2427,43 +2518,52 @@ async function renderDetail(m, d) {
   async function removePl(i) {
     const it = items[i], prev = items.slice();
     items.splice(i, 1); paint();
-    const ok = await plOp({ type:'playlistRemove', playlistId:pid, setVideoId:it.setVideoId, videoId:it.videoId }, 'Removed from playlist');
+    const ok = await plOp({ type:'playlistRemove', playlistId:pid, setVideoId:it.setVideoId, videoId:it.videoId }, tr('Removed from playlist'));
     if (!ok) { items = prev; paint(); } else cache.playlists = null;
   }
   if (editable) {
-    const setLabel = () => { editBtn.innerHTML = editing ? TICK + 'Done' : PEN + 'Edit'; editBtn.classList.toggle('primary', editing); editBtn.classList.toggle('ghost', !editing); };
+    const setLabel = () => { editBtn.innerHTML = editing ? TICK + tr('Done') : PEN + tr('Edit'); editBtn.classList.toggle('primary', editing); editBtn.classList.toggle('ghost', !editing); };
     setLabel(); editBtn.style.display = '';
     editBtn.addEventListener('click', () => { editing = !editing; setLabel(); paint(); });
   }
   paint();
 }
 
-function renderMixerPage(m) { m.innerHTML = ''; m.appendChild(topbar('Sound & outputs'));
+function renderMixerPage(m) { m.innerHTML = ''; m.appendChild(topbar(tr('Sound & outputs')));
   const c = el('div'); c.style.maxWidth = '520px'; c.id = 'mixerpage'; m.appendChild(c); paintMixer(c); }
 
 function renderSettings(m) {
-  m.innerHTML = ''; m.appendChild(topbar('Settings'));
+  m.innerHTML = ''; m.appendChild(topbar(tr('Settings')));
   m.appendChild(partsSection());   // what YTM Starcast does at all comes first
   m.appendChild(extensionSection());
   m.appendChild(connectSection());
   // Theme has its own submenu now, so Settings stays short.
   const tSel = localStorage.getItem('vmr-theme') || 'dark';
-  const tName = (THEMES.find(t => t[0] === tSel) || [])[1]
-    || (customThemes().find(c => c.id === tSel) || {}).name || 'Dark';
-  const apx = el('div', 'setsec'); apx.appendChild(Object.assign(el('h3'), { textContent:'Appearance' }));
+  const tKey = (THEMES.find(t => t[0] === tSel) || [])[1];
+  const tName = (tKey && tr(tKey)) || (customThemes().find(c => c.id === tSel) || {}).name || tr('Dark');
+  const apx = el('div', 'setsec'); apx.appendChild(secH3(trKey('Appearance')));
   const trow = el('div', 'setrow'); trow.style.cursor = 'pointer';
-  trow.innerHTML = `<div><div class="k">Theme</div><div class="d">${escapeHtml(tName)}</div></div>
+  trow.innerHTML = `<div><div class="k">${tr('Theme')}</div><div class="d">${escapeHtml(tName)}</div></div>
     <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:var(--dim);flex:none"><path d="M9 6l6 6-6 6z"/></svg>`;
   trow.addEventListener('click', () => setView('theme'));
-  apx.appendChild(trow); m.appendChild(apx);
+  apx.appendChild(trow);
+  // the language: one setting for every app, kept by the computer
+  const lrow = el('div', 'setrow');
+  lrow.innerHTML = `<div><div class="k">${tr('Language')}</div><div class="d">${tr("For YTM Starcast on every device. Automatic uses each device's own language.")}</div></div>`;
+  const lsel = el('select', 'langsel'); lsel.setAttribute('aria-label', tr('Language'));
+  for (const [code, name] of [['auto', tr('Automatic')], ...LANGS]) { const o = el('option'); o.value = code; o.textContent = name; lsel.appendChild(o); }
+  lsel.value = LANG.pref;
+  lsel.addEventListener('change', () => chooseLanguage(lsel.value));
+  lrow.appendChild(lsel); apx.appendChild(lrow);
+  m.appendChild(apx);
   return renderSettingsTail(m);
 }
 
 function renderThemes(m) {
-  m.innerHTML = ''; m.appendChild(topbar('Theme'));
+  m.innerHTML = ''; m.appendChild(topbar(tr('Theme')));
 
   // ---- Theme ----
-  const ts = el('div', 'setsec'); ts.appendChild(Object.assign(el('h3'), { textContent:'Theme' }));
+  const ts = el('div', 'setsec'); ts.appendChild(secH3(trKey('Theme')));
   const grid = el('div', 'themes'); ts.appendChild(grid);
   const paintThemeGrid = () => {
     grid.innerHTML = '';
@@ -2473,7 +2573,7 @@ function renderThemes(m) {
       c.innerHTML = `<div class="swatch"><i style="background:${sw[0]}"></i><i style="background:${sw[1]}"></i><i style="background:${sw[2]}"></i></div><div class="n">${escapeHtml(name)}</div>`;
       c.addEventListener('click', () => { applyTheme(id); paintThemeGrid(); });
       if (custom) {
-        const ed = el('button', 'themeedit-btn'); ed.title = 'Edit / delete';
+        const ed = el('button', 'themeedit-btn'); ed.title = tr('Edit / delete');
         ed.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
         ed.addEventListener('click', ev => { ev.stopPropagation(); openThemeEditor(m, custom); });
         c.appendChild(ed);
@@ -2481,11 +2581,11 @@ function renderThemes(m) {
       grid.appendChild(c);
     };
     const inCue = !!(window.CueNative && window.CueNative.systemColors);
-    for (const [id, name] of THEMES) { if (id === 'material' && !inCue) continue; mk(id, name, THEME_SW[id]); }
+    for (const [id, name] of THEMES) { if (id === 'material' && !inCue) continue; mk(id, tr(name), THEME_SW[id]); }
     for (const ct of customThemes()) mk(ct.id, ct.name, [ct.vars.bg, ct.vars.card2, ct.vars.accent], ct);
     const add = el('div', 'themecard'); add.style.display = 'flex'; add.style.flexDirection = 'column';
     add.style.alignItems = 'center'; add.style.justifyContent = 'center'; add.style.color = 'var(--dim)';
-    add.innerHTML = '<div style="font-size:26px;line-height:1">+</div><div class="n">New</div>';
+    add.innerHTML = `<div style="font-size:26px;line-height:1">+</div><div class="n">${tr('New')}</div>`;
     add.addEventListener('click', () => openThemeEditor(m, null));
     grid.appendChild(add);
   };
@@ -2494,9 +2594,9 @@ function renderThemes(m) {
 
 function renderSettingsTail(m) {
   // ---- Interface ----
-  const ap = el('div', 'setsec'); ap.appendChild(Object.assign(el('h3'), { textContent:'Interface' }));
+  const ap = el('div', 'setsec'); ap.appendChild(secH3(trKey('Interface')));
   const nl = el('div', 'setrow');
-  nl.innerHTML = `<div><div class="k">Show labels in the nav bar</div><div class="d">Turn off for a cleaner, icon-only bar.</div></div>`;
+  nl.innerHTML = `<div><div class="k">${tr('Show labels in the nav bar')}</div><div class="d">${tr('Turn off for a cleaner, icon-only bar.')}</div></div>`;
   const nt = el('button', 'toggle'); let labelsOn = lsGet('vmr-navlabels', true);
   if (labelsOn) nt.classList.add('on');
   nt.addEventListener('click', () => { labelsOn = !labelsOn; lsSet('vmr-navlabels', labelsOn);
@@ -2504,18 +2604,18 @@ function renderSettingsTail(m) {
   nl.appendChild(nt); ap.appendChild(nl); m.appendChild(ap);
 
   // ---- Display ----
-  const dp = el('div', 'setsec'); dp.appendChild(Object.assign(el('h3'), { textContent:'Display' }));
+  const dp = el('div', 'setsec'); dp.appendChild(secH3(trKey('Display')));
   const mkToggle = (title, desc, key, def, after) => { const row = el('div', 'setrow');
     row.innerHTML = `<div><div class="k">${title}</div><div class="d">${desc}</div></div>`;
     const t = el('button', 'toggle'); let on = lsGet(key, def); t.classList.toggle('on', on);
     t.addEventListener('click', () => { on = !on; lsSet(key, on); t.classList.toggle('on', on); applyDisplayPrefs(); if (after) after(on); });
     row.appendChild(t); dp.appendChild(row); };
-  mkToggle('Keep screen on', "Stops the screen from sleeping while this page is open. Handy for a tablet that stays on a desk. Not every browser supports it.", 'vmr-wake', false);
-  mkToggle('Pixel shift', 'Moves the whole page a few pixels every few minutes so static parts don\'t burn into OLED screens.', 'vmr-pshift', false,
+  mkToggle(tr('Keep screen on'), tr("Stops the screen from sleeping while this page is open. Handy for a tablet that stays on a desk. Not every browser supports it."), 'vmr-wake', false);
+  mkToggle(tr('Pixel shift'), tr('Moves the whole page a few pixels every few minutes so static parts don\'t burn into OLED screens.'), 'vmr-pshift', false,
     on => { pr.style.display = on ? '' : 'none'; });
   const pr = el('div', 'setrow'); pr.style.display = lsGet('vmr-pshift', false) ? '' : 'none';
-  pr.innerHTML = '<div><div class="k">Shift every</div><div class="d">Minutes between moves.</div></div>';
-  const ps = el('select'); [1, 2, 5, 10].forEach(m => { const o = el('option'); o.value = m; o.textContent = m + ' min'; ps.appendChild(o); });
+  pr.innerHTML = `<div><div class="k">${tr('Shift every')}</div><div class="d">${tr('Minutes between moves.')}</div></div>`;
+  const ps = el('select'); [1, 2, 5, 10].forEach(m => { const o = el('option'); o.value = m; o.textContent = trn('{n} min', '{n} min', m); ps.appendChild(o); });
   ps.value = String(lsGet('vmr-pshift-min', 2));
   ps.style.cssText = 'height:38px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--card);color:var(--text);padding:0 8px';
   ps.addEventListener('change', () => { lsSet('vmr-pshift-min', parseInt(ps.value, 10)); applyDisplayPrefs(); });
@@ -2524,9 +2624,9 @@ function renderSettingsTail(m) {
   // (Home widgets are now managed on the Home page — tap Edit there to add / remove / drag / resize.)
 
   // ---- Playback ----
-  const pb = el('div', 'setsec'); pb.appendChild(Object.assign(el('h3'), { textContent:'Playback' }));
+  const pb = el('div', 'setsec'); pb.appendChild(secH3(trKey('Playback')));
   const yv = el('div', 'setrow'); yv.dataset.part = 'remote';
-  yv.innerHTML = `<div><div class="k">YouTube Music volume</div><div class="d">The player's own level, separate from the computer's volume.</div></div>`;
+  yv.innerHTML = `<div><div class="k">${tr('YouTube Music volume')}</div><div class="d">${tr("The player's own level, separate from the computer's volume.")}</div></div>`;
   const ytvIn = el('input'); ytvIn.type = 'range'; ytvIn.min = 0; ytvIn.max = 100; ytvIn.value = (lastNow && lastNow.volume != null) ? lastNow.volume : 100;
   let ytvT = null;
   ytvIn.addEventListener('input', () => { const lvl = parseInt(ytvIn.value, 10);
@@ -2535,12 +2635,12 @@ function renderSettingsTail(m) {
   yv.appendChild(ytvIn); pb.appendChild(yv);
 
   const ks2 = el('div', 'setrow');
-  ks2.innerHTML = `<div><div class="k">Keyboard shortcuts</div><div class="d">
-    <b>Space</b> play/pause · <b>←/→</b> seek · <b>Shift+←/→</b> previous/next ·
-    <b>↑/↓</b> volume · <b>/</b> search · <b>Esc</b> close player</div></div>`;
+  ks2.innerHTML = `<div><div class="k">${tr('Keyboard shortcuts')}</div><div class="d">
+    <b>Space</b> ${tr('play/pause')} · <b>←/→</b> ${tr('seek')} · <b>Shift+←/→</b> ${tr('previous/next')} ·
+    <b>↑/↓</b> ${tr('volume')} · <b>/</b> ${tr('search')} · <b>Esc</b> ${tr('close player')}</div></div>`;
   pb.appendChild(ks2);
   const ss = el('div', 'setrow');
-  ss.innerHTML = `<div><div class="k">Double-tap seek</div><div class="d">Seconds to jump when you double-tap the album art.</div></div>`;
+  ss.innerHTML = `<div><div class="k">${tr('Double-tap seek')}</div><div class="d">${tr('Seconds to jump when you double-tap the album art.')}</div></div>`;
   const ssIn = el('input'); ssIn.type = 'number'; ssIn.min = 1; ssIn.max = 120; ssIn.value = seekSecs;
   ssIn.style.cssText = 'width:70px;height:38px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--card);color:var(--text);text-align:center';
   ssIn.addEventListener('change', () => { seekSecs = Math.max(1, Math.min(120, parseInt(ssIn.value,10) || 10)); ssIn.value = seekSecs; localStorage.setItem('vmr-seeksecs', seekSecs); });
@@ -2550,20 +2650,20 @@ function renderSettingsTail(m) {
   // ---- Engine (only when the audio backend offers actions, e.g. Voicemeeter) ----
   const caps = (mixerState && mixerState.capabilities) || {};
   const ACTION_INFO = {
-    restart: ['Restart audio engine', 'Reload the audio engine.'],
-    relaunch_vmwv: ['Relaunch Windows Volume sync', 'Restart the VMWV helper (Windows↔Voicemeeter volume).'],
+    restart: [trKey('Restart audio engine'), trKey('Reload the audio engine.')],
+    relaunch_vmwv: [trKey('Relaunch Windows Volume sync'), trKey('Restart the VMWV helper (Windows↔Voicemeeter volume).')],
   };
   if ((caps.engine_actions || []).length) {
-    const en = el('div', 'setsec'); en.dataset.part = 'audio'; en.appendChild(Object.assign(el('h3'), { textContent:(caps.engine_label || 'Audio') + ' engine' }));
+    const en = el('div', 'setsec'); en.dataset.part = 'audio'; en.appendChild(secH3((caps.engine_label || 'Audio') + ' engine', tr('{engine} engine', { engine: caps.engine_label || tr('Audio') })));
     const mkBtn = (label, desc, fn) => {
       const row = el('div', 'setrow');
       row.innerHTML = `<div><div class="k">${label}</div><div class="d">${desc}</div></div>`;
-      const b = el('button', 'pill ghost'); b.textContent = 'Run'; b.style.height = '38px';
-      b.addEventListener('click', async () => { b.textContent = '…'; const r = await fn(); b.textContent = 'Run';
-        toast(r && r.ok ? label + ' ✓' : (r && r.error) || 'Failed'); });
+      const b = el('button', 'pill ghost'); b.textContent = tr('Run'); b.style.height = '38px';
+      b.addEventListener('click', async () => { b.textContent = '…'; const r = await fn(); b.textContent = tr('Run');
+        toast(r && r.ok ? label + ' ✓' : (r && r.error) || tr('Failed')); });
       row.appendChild(b); en.appendChild(row);
     };
-    for (const a of caps.engine_actions) { const [l, d] = ACTION_INFO[a] || [a, '']; mkBtn(l, d, () => post('/api/engine', { action:a })); }
+    for (const a of caps.engine_actions) { const [l, d] = ACTION_INFO[a] || [a, '']; mkBtn(ACTION_INFO[a] ? tr(l) : l, d && tr(d), () => post('/api/engine', { action:a })); }
     m.appendChild(en);
   }
 
@@ -2572,55 +2672,55 @@ function renderSettingsTail(m) {
 
   // ---- Status ----
   const eng = mixerState && mixerState.engine && mixerState.engine.connected;
-  const st = el('div', 'setsec'); st.appendChild(Object.assign(el('h3'), { textContent:'Status' }));
+  const st = el('div', 'setsec'); st.appendChild(secH3(trKey('Status')));
   st.innerHTML += `
-    <div class="setrow" data-part="remote"><div><div class="k">YouTube Music</div><div class="d">Full YouTube Music control (search, queue, mixes) through the YTM Starcast extension in the computer's browser.</div></div><div class="val">${lastYtm ? 'Connected' : 'Not connected'}</div></div>
-    <div class="setrow" data-part="audio"><div><div class="k">Audio output</div><div class="d">The computer's current output &mdash; what the volume slider controls.</div></div><div class="val">${(mixerState && mixerState.volume && mixerState.volume.available) ? escapeHtml(mixerState.volume.device) : 'Not available'}</div></div>` +
-    (caps.engine_label ? `<div class="setrow" data-part="audio"><div><div class="k">${caps.engine_label} engine</div><div class="d">Master volume &amp; EQ.</div></div><div class="val">${eng ? 'Connected' : 'Not reachable'}</div></div>` : '');
+    <div class="setrow" data-part="remote"><div><div class="k">YouTube Music</div><div class="d">${tr("Full YouTube Music control (search, queue, mixes) through the YTM Starcast extension in the computer's browser.")}</div></div><div class="val">${lastYtm ? tr('Connected') : tr('Not connected')}</div></div>
+    <div class="setrow" data-part="audio"><div><div class="k">${tr('Audio output')}</div><div class="d">${tr("The computer's current output — what the volume slider controls.")}</div></div><div class="val">${(mixerState && mixerState.volume && mixerState.volume.available) ? escapeHtml(mixerState.volume.device) : tr('Not available')}</div></div>` +
+    (caps.engine_label ? `<div class="setrow" data-part="audio"><div><div class="k">${tr('{engine} engine', { engine: caps.engine_label })}</div><div class="d">${tr('Master volume & EQ.')}</div></div><div class="val">${eng ? tr('Connected') : tr('Not reachable')}</div></div>` : '');
   // When the bridge is down, say how to fix it instead of just reporting "Offline".
   if (!lastYtm) {
     const help = el('div', 'setrow'); help.dataset.part = 'remote';
-    help.innerHTML = `<div><div class="k">Bridge is offline — how to fix</div><div class="d">
-      1. Open <b>music.youtube.com</b> in the browser on the computer.<br>
-      2. If it's already open, refresh that tab.<br>
-      3. Not added yet, or still stuck? Settings → Browser extension has the steps.</div></div>`;
+    help.innerHTML = `<div><div class="k">${tr('Bridge is offline — how to fix')}</div><div class="d">
+      1. ${tr('Open {site} in the browser on the computer.', { site: '<b>music.youtube.com</b>' })}<br>
+      2. ${tr("If it's already open, refresh that tab.")}<br>
+      3. ${tr('Not added yet, or still stuck? Settings → Browser extension has the steps.')}</div></div>`;
     st.appendChild(help);
   }
   const rc = el('div', 'setrow');
-  rc.innerHTML = `<div><div class="k">Reconnect</div><div class="d">Reload the app if something stops responding.</div></div>`;
-  const rcb = el('button', 'pill ghost'); rcb.textContent = 'Refresh'; rcb.style.height = '38px';
-  rcb.addEventListener('click', () => { toast('Reconnecting…'); setTimeout(() => location.reload(), 200); });
+  rc.innerHTML = `<div><div class="k">${tr('Reconnect')}</div><div class="d">${tr('Reload the app if something stops responding.')}</div></div>`;
+  const rcb = el('button', 'pill ghost'); rcb.textContent = tr('Refresh'); rcb.style.height = '38px';
+  rcb.addEventListener('click', () => { toast(tr('Reconnecting…')); setTimeout(() => location.reload(), 200); });
   rc.appendChild(rcb); st.appendChild(rc);
   m.appendChild(st);
 
   // ---- Cue app (only visible inside the native Android wrapper) ----
   const cue = window.CueNative;
   if (cue && cue.isCue && cue.isCue()) {
-    const cs = el('div', 'setsec'); cs.appendChild(Object.assign(el('h3'), { textContent:'Cue app' }));
+    const cs = el('div', 'setsec'); cs.appendChild(secH3(trKey('Cue app')));
     const sr = el('div', 'setrow');
-    sr.innerHTML = `<div><div class="k">Server address</div><div class="d">Where Cue loads the app from.</div></div>`;
+    sr.innerHTML = `<div><div class="k">${tr('Server address')}</div><div class="d">${tr('Where Cue loads the app from.')}</div></div>`;
     const inp = el('input'); try { inp.value = cue.getServer(); } catch (e) {}
     inp.style.cssText = 'flex:1;max-width:240px;height:38px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--card);color:var(--text);padding:0 12px;font-size:13px';
     inp.addEventListener('change', () => {
       const wanted = inp.value.trim();
-      toast('Checking…');
+      toast(tr('Checking…'));
       try {
         // the bridge verifies it's reachable first, so a typo can't strand you
-        if (cue.setServer(wanted)) toast('Connected — reloading');
-        else { toast("Couldn't reach that address"); inp.value = cue.getServer(); }
+        if (cue.setServer(wanted)) toast(tr('Connected — reloading'));
+        else { toast(tr("Couldn't reach that address")); inp.value = cue.getServer(); }
       } catch (e) { inp.value = cue.getServer(); }
     });
     sr.appendChild(inp); cs.appendChild(sr);
     const ks = el('div', 'setrow');
-    ks.innerHTML = `<div><div class="k">Keep screen on</div><div class="d">Stop your device from sleeping while Cue is running.</div></div>`;
+    ks.innerHTML = `<div><div class="k">${tr('Keep screen on')}</div><div class="d">${tr('Stop your device from sleeping while Cue is running.')}</div></div>`;
     const kt = el('button', 'toggle'); let kon = true; try { kon = cue.getKeepScreenOn(); } catch (e) {}
     if (kon) kt.classList.add('on');
     kt.addEventListener('click', () => { kon = !kon; kt.classList.toggle('on', kon); try { cue.setKeepScreenOn(kon); } catch (e) {} });
     ks.appendChild(kt); cs.appendChild(ks);
     const rs = el('div', 'setrow');
-    rs.innerHTML = `<div><div class="k">Media notification</div><div class="d">Restart the status-bar player service.</div></div>`;
-    const rb = el('button', 'pill ghost'); rb.textContent = 'Restart'; rb.style.height = '38px';
-    rb.addEventListener('click', () => { try { cue.restartService(); toast('Restarted'); } catch (e) {} });
+    rs.innerHTML = `<div><div class="k">${tr('Media notification')}</div><div class="d">${tr('Restart the status-bar player service.')}</div></div>`;
+    const rb = el('button', 'pill ghost'); rb.textContent = tr('Restart'); rb.style.height = '38px';
+    rb.addEventListener('click', () => { try { cue.restartService(); toast(tr('Restarted')); } catch (e) {} });
     rs.appendChild(rb); cs.appendChild(rs);
     m.appendChild(cs);
   }
@@ -2634,10 +2734,10 @@ function openThemeEditor(m, existing) {
     const raw = cs.getPropertyValue('--' + k).trim();
     start[k] = raw.startsWith('#') ? raw : rgb2hex(raw);
   }
-  m.innerHTML = ''; m.appendChild(topbar('Theme editor'));
+  m.innerHTML = ''; m.appendChild(topbar(tr('Theme editor')));
   const wrap = el('div', 'setsec');
-  const LABELS = { bg:'Background', panel:'Panel / sidebar', card:'Card', card2:'Card (raised)', line:'Borders',
-    text:'Text', dim:'Muted text', dim2:'Faint text', accent:'Accent', accent2:'Accent (bright)' };
+  const LABELS = { bg:tr('Background'), panel:tr('Panel / sidebar'), card:tr('Card'), card2:tr('Card (raised)'), line:tr('Borders'),
+    text:tr('Text'), dim:tr('Muted text'), dim2:tr('Faint text'), accent:tr('Accent'), accent2:tr('Accent (bright)') };
   const grid = el('div', 'themeedit');
   const inputs = {};
   for (const k of THEME_VARS) {
@@ -2656,23 +2756,23 @@ function openThemeEditor(m, existing) {
   }
   wrap.appendChild(grid);
   const bar = el('div', 'cebar');
-  const nameIn = el('input'); nameIn.id = 'cename'; nameIn.placeholder = 'Theme name'; nameIn.value = existing ? existing.name : '';
-  const save = el('button', 'pill primary'); save.textContent = 'Save theme';
+  const nameIn = el('input'); nameIn.id = 'cename'; nameIn.placeholder = tr('Theme name'); nameIn.value = existing ? existing.name : '';
+  const save = el('button', 'pill primary'); save.textContent = tr('Save theme');
   save.addEventListener('click', () => {
-    const name = nameIn.value.trim() || 'My theme';
+    const name = nameIn.value.trim() || tr('My theme');
     const vars = {}; for (const k of THEME_VARS) vars[k] = inputs[k].value;
     let list = customThemes();
     const id = existing ? existing.id : 'custom-' + Date.now();
     const entry = { id, name, base:'dark', vars };
     if (existing) list = list.map(c => c.id === id ? entry : c); else list.push(entry);
-    saveCustomThemes(list); applyTheme(id); toast('Theme saved'); renderThemes(m);
+    saveCustomThemes(list); applyTheme(id); toast(tr('Theme saved')); renderThemes(m);
   });
   bar.append(nameIn, save);
-  if (existing) { const del = el('button', 'pill ghost'); del.textContent = 'Delete';
+  if (existing) { const del = el('button', 'pill ghost'); del.textContent = tr('Delete');
     del.addEventListener('click', () => { saveCustomThemes(customThemes().filter(c => c.id !== existing.id));
-      applyTheme('dark'); toast('Theme deleted'); renderThemes(m); });
+      applyTheme('dark'); toast(tr('Theme deleted')); renderThemes(m); });
     bar.appendChild(del); }
-  const cancel = el('button', 'pill ghost'); cancel.textContent = 'Cancel';
+  const cancel = el('button', 'pill ghost'); cancel.textContent = tr('Cancel');
   cancel.addEventListener('click', () => { applyTheme(localStorage.getItem('vmr-theme') || 'refine'); renderThemes(m); });
   bar.appendChild(cancel);
   wrap.appendChild(bar); m.appendChild(wrap);
@@ -2718,7 +2818,7 @@ function cpDrag(elm, handler) {
 function openColorPicker(hex, title, onLive, onDone) {
   const rgb = hex2rgb(hex) || [128, 128, 128]; [CP.h, CP.s, CP.v] = rgb2hsv(...rgb);
   CP.onLive = onLive; CP.onDone = onDone; CP.onCancel = null;
-  $('#cp-title').textContent = title || 'Color'; cpRender(); $('#cpwrap').classList.add('show');
+  $('#cp-title').textContent = title || tr('Color'); cpRender(); $('#cpwrap').classList.add('show');
 }
 cpDrag($('#cp-sv'), (x, y) => { CP.s = x; CP.v = 1 - y; cpRender(); });
 cpDrag($('#cp-hue'), x => { CP.h = x * 360; cpRender(); });
@@ -2737,18 +2837,18 @@ function activate(item) {
   if (item.kind === 'favorites') { setView('favorites'); return; }
   if (item.kind === 'song' && item.videoId) {
     optimisticNow(item);   // paint what we already know instantly
-    ytm({ type:'play', videoId:item.videoId, playlistId:item.playlistId }); toast('Playing'); setRailTab('queue');
+    ytm({ type:'play', videoId:item.videoId, playlistId:item.playlistId }); toast(tr('Playing')); setRailTab('queue');
   } else if (item.playlistId || (item.browseId && item.browseId.startsWith('VL'))) {
     detailStack = item; setView('detail');
   } else if (item.kind === 'song') {
-    ytm({ type:'play', videoId:item.videoId }); toast('Playing');
+    ytm({ type:'play', videoId:item.videoId }); toast(tr('Playing'));
   } else { openSheet(item); }
 }
 
 // Overflow sheet for a playlist / album header.
 function openCollectionSheet(d, pid) {
   $('#sheet-art').src = d.thumb || ART_FALLBACK;
-  $('#sheet-t').textContent = d.title; $('#sheet-s').textContent = d.subtitle || 'Playlist';
+  $('#sheet-t').textContent = d.title; $('#sheet-s').textContent = d.subtitle || tr('Playlist');
   const acts = $('#sheet-acts'); acts.innerHTML = '';
   const add = (label, icon, fn) => { const b = el('button', 'act'); b.innerHTML = icon + '<span>' + label + '</span>';
     b.addEventListener('click', () => { closeSheet(); fn(); }); acts.appendChild(b); };
@@ -2756,25 +2856,25 @@ function openCollectionSheet(d, pid) {
     q:'<svg viewBox="0 0 24 24"><path d="M4 6h12v2H4zm0 4h12v2H4zm0 4h8v2H4zm11 0h2v3h3v2h-3v3h-2v-3h-3v-2h3z"/></svg>',
     star:'<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17l-6.2 3.3 1.6-6.8L2.2 8.9l6.9-.6z"/></svg>',
     share:'<svg viewBox="0 0 24 24"><path d="M18 16a3 3 0 00-2.3 1.1l-6.1-3.5a3 3 0 000-1.2l6-3.5A3 3 0 1015 6l-6 3.5a3 3 0 100 5l6.1 3.6A3 3 0 1018 16z"/></svg>' };
-  add('Play', I.play, () => { ytm({ type:'startPlaylist', playlistId:pid, shuffle:false }); toast('Starting playlist'); });
-  add('Shuffle', I.play, () => { ytm({ type:'startPlaylist', playlistId:pid, shuffle:true }); toast('Shuffling'); });
-  add(isPinned(d) ? 'Remove from favorites' : 'Add to favorites', I.star,
-    () => { const on = togglePin(d); refreshFavoriteWidgets(); toast(on ? 'Added to favorites' : 'Removed'); });
-  add('Share', I.share, () => shareItem({ playlistId:pid, title:d.title, subtitle:d.subtitle }));
+  add(tr('Play'), I.play, () => { ytm({ type:'startPlaylist', playlistId:pid, shuffle:false }); toast(tr('Starting playlist')); });
+  add(tr('Shuffle'), I.play, () => { ytm({ type:'startPlaylist', playlistId:pid, shuffle:true }); toast(tr('Shuffling')); });
+  add(isPinned(d) ? tr('Remove from favorites') : tr('Add to favorites'), I.star,
+    () => { const on = togglePin(d); refreshFavoriteWidgets(); toast(on ? tr('Added to favorites') : tr('Removed')); });
+  add(tr('Share'), I.share, () => shareItem({ playlistId:pid, title:d.title, subtitle:d.subtitle }));
   if (d.editable) {
     const pen = '<svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM20.7 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
     const bin = '<svg viewBox="0 0 24 24"><path d="M6 7h12v13a2 2 0 01-2 2H8a2 2 0 01-2-2zm3-4h6l1 2h4v2H4V5h4z"/></svg>';
-    add('Rename', pen, async () => {
-      const name = await askBox({ title:'Rename playlist', input:true, value:d.title, ok:'Rename' });
+    add(tr('Rename'), pen, async () => {
+      const name = await askBox({ title:tr('Rename playlist'), input:true, value:d.title, ok:tr('Rename') });
       if (!name || name === d.title) return;
-      if (await plOp({ type:'playlistRename', playlistId:pid, name }, 'Renamed')) { cache.playlists = null; if (onDetailRenamed) onDetailRenamed(name); }
+      if (await plOp({ type:'playlistRename', playlistId:pid, name }, tr('Renamed'))) { cache.playlists = null; if (onDetailRenamed) onDetailRenamed(name); }
     });
-    add('Delete playlist', bin, async () => {
-      const yes = await askBox({ title:'Delete this playlist?', text:'“' + d.title + '” will be removed from your YouTube Music library. This can’t be undone.', ok:'Delete', danger:true });
-      if (yes && await plOp({ type:'playlistDelete', playlistId:pid }, 'Playlist deleted')) { cache.playlists = null; setView('playlists'); }
+    add(tr('Delete playlist'), bin, async () => {
+      const yes = await askBox({ title:tr('Delete this playlist?'), text:tr('“{name}” will be removed from your YouTube Music library. This can’t be undone.', { name: d.title }), ok:tr('Delete'), danger:true });
+      if (yes && await plOp({ type:'playlistDelete', playlistId:pid }, tr('Playlist deleted'))) { cache.playlists = null; setView('playlists'); }
     });
   }
-  $('#sheet').classList.add('show');
+  $('#sheet').classList.add(tr('show'));
 }
 
 /* Queue rows get their own menu — the actions that make sense for something already in the
@@ -2792,29 +2892,29 @@ function openQueueSheet(q) {
     mix:'<svg viewBox="0 0 24 24"><path d="M17 3l4 4-4 4V8h-3l-2 2-1.4-1.4L12 7h2l-2-2h5V3zM3 6h5l3 3-1.4 1.4L7 8H3V6zm14 9v-3l4 4-4 4v-3h-2l-8-8H3v-2h5l8 8h1z"/></svg>',
     star:'<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 17l-6.2 3.3 1.6-6.8L2.2 8.9l6.9-.6z"/></svg>',
     share:'<svg viewBox="0 0 24 24"><path d="M18 16a3 3 0 00-2.3 1.1l-6.1-3.5a3 3 0 000-1.2l6-3.5A3 3 0 1015 6l-6 3.5a3 3 0 100 5l6.1 3.6A3 3 0 1018 16z"/></svg>' };
-  add('Play now', I.play, () => queueJump(q));
+  add(tr('Play now'), I.play, () => queueJump(q));
   if ((q.section || 'queue') === 'queue') {
     const m = qsplit().main, ci = m.findIndex(x => x.selected);
-    add('Move to play next', I.up, () => commitMove(m.indexOf(q), Math.min(m.length - 1, ci + 1)));
-    add('Move to end of queue', I.up, () => commitMove(m.indexOf(q), m.length - 1));
+    add(tr('Move to play next'), I.up, () => commitMove(m.indexOf(q), Math.min(m.length - 1, ci + 1)));
+    add(tr('Move to end of queue'), I.up, () => commitMove(m.indexOf(q), m.length - 1));
   } else {
-    add('Play next', I.up, () => { ytm(Object.assign({ type:'queueMoveNext' }, qref(q)), true); toast('Added — playing next'); });
+    add(tr('Play next'), I.up, () => { ytm(Object.assign({ type:'queueMoveNext' }, qref(q)), true); toast(tr('Added — playing next')); });
   }
-  add('Remove from queue', I.del, () => queueRemove(q));
-  add('Start radio', I.mix, () => { ytm({ type:'startMix', videoId:q.videoId }); toast('Starting radio'); });
-  add(isPinned(q) ? 'Remove from favorites' : 'Favorite', I.star,
-    () => { const on = togglePin({ ...q, kind:'song', subtitle:q.artist }); refreshFavoriteWidgets(); toast(on ? 'Added to favorites' : 'Removed'); });
-  if (q.artist && lastYtm && window.openArtist) add('Go to artist', '<svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/></svg>',
+  add(tr('Remove from queue'), I.del, () => queueRemove(q));
+  add(tr('Start radio'), I.mix, () => { ytm({ type:'startMix', videoId:q.videoId }); toast(tr('Starting radio')); });
+  add(isPinned(q) ? tr('Remove from favorites') : tr('Favorite'), I.star,
+    () => { const on = togglePin({ ...q, kind:'song', subtitle:q.artist }); refreshFavoriteWidgets(); toast(on ? tr('Added to favorites') : tr('Removed')); });
+  if (q.artist && lastYtm && window.openArtist) add(tr('Go to artist'), '<svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/></svg>',
     () => { if ($('#app').classList.contains('railopen')) history.back(); setTimeout(() => window.openArtist(null, q.artist, q.videoId), 60); });
-  add('Share', I.share, () => shareItem({ videoId:q.videoId, title:q.title, subtitle:q.artist }));
-  $('#sheet').classList.add('show');
+  add(tr('Share'), I.share, () => shareItem({ videoId:q.videoId, title:q.title, subtitle:q.artist }));
+  $('#sheet').classList.add(tr('show'));
 }
 // Remove with an optimistic repaint so the row disappears immediately.
 function queueRemove(q) {
   lastQueue = lastQueue.filter(x => x !== q);
   queueSettleUntil = Date.now() + 2500; queueSig = null; paintRailBody();
   ytm(Object.assign({ type:'queueRemove' }, qref(q)), true);
-  toast('Removed from queue');
+  toast(tr('Removed from queue'));
 }
 
 function shareItem(item) {
@@ -2826,7 +2926,7 @@ function shareItem(item) {
   // back to copying the link — execCommand still works in non-secure contexts.
   const ta = document.createElement('textarea'); ta.value = url; ta.style.cssText = 'position:fixed;opacity:0';
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); toast('Link copied'); } catch (e) { toast(url); }
+  try { document.execCommand('copy'); toast(tr('Link copied')); } catch (e) { toast(url); }
   document.body.removeChild(ta);
 }
 
@@ -2846,25 +2946,25 @@ function openSheet(item) {
     like:'<svg viewBox="0 0 24 24"><path d="M2 21h4V9H2v12zM23 10a2 2 0 00-2-2h-6.31l.95-4.57.03-.32a1.5 1.5 0 00-.44-1.06L14.17 1 7.59 7.59A2 2 0 007 9v10a2 2 0 002 2h9a2 2 0 001.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>',
     person:'<svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/></svg>' };
   if (item.videoId) {
-    add('Play now', I.play, () => { ytm({ type:'play', videoId:item.videoId }); toast('Playing'); setRailTab('queue'); });
-    add('Play next', I.next, () => { ytm({ type:'queueAdd', videoId:item.videoId, query:item.title + ' ' + (item.subtitle||''), mode:'next' }); toast('Added — playing next'); });
-    add('Add to queue', I.q, () => { ytm({ type:'queueAdd', videoId:item.videoId, query:item.title + ' ' + (item.subtitle||''), mode:'end' }); toast('Added to queue'); });
-    add('Add to playlist…', I.q, () => openAddToPlaylist(item));
-    add('Start radio', I.mix, () => { ytm({ type:'startMix', videoId:item.videoId }); toast('Starting radio'); setRailTab('queue'); });
-    add(isPinned(item) ? 'Remove from favorites' : 'Favorite', I.star, () => { const on = togglePin(item); refreshFavoriteWidgets(); toast(on ? 'Added to favorites' : 'Removed'); });
-    add('Like on YouTube Music', I.like, async () => {
+    add(tr('Play now'), I.play, () => { ytm({ type:'play', videoId:item.videoId }); toast(tr('Playing')); setRailTab('queue'); });
+    add(tr('Play next'), I.next, () => { ytm({ type:'queueAdd', videoId:item.videoId, query:item.title + ' ' + (item.subtitle||''), mode:'next' }); toast(tr('Added — playing next')); });
+    add(tr('Add to queue'), I.q, () => { ytm({ type:'queueAdd', videoId:item.videoId, query:item.title + ' ' + (item.subtitle||''), mode:'end' }); toast(tr('Added to queue')); });
+    add(tr('Add to playlist…'), I.q, () => openAddToPlaylist(item));
+    add(tr('Start radio'), I.mix, () => { ytm({ type:'startMix', videoId:item.videoId }); toast(tr('Starting radio')); setRailTab('queue'); });
+    add(isPinned(item) ? tr('Remove from favorites') : tr('Favorite'), I.star, () => { const on = togglePin(item); refreshFavoriteWidgets(); toast(on ? tr('Added to favorites') : tr('Removed')); });
+    add(tr('Like on YouTube Music'), I.like, async () => {
       const r = await ytm({ type:'like', videoId:item.videoId, action:'like' }, true);
-      toast(r && r.ok ? 'Liked' : "Couldn't like it" + (lastYtm ? '' : ': YouTube Music isn\'t open on the computer'));
+      toast(r && r.ok ? tr('Liked') : lastYtm ? tr("Couldn't like it") : tr("Couldn't like it: YouTube Music isn't open on the computer"));
     });
     const artist = String(item.subtitle || '').split(' \u2022 ')[0].trim();
-    if (artist && lastYtm && window.openArtist) add('Go to artist', I.person, () => window.openArtist(null, artist, item.videoId));
-    add('Share', I.share, () => shareItem(item));
+    if (artist && lastYtm && window.openArtist) add(tr('Go to artist'), I.person, () => window.openArtist(null, artist, item.videoId));
+    add(tr('Share'), I.share, () => shareItem(item));
   }
-  $('#sheet').classList.add('show');
+  $('#sheet').classList.add(tr('show'));
 }
 async function openAddToPlaylist(item) {
   $('#sheet-art').src = item.thumb || ART_FALLBACK;
-  $('#sheet-t').textContent = 'Add to playlist'; $('#sheet-s').textContent = item.title;
+  $('#sheet-t').textContent = tr('Add to playlist'); $('#sheet-s').textContent = item.title;
   const acts = $('#sheet-acts'); acts.innerHTML = ''; acts.appendChild(el('div', 'spinner'));
   $('#sheet').classList.add('show');
   if (!cache.playlists) { const r = await ytm({ type:'playlists' }); cache.playlists = (r && r.playlists) || []; }
@@ -2872,23 +2972,23 @@ async function openAddToPlaylist(item) {
   const ICON = '<svg viewBox="0 0 24 24"><path d="M4 6h12v2H4zm0 4h12v2H4zm0 4h8v2H4zm11 0h2v3h3v2h-3v3h-2v-3h-3v-2h3z"/></svg>';
   const mk = (label, fn) => { const b = el('button', 'act'); b.innerHTML = ICON + '<span></span>';
     b.querySelector('span').textContent = label; b.addEventListener('click', () => { closeSheet(); fn(); }); acts.appendChild(b); };
-  mk('New playlist…', async () => {
-    const name = await askBox({ title:'New playlist', text:'Starts with “' + item.title + '”.', input:true, placeholder:'Playlist name', ok:'Create' });
+  mk(tr('New playlist…'), async () => {
+    const name = await askBox({ title:tr('New playlist'), text:tr('Starts with “{title}”.', { title: item.title }), input:true, placeholder:tr('Playlist name'), ok:tr('Create') });
     if (!name) return;
     const r = await ytm({ type:'playlistCreate', title:name, videoIds:[item.videoId] }, true);
-    if (r && r.ok) { cache.playlists = null; toast('Created “' + name + '”'); } else toast("Couldn't create the playlist");
+    if (r && r.ok) { cache.playlists = null; toast(tr('Created “{name}”', { name })); } else toast(tr("Couldn't create the playlist"));
   });
   for (const p of cache.playlists) {
     const id = p.playlistId || (p.browseId && p.browseId.replace(/^VL/, ''));
     if (!id || id === 'LM' || id === 'SE') continue;   // Liked music / uploads can't be edited this way
-    mk(p.title, async () => { if (await plOp({ type:'playlistAdd', playlistId:id, videoId:item.videoId }, 'Added to ' + p.title)) cache.playlists = null; });
+    mk(p.title, async () => { if (await plOp({ type:'playlistAdd', playlistId:id, videoId:item.videoId }, tr('Added to {playlist}', { playlist: p.title }))) cache.playlists = null; });
   }
 }
 $('#qm-save').addEventListener('click', async () => {
-  const name = await askBox({ title:'Save queue as playlist', text:'Saves the tracks in your queue (not the autoplay suggestions) as a new private playlist.',
-    input:true, value:'Saved queue', ok:'Save' });
+  const name = await askBox({ title:tr('Save queue as playlist'), text:tr('Saves the tracks in your queue (not the autoplay suggestions) as a new private playlist.'),
+    input:true, value:tr('Saved queue'), ok:tr('Save') });
   if (!name) return;
-  if (await plOp({ type:'queueSave', title:name }, 'Saved as “' + name + '”')) cache.playlists = null;
+  if (await plOp({ type:'queueSave', title:name }, tr('Saved as “{name}”', { name }))) cache.playlists = null;
 });
 function closeSheet() { $('#sheet').classList.remove('show'); }
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
@@ -2911,7 +3011,7 @@ $('#r-prev').addEventListener('click', () => ytm({ type:'transport', action:'pre
 $('#np-fav').addEventListener('click', () => {
   if (!lastNow || !lastNow.videoId) return;
   const on = togglePin({ videoId:lastNow.videoId, kind:'song', title:lastNow.title, subtitle:lastNow.artist, thumb:lastNow.art });
-  $('#np-fav').classList.toggle('on', on); refreshFavoriteWidgets(); toast(on ? 'Added to favorites' : 'Removed from favorites');
+  $('#np-fav').classList.toggle('on', on); refreshFavoriteWidgets(); toast(on ? tr('Added to favorites') : tr('Removed from favorites'));
 });
 $('#np-share').addEventListener('click', () => { if (lastNow && lastNow.videoId) shareItem({ videoId:lastNow.videoId, title:lastNow.title, subtitle:lastNow.artist }); });
 $('#np-like').addEventListener('click', () => {
@@ -2920,7 +3020,7 @@ $('#np-like').addEventListener('click', () => {
   ytm({ type:'like', videoId:lastNow.videoId, action: liked ? 'remove' : 'like' }, true);
   lastNow.liked = liked ? 'INDIFFERENT' : 'LIKE';
   likeSettleUntil = Date.now() + 3000; likeSettleVid = lastNow.videoId;   // keep optimistic state
-  $('#np-like').classList.toggle('on', !liked); toast(liked ? 'Removed like' : 'Liked on YouTube Music');
+  $('#np-like').classList.toggle('on', !liked); toast(liked ? tr('Removed like') : tr('Liked on YouTube Music'));
 });
 
 // Mobile mini-player → opens the full now-playing sheet; back / close button dismisses it.
@@ -3107,7 +3207,7 @@ function optimisticNow(item) {
       cardDismissed = true;                               // stays hidden until playback resumes
       reset();
       paintNow({}, []);                                   // hide the card straight away
-      toast('Stopped — queue cleared');
+      toast(tr('Stopped — queue cleared'));
       return;
     }
     if (_mode === 'v' && _dy < 0) {
@@ -3259,7 +3359,7 @@ document.querySelectorAll('.railhead .rtab').forEach(b => b.addEventListener('cl
 function lyricsKey() { const n = lastNow; return n && n.title ? [n.title, n.artist].join('|') : null; }
 async function loadLyrics(refresh) {
   const key = lyricsKey(), body = $('#lyricsbody');
-  if (!key) { lyr.key = null; lyr.data = null; body.innerHTML = '<div class="lymsg">Nothing is playing.</div>'; return; }
+  if (!key) { lyr.key = null; lyr.data = null; body.innerHTML = `<div class="lymsg">${tr('Nothing is playing.')}</div>`; return; }
   if (key === lyr.key && !refresh && lyr.data) return;
   lyr.key = key; lyr.loading = true; lyr.error = null; lyr.data = null; lyr.active = -2; paintLyrics();
   const n = lastNow;
@@ -3284,11 +3384,11 @@ function paintLyrics() {
   if (lyr.loading) { body.appendChild(el('div', 'spinner')); return; }
   const d = lyr.data;
   if (lyr.error) { body.innerHTML = '<div class="lymsg"></div>'; body.firstChild.textContent = lyr.error; return; }
-  if (!d || !d.found) { body.innerHTML = '<div class="lymsg">No lyrics found for this song. Try another source or look again.</div>';
+  if (!d || !d.found) { body.innerHTML = `<div class="lymsg">${tr('No lyrics found for this song. Try another source or look again.')}</div>`;
     if (d) body.prepend(lyricsControls(d)); return; }
   const L = d.lyrics; body.classList.toggle('synced', !!L.synced); body.classList.toggle('plain', !L.synced);
   body.appendChild(lyricsControls(d));
-  const note = el('div', 'lynote'); note.textContent = (L.synced ? 'Live lyrics follow the song. Tap a line to jump to it.' : "These lyrics aren't time-synced.") + (L.credit ? '  ' + L.credit : '');
+  const note = el('div', 'lynote'); note.textContent = (L.synced ? tr('Live lyrics follow the song. Tap a line to jump to it.') : tr("These lyrics aren't time-synced.")) + (L.credit ? '  ' + L.credit : '');
   body.appendChild(note);
   L.lines.forEach((ln, i) => {
     if (!ln.text.trim()) { const g = el('div', 'lyl gap'); g.dataset.i = i; const gt = el('div', 't'); gt.textContent = '♪'; g.appendChild(gt); body.appendChild(g); return; }
@@ -3304,14 +3404,14 @@ function paintLyrics() {
 function lyricsControls(d) {
   const box = el('div', 'lyctl');
   const chip = (label, on, fn, off) => { const b = el('button', 'lychip' + (on ? ' on' : '')); b.textContent = label; b.disabled = !!off; b.addEventListener('click', fn); box.appendChild(b); return b; };
-  (d.sources || []).forEach(s => chip(s.label + (s.found && s.words ? ' · word-by-word' : s.found && s.synced ? ' · synced' : ''), d.source === s.id, () => { lyr.source = s.id; lsSet('vmr-ly-src', s.id); lyr.key = null; loadLyrics(false); }, !s.found));
-  chip('↻', false, () => { lyr.key = null; loadLyrics(true); }).title = 'Look again';
+  (d.sources || []).forEach(s => chip(s.found && s.words ? tr('{source} · word-by-word', { source: s.label }) : s.found && s.synced ? tr('{source} · synced', { source: s.label }) : s.label, d.source === s.id, () => { lyr.source = s.id; lsSet('vmr-ly-src', s.id); lyr.key = null; loadLyrics(false); }, !s.found));
+  chip('↻', false, () => { lyr.key = null; loadLyrics(true); }).title = tr('Look again');
   if (d.lyrics && d.lyrics.synced) { const off = lsGet('vmr-ly-off', 0);
-    chip('−0.1s', false, () => { lsSet('vmr-ly-off', Math.max(-2000, off - 100)); paintLyrics(); }).title = 'Lyrics earlier';
-    chip('+0.1s', false, () => { lsSet('vmr-ly-off', Math.min(2000, off + 100)); paintLyrics(); }).title = 'Lyrics later';
-    if (off) chip((off > 0 ? '+' : '') + (off / 1000).toFixed(1) + 's · reset', true, () => { lsSet('vmr-ly-off', 0); paintLyrics(); }); }
-  if (d.lyrics && d.lyrics.lines.some(l => l.rom)) chip('Romanize', lyr.rom, () => { lyr.rom = !lyr.rom; lsSet('vmr-ly-rom', lyr.rom); paintLyrics(); });
-  if (d.lyrics && d.lyrics.lines.some(l => l.tr)) chip('Translation', lyr.tr, () => { lyr.tr = !lyr.tr; lsSet('vmr-ly-tr', lyr.tr); paintLyrics(); });
+    chip('−0.1s', false, () => { lsSet('vmr-ly-off', Math.max(-2000, off - 100)); paintLyrics(); }).title = tr('Lyrics earlier');
+    chip('+0.1s', false, () => { lsSet('vmr-ly-off', Math.min(2000, off + 100)); paintLyrics(); }).title = tr('Lyrics later');
+    if (off) chip(tr('{offset} · reset', { offset: (off > 0 ? '+' : '') + (off / 1000).toFixed(1) + 's' }), true, () => { lsSet('vmr-ly-off', 0); paintLyrics(); }); }
+  if (d.lyrics && d.lyrics.lines.some(l => l.rom)) chip(tr('Romanize'), lyr.rom, () => { lyr.rom = !lyr.rom; lsSet('vmr-ly-rom', lyr.rom); paintLyrics(); });
+  if (d.lyrics && d.lyrics.lines.some(l => l.tr)) chip(tr('Translation'), lyr.tr, () => { lyr.tr = !lyr.tr; lsSet('vmr-ly-tr', lyr.tr); paintLyrics(); });
   return box;
 }
 let lyPause = 0;
@@ -3356,10 +3456,10 @@ function paintNow(now, queue) {
   const art = $('#np-art');
   if (live && now.art) { if (art.tagName !== 'IMG') { const img = el('img','art'); img.id='np-art'; art.replaceWith(img); }
     $('#np-art').src = now.art; }
-  else { if ($('#np-art').tagName === 'IMG') { const d = el('div','art idle'); d.id='np-art'; d.textContent='Nothing playing'; $('#np-art').replaceWith(d); } }
+  else { if ($('#np-art').tagName === 'IMG') { const d = el('div','art idle'); d.id='np-art'; d.textContent=tr('Nothing playing'); $('#np-art').replaceWith(d); } }
   $('#np-glow').style.backgroundImage = (live && now.art) ? 'url("' + now.art + '")' : 'none';
   if (live && now.art) albumFrom(now.art);
-  $('#np-t').textContent = live ? now.title : 'Nothing playing';
+  $('#np-t').textContent = live ? now.title : tr('Nothing playing');
   $('#np-s').textContent = live ? (now.artist || '') : '';
   const has = !!live;
   $('#r-pp').disabled = !has; $('#r-next').disabled = !has; $('#r-prev').disabled = !has;
@@ -3376,7 +3476,7 @@ function paintNow(now, queue) {
   } else like.style.display = 'none';
   // mobile mini-player
   $('#mini-art').src = (has && now.art) ? now.art : ART_FALLBACK;
-  $('#mini-t').textContent = has ? now.title : 'Nothing playing';
+  $('#mini-t').textContent = has ? now.title : tr('Nothing playing');
   $('#mini-s').textContent = has ? (now.artist || '') : '';
   $('#mini-pp-icon').firstElementChild.setAttribute('d', now && now.playing ? PAUSE : PLAY);
   $('#mini-time').textContent = (has && now.duration) ? fmtAt(now.position || 0, now) + ' - ' + fmtAt(now.duration, now) : '';
@@ -3416,15 +3516,15 @@ function paintModes() {
   $('#qm-shuffle').classList.toggle('on', !!n.shuffle);
   const rp = n.repeat || 'NONE';
   $('#qm-repeat').classList.toggle('on', rp !== 'NONE');
-  $('#qm-repeat-l').textContent = rp === 'ONE' ? 'Loop: track' : rp === 'ALL' ? 'Loop: queue' : 'Loop off';
+  $('#qm-repeat-l').textContent = rp === 'ONE' ? tr('Loop: track') : rp === 'ALL' ? tr('Loop: queue') : tr('Loop off');
   const ap = $('#qm-auto'); ap.style.display = n.autoplay == null ? 'none' : ''; ap.classList.toggle('on', !!n.autoplay);
 }
 function setMode(patch, cmd) {
   lastNow = Object.assign(lastNow || {}, patch); queueSettleUntil = Date.now() + 2500; queueSig = null; paintRailBody();
-  return ytm(cmd, true).then(r => { if (r && r.ok === false) toast("YouTube Music didn't accept that"); return r; });
+  return ytm(cmd, true).then(r => { if (r && r.ok === false) toast(tr("YouTube Music didn't accept that")); return r; });
 }
 $('#qm-shuffle').addEventListener('click', () => { const on = !(lastNow || {}).shuffle; setMode({ shuffle:on }, { type:'setShuffle', on }); });
-$('#qm-shuffle').addEventListener('dblclick', () => { ytm({ type:'reshuffle' }, true); toast('Reshuffled'); });
+$('#qm-shuffle').addEventListener('dblclick', () => { ytm({ type:'reshuffle' }, true); toast(tr('Reshuffled')); });
 $('#qm-repeat').addEventListener('click', () => { const mode = { NONE:'ALL', ALL:'ONE', ONE:'NONE' }[(lastNow || {}).repeat || 'NONE']; setMode({ repeat:mode }, { type:'setRepeat', mode }); });
 $('#qm-auto').addEventListener('click', () => { const on = !(lastNow || {}).autoplay; setMode({ autoplay:on }, { type:'setAutoplay', on }); });
 
@@ -3433,12 +3533,12 @@ function qrow(q, i, cls, main, curIdx) {
   if (main) it.dataset.main = '1';
   const meta = el('div'); meta.style.minWidth = '0'; meta.style.flex = '1';
   meta.innerHTML = `<div class="t">${escapeHtml(q.title||'')}</div><div class="s">${escapeHtml(q.artist||'')}</div>`;
-  const rm = el('button', 'qrm'); rm.title = 'Remove from queue';
+  const rm = el('button', 'qrm'); rm.title = tr('Remove from queue');
   rm.innerHTML = '<svg viewBox="0 0 24 24"><path d="M18.3 5.7L12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7l1.4-1.4L10.6 10.6l6.3-6.3z"/></svg>';
   rm.addEventListener('click', e => { e.stopPropagation(); queueRemove(q); });
   it.append(thumbBox(q.art), meta);
   if (main && i > curIdx && q.canReorder !== false) {
-    const g = el('button', 'qgrip'); g.title = 'Drag to reorder';
+    const g = el('button', 'qgrip'); g.title = tr('Drag to reorder');
     g.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 5h2v2H9zm4 0h2v2h-2zM9 11h2v2H9zm4 0h2v2h-2zM9 17h2v2H9zm4 0h2v2h-2z"/></svg>';
     g.addEventListener('click', e => e.stopPropagation());
     g.addEventListener('pointerdown', e => startDrag(e, it, q, i, curIdx));
@@ -3465,17 +3565,17 @@ function paintRailBody() {
   if (sig === queueSig || dragState) return;
   queueSig = sig;
   const { main, auto } = qsplit();
-  $('#qcount').textContent = main.length ? main.length + ' in queue' + (auto.length ? ' · ' + auto.length + ' suggested' : '') : '';
+  $('#qcount').textContent = main.length ? trn('{n} in queue', '{n} in queue', main.length) + (auto.length ? ' · ' + trn('{n} suggested', '{n} suggested', auto.length) : '') : '';
   body.innerHTML = '';
-  if (!main.length && !auto.length) { body.appendChild(emptyMsg('Queue is empty.')); return; }
+  if (!main.length && !auto.length) { body.appendChild(emptyMsg(tr('Queue is empty.'))); return; }
   let curIdx = main.findIndex(q => q.selected); if (curIdx < 0) curIdx = main.findIndex(q => q.videoId === cur);
   main.forEach((q, i) => body.appendChild(qrow(q, i, i < curIdx ? 'played' : '', true, curIdx)));
   if (auto.length) {
     const loop = n.repeat && n.repeat !== 'NONE', will = !loop && n.autoplay !== false;
-    const why = loop ? (n.repeat === 'ONE' ? 'Won\'t play — this track is on repeat' : 'Won\'t play — your queue is on loop')
-      : n.autoplay === false ? 'Won\'t play — autoplay is off' : 'Plays when your queue ends';
+    const why = loop ? (n.repeat === 'ONE' ? tr("Won't play — this track is on repeat") : tr("Won't play — your queue is on loop"))
+      : n.autoplay === false ? tr("Won't play — autoplay is off") : tr('Plays when your queue ends');
     const h = el('div', 'qsec' + (will ? '' : ' off'));
-    h.innerHTML = `<div class="a">Autoplay suggestions</div><div class="b">${why}</div>`;
+    h.innerHTML = `<div class="a">${tr('Autoplay suggestions')}</div><div class="b">${why}</div>`;
     body.appendChild(h);
     auto.forEach((q, i) => body.appendChild(qrow(q, i, will ? '' : 'wont', false, curIdx)));
   }
@@ -3508,37 +3608,39 @@ async function commitMove(from, to) {
   const order = m.slice(); order.splice(to, 0, order.splice(from, 1)[0]);
   lastQueue = order.concat(qsplit().auto);                 // optimistic: show the new order at once
   order.forEach((x, k) => { x.index = k; });
-  queueSettleUntil = Date.now() + 15000; queueSig = null; paintRailBody(); toast('Reordering…');
+  queueSettleUntil = Date.now() + 15000; queueSig = null; paintRailBody(); toast(tr('Reordering…'));
   const r = await ytm({ type:'queueMove', section:'queue', index:from, videoId:q.videoId, to }, true);
-  if (r && r.ok) { toast('Queue updated'); queueSettleUntil = Date.now() + 1200; }
-  else { toast('Could not reorder' + (r && r.error ? ' (' + r.error + ')' : '')); queueSettleUntil = 0; }
+  if (r && r.ok) { toast(tr('Queue updated')); queueSettleUntil = Date.now() + 1200; }
+  else { toast(r && r.error ? tr('Could not reorder ({error})', { error: r.error }) : tr('Could not reorder')); queueSettleUntil = 0; }
 }
 
 /* ==================== Discord status (built into YTM Starcast on the computer; its routes keep their /api/beacon names) ==================== */
 const BEACON_TEXT = {
-  showing:['Showing on Discord.','good'], waiting:['Getting ready to show…','good'], idle:['Ready. Nothing is playing.','good'],
-  off:['Switched off. Nothing is shown on Discord.','off'], snoozed:['Hidden for a while. It comes back by itself.','warn'],
-  'paused-hidden':['Not shown while paused. Turn on “Show when paused” to keep it.','warn'],
-  'paused-timeout':['Hidden because the song was paused a while. It returns when you press play.','warn'],
-  filtered:['Not shown: this song matches one of your never-show words.','warn'],
-  'extension-quiet':['The browser extension went quiet. Check that YouTube Music is open in your browser.','warn'],
-  'extension-missing':["The browser extension hasn't reported yet. Add the YTM Starcast extension to the browser on the computer, then open YouTube Music there.",'bad'],
-  'discord-down':["Can't reach Discord. Open the Discord app on the computer.",'bad'],
-  unsupported:["Discord status doesn't work with this version. Update YTM Starcast on the computer.",'bad'],
-  unreachable:["Discord status isn't answering on the computer. Restart YTM Starcast there.",'bad'],
-  ad:['Hidden while an advert plays. It comes back with the music.','warn'],
-  'beacon-running':['The separate YTM Beacon app is still running, so YTM Starcast leaves Discord to it for now.','warn'],
+  showing:[trKey('Showing on Discord.'),'good'], waiting:[trKey('Getting ready to show…'),'good'], idle:[trKey('Ready. Nothing is playing.'),'good'],
+  off:[trKey('Switched off. Nothing is shown on Discord.'),'off'], snoozed:[trKey('Hidden for a while. It comes back by itself.'),'warn'],
+  'paused-hidden':[trKey('Not shown while paused. Turn on “Show when paused” to keep it.'),'warn'],
+  'paused-timeout':[trKey('Hidden because the song was paused a while. It returns when you press play.'),'warn'],
+  filtered:[trKey('Not shown: this song matches one of your never-show words.'),'warn'],
+  'extension-quiet':[trKey('The browser extension went quiet. Check that YouTube Music is open in your browser.'),'warn'],
+  'extension-missing':[trKey("The browser extension hasn't reported yet. Add the YTM Starcast extension to the browser on the computer, then open YouTube Music there."),'bad'],
+  'discord-down':[trKey("Can't reach Discord. Open the Discord app on the computer."),'bad'],
+  unsupported:[trKey("Discord status doesn't work with this version. Update YTM Starcast on the computer."),'bad'],
+  unreachable:[trKey("Discord status isn't answering on the computer. Restart YTM Starcast there."),'bad'],
+  ad:[trKey('Hidden while an advert plays. It comes back with the music.'),'warn'],
+  'beacon-running':[trKey('The separate YTM Beacon app is still running, so YTM Starcast leaves Discord to it for now.'),'warn'],
 };
-const PAUSE_AFTER = [[0, 'Never'], [1, '1 min'], [5, '5 min'], [15, '15 min'], [60, '1 hour']];
-const STATUS_NAME = [['name', 'YouTube Music'], ['state', 'Artist'], ['details', 'Song title']];
+const PAUSE_AFTER = [0, 1, 5, 15, 60];
+// "Never", "5 min", "1 hour", "2 hours"
+const pauseAfterName = m => m === 0 ? tr('Never') : m >= 60 && m % 60 === 0 ? trn('{n} hour', '{n} hours', m / 60) : trn('{n} min', '{n} min', m);
+const STATUS_NAME = [['name', 'YouTube Music'], ['state', trKey('Artist')], ['details', trKey('Song title')]];
 const HIDE_WORDS_MAX = 50, HIDE_WORD_LEN = 80;   // the computer keeps at most 50 words of up to 80 letters
 const X_ICON = '<svg viewBox="0 0 24 24"><path d="M18.3 5.7L12 12l6.3 6.3-1.4 1.4L12 13.4l-6.3 6.3-1.4-1.4L10.6 12 4.3 5.7l1.4-1.4L12 10.6l6.3-6.3z"/></svg>';
 const CHEVRON = '<svg class="chev" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>';
 function beaconSection() {
-  const sec = el('div', 'setsec'); sec.appendChild(Object.assign(el('h3'), { textContent:'Discord status' }));
+  const sec = el('div', 'setsec'); sec.appendChild(secH3(trKey('Discord status')));
   const box = el('div'); sec.appendChild(box);
   let st = null, heldUntil = 0, misses = 0, rcvAt = 0, more = !!lsGet('vmr-discord-more', false), moving = false, moveMsg = '', draft = '';
-  const call = async (path, body) => { const r = await post(path, body); if (!r || r.error) { toast((r && (r.message || r.error)) || 'Could not reach the computer'); return null; } return r; };
+  const call = async (path, body) => { const r = await post(path, body); if (!r || r.error) { toast((r && (r.message || r.error)) || tr('Could not reach the computer')); return null; } return r; };
   const row = (k, d, ctl, cls) => { const r = el('div', 'setrow' + (cls ? ' ' + cls : '')); const t = el('div');
     t.appendChild(Object.assign(el('div', 'k'), { textContent:k })); if (d) t.appendChild(Object.assign(el('div', 'd'), { textContent:d }));
     r.appendChild(t); if (ctl) r.appendChild(ctl); return r; };
@@ -3558,110 +3660,112 @@ function beaconSection() {
   const setting = (k, v, soft = true) => act('/api/beacon/settings', { [k]:v }, null, k, v, soft);
   function paint() {
     box.textContent = '';
-    if (!st) { box.appendChild(row('Status', 'Checking…')); return; }
+    if (!st) { box.appendChild(row(tr('Status'), tr('Checking…'))); return; }
     const A = st.beaconApp || {}, S = st.settings || {};
-    const [txt, tone] = BEACON_TEXT[st.headline]
-      || (A.running ? ['The separate YTM Beacon app is still running, so YTM Starcast leaves Discord to it for now.', 'warn']
-        : st.error ? [st.message || st.error, 'bad'] : ["Discord status isn't ready yet.", 'warn']);
-    const head = row('Status', txt + (st.detail ? ' (' + st.detail + ')' : ''));
+    const known = BEACON_TEXT[st.headline];
+    const [txt, tone] = known ? [tr(known[0]), known[1]]
+      : A.running ? [tr('The separate YTM Beacon app is still running, so YTM Starcast leaves Discord to it for now.'), 'warn']
+        : st.error ? [st.message || st.error, 'bad'] : [tr("Discord status isn't ready yet."), 'warn'];
+    const head = row(tr('Status'), txt + (st.detail ? ' (' + st.detail + ')' : ''));
     const v = el('div', 'val'), dot = el('span', 'sdot'); dot.dataset.tone = tone; v.appendChild(dot); head.appendChild(v);
     box.appendChild(head);
     // The separate YTM Beacon app from before is still on the computer: YTM Starcast can take over its job.
     if (A.canMigrate || moving) {
-      const r = row('The separate YTM Beacon app is still installed.',
-        'Its job is now built into YTM Starcast. Moving over brings your settings along and removes the old app.', null, 'stack');
+      const r = row(tr('The separate YTM Beacon app is still installed.'),
+        tr('Its job is now built into YTM Starcast. Moving over brings your settings along and removes the old app.'), null, 'stack');
       if (moveMsg) r.appendChild(Object.assign(el('div', 'note'), { textContent:moveMsg }));
       const g = el('div', 'chips'), b = el('button', 'pill primary');
-      b.textContent = moving ? 'Moving over…' : 'Move over'; b.disabled = moving; b.addEventListener('click', migrate);
+      b.textContent = moving ? tr('Moving over…') : tr('Move over'); b.disabled = moving; b.addEventListener('click', migrate);
       g.appendChild(b); r.appendChild(g); box.appendChild(r);
     } else if (A.running) {
       // It runs from a place its installer doesn't use, so it can't be removed from here: say how instead of offering a button.
-      const r = row('The separate YTM Beacon app is still running.',
-        "It isn't where its installer puts it, so it can't be removed from here. Remove it with its own “ytm-beacon uninstall” command; YTM Starcast then shows your status by itself.", null, 'stack');
+      const r = row(tr('The separate YTM Beacon app is still running.'),
+        tr("It isn't where its installer puts it, so it can't be removed from here. Remove it with its own “ytm-beacon uninstall” command; YTM Starcast then shows your status by itself."), null, 'stack');
       if (moveMsg) r.appendChild(Object.assign(el('div', 'note'), { textContent:moveMsg }));
       box.appendChild(r);
     } else if (moveMsg) box.appendChild(row(moveMsg, ''));
     if (st.nowPlaying) {
       // a song the phone plays itself (the Android app reports it) says so
-      const from = st.nowPlaying.from === 'phone' ? Object.assign(el('span', 'srctag'), { textContent:'from your phone' }) : null;
+      const from = st.nowPlaying.from === 'phone' ? Object.assign(el('span', 'srctag'), { textContent:tr('from your phone') }) : null;
       box.appendChild(row((st.nowPlaying.state === 'playing' ? '▶ ' : '⏸ ') + st.nowPlaying.title, st.nowPlaying.artist, from));
     }
     if ('preview' in st) box.appendChild(discordCard(st.preview));
     // while the old YTM Beacon app still runs, Discord is its job: the switches would change nothing, so they wait
     const usable = st.reachable && st.headline !== 'unsupported' && !A.running;
-    box.appendChild(row('Show on Discord', st.discord && st.discord.user ? 'as ' + st.discord.user : '',
-      toggle(st.visible, on => act('/api/beacon/visibility', { action: on ? 'show' : 'hide' }, { visible:on, snoozeSec:0 }, null, null, true), !usable, 'Show on Discord')));
+    box.appendChild(row(tr('Show on Discord'), st.discord && st.discord.user ? tr('as {user}', { user: st.discord.user }) : '',
+      toggle(st.visible, on => act('/api/beacon/visibility', { action: on ? 'show' : 'hide' }, { visible:on, snoozeSec:0 }, null, null, true), !usable, tr('Show on Discord'))));
     if (st.visible && usable) {
       const g = el('div', 'chips');
-      [['30 min',30],['1 hour',60],['3 hours',180]].forEach(([l, m]) => { const b = el('button', 'pill ghost'); b.textContent = l;
+      [[30, trn('{n} min', '{n} min', 30)], [60, trn('{n} hour', '{n} hours', 1)], [180, trn('{n} hour', '{n} hours', 3)]].forEach(([m, l]) => { const b = el('button', 'pill ghost'); b.textContent = l;
         b.addEventListener('click', () => act('/api/beacon/visibility', { action:'hide', minutes:m }, { visible:false, snoozeSec:m * 60 })); g.appendChild(b); });
-      box.appendChild(row('Hide for…', 'It comes back by itself.', g, 'stack'));
+      box.appendChild(row(tr('Hide for…'), tr('It comes back by itself.'), g, 'stack'));
     } else if (st.snoozeSec > 0 && usable) {
       const left = Math.max(0, st.snoozeSec - Math.floor((Date.now() - rcvAt) / 1000));
-      const b = el('button', 'pill ghost'); b.textContent = 'Show now'; b.style.height = '38px';
+      const b = el('button', 'pill ghost'); b.textContent = tr('Show now'); b.style.height = '38px';
       b.addEventListener('click', () => act('/api/beacon/visibility', { action:'show' }, { visible:true, snoozeSec:0 }));
-      box.appendChild(row('Hidden for ' + (left >= 60 ? Math.ceil(left / 60) + ' more min' : left + ' more s'), '', b));
+      box.appendChild(row(left >= 60 ? trn('Hidden for {n} more min', 'Hidden for {n} more min', Math.ceil(left / 60)) : trn('Hidden for {n} more s', 'Hidden for {n} more s', left), '', b));
     }
     if (!usable) return;
     // ---- What it shows (folded away until asked for) ----
-    const ex = row('What it shows', more ? '' : (S.privateMode ? 'Private mode: only “Listening to music”.' : 'The song, its picture, progress and button.'),
+    const ex = row(tr('What it shows'), more ? '' : (S.privateMode ? tr('Private mode: only “Listening to music”.') : tr('The song, its picture, progress and button.')),
       Object.assign(el('span'), { innerHTML:CHEVRON }), 'more');
     ex.setAttribute('role', 'button'); ex.tabIndex = 0; ex.setAttribute('aria-expanded', more ? 'true' : 'false');
     ex.addEventListener('click', () => { more = !more; lsSet('vmr-discord-more', more); paint(); });
     ex.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ex.click(); } });
     box.appendChild(ex);
     if (!more) return;
-    [['privateMode','Private mode','Only say “Listening to music”: no song, artist, picture or button.'],
-     ['showPaused','Show when paused','Keep the song on your profile while paused.'],
-     ['showProgress','Progress bar',''],['showStateIcon','Play / pause icon',''],
-     ['showButtons','Listen button','A button on the card that opens the song.'],['showAlbumArt','Album art','']].forEach(([k, l, d]) => {
+    [['privateMode',tr('Private mode'),tr('Only say “Listening to music”: no song, artist, picture or button.')],
+     ['showPaused',tr('Show when paused'),tr('Keep the song on your profile while paused.')],
+     ['showProgress',tr('Progress bar'),''],['showStateIcon',tr('Play / pause icon'),''],
+     ['showButtons',tr('Listen button'),tr('A button on the card that opens the song.')],['showAlbumArt',tr('Album art'),'']].forEach(([k, l, d]) => {
       box.appendChild(row(l, d, toggle(S[k], on => setting(k, on), false, l)));
       if (k === 'showPaused' && S.showPaused && typeof S.pauseTimeoutMinutes === 'number') {
-        const cur = Math.max(0, Math.round(S.pauseTimeoutMinutes)), opts = PAUSE_AFTER.slice();
-        if (!opts.some(o => o[0] === cur)) { opts.push([cur, cur >= 60 && cur % 60 === 0 ? (cur / 60) + ' hours' : cur + ' min']); opts.sort((a, b) => a[0] - b[0]); }
-        box.appendChild(row('Hide a paused song after', 'It comes back when you press play.', choice(opts, cur, m => setting('pauseTimeoutMinutes', m)), 'stack'));
+        const cur = Math.max(0, Math.round(S.pauseTimeoutMinutes)), mins = PAUSE_AFTER.slice();
+        if (!mins.includes(cur)) { mins.push(cur); mins.sort((a, b) => a - b); }
+        const opts = mins.map(m => [m, pauseAfterName(m)]);
+        box.appendChild(row(tr('Hide a paused song after'), tr('It comes back when you press play.'), choice(opts, cur, m => setting('pauseTimeoutMinutes', m)), 'stack'));
       }
     });
-    box.appendChild(row('Name next to your username', 'What the member list shows next to your name.',
-      choice(STATUS_NAME, S.statusDisplay || 'name', val => setting('statusDisplay', val)), 'stack'));
+    box.appendChild(row(tr('Name next to your username'), tr('What the member list shows next to your name.'),
+      choice(STATUS_NAME.map(([v, l]) => [v, tr(l)]), S.statusDisplay || 'name', val => setting('statusDisplay', val)), 'stack'));
     if (Array.isArray(S.hideMatching)) box.appendChild(wordsRow(S.hideMatching.filter(w => typeof w === 'string')));
     // as YTM Beacon's dashboard had: a test song on Discord for 30 seconds, to see the card for real
     if ('preview' in st) {
-      const tb = el('button', 'pill ghost'); tb.textContent = 'Show a test song'; tb.style.height = '38px';
+      const tb = el('button', 'pill ghost'); tb.textContent = tr('Show a test song'); tb.style.height = '38px';
       tb.addEventListener('click', async () => {
         tb.disabled = true;
         const r = await post('/api/beacon/test', {});
         tb.disabled = false;
-        toast(r && r.ok ? (r.dryRun ? 'Trial run: nothing was sent to Discord' : 'A test song shows on Discord for 30 seconds')
-          : ((r && (r.message || r.error)) || "Couldn't reach the computer"));
+        toast(r && r.ok ? (r.dryRun ? tr('Trial run: nothing was sent to Discord') : tr('A test song shows on Discord for 30 seconds'))
+          : ((r && (r.message || r.error)) || tr("Couldn't reach the computer")));
       });
-      box.appendChild(row('Test', 'Shows a test song on Discord for 30 seconds.', tb));
+      box.appendChild(row(tr('Test'), tr('Shows a test song on Discord for 30 seconds.'), tb));
     }
   }
   // "Never show songs matching": a list of words; a song whose title, artist or album contains one stays off Discord.
   function wordsRow(words) {
-    const r = row('Never show songs matching', 'A song whose title, artist or album contains one of these words stays off Discord.', null, 'stack');
+    const r = row(tr('Never show songs matching'), tr('A song whose title, artist or album contains one of these words stays off Discord.'), null, 'stack');
     if (words.length) {
       const g = el('div', 'chips');
       for (const w of words) {
         const c = el('span', 'wordchip'), t = el('span'), x = el('button');
-        t.textContent = w; x.innerHTML = X_ICON; x.title = 'Remove'; x.setAttribute('aria-label', 'Remove ' + w);
+        t.textContent = w; x.innerHTML = X_ICON; x.title = tr('Remove'); x.setAttribute('aria-label', tr('Remove {word}', { word: w }));
         x.addEventListener('click', () => setting('hideMatching', words.filter(z => z !== w), false));
         c.append(t, x); g.appendChild(c);
       }
       r.appendChild(g);
     }
     const f = el('form', 'wordadd'), inp = el('input'), add = el('button', 'pill ghost');
-    inp.placeholder = words.length ? 'Another word or name' : 'A word or a name'; inp.maxLength = HIDE_WORD_LEN; inp.autocomplete = 'off';
-    inp.value = draft; inp.setAttribute('aria-label', 'A word to never show'); inp.setAttribute('enterkeyhint', 'done');
+    inp.placeholder = words.length ? tr('Another word or name') : tr('A word or a name'); inp.maxLength = HIDE_WORD_LEN; inp.autocomplete = 'off';
+    inp.value = draft; inp.setAttribute('aria-label', tr('A word to never show')); inp.setAttribute('enterkeyhint', 'done');
     inp.addEventListener('input', () => { draft = inp.value; });
-    add.type = 'submit'; add.textContent = 'Add';
+    add.type = 'submit'; add.textContent = tr('Add');
     f.addEventListener('submit', e => {
       e.preventDefault();
       const w = inp.value.trim().toLowerCase();
       if (!w) { inp.focus(); return; }
-      if (words.includes(w)) { toast('That one is already in the list'); return; }
-      if (words.length >= HIDE_WORDS_MAX) { toast('The list is full (' + HIDE_WORDS_MAX + ' words)'); return; }
+      if (words.includes(w)) { toast(tr('That one is already in the list')); return; }
+      if (words.length >= HIDE_WORDS_MAX) { toast(trn('The list is full ({n} word)', 'The list is full ({n} words)', HIDE_WORDS_MAX)); return; }
       draft = ''; setting('hideMatching', words.concat([w]), false);
     });
     f.append(inp, add); r.appendChild(f);
@@ -3673,7 +3777,7 @@ function beaconSection() {
     moving = true; moveMsg = ''; paint();
     const r = await post('/api/beacon/migrate', {});
     moving = false;
-    moveMsg = (r && (r.message || (r.ok ? 'Moved over.' : r.error))) || "Couldn't reach the computer.";
+    moveMsg = (r && (r.message || (r.ok ? tr('Moved over.') : r.error))) || tr("Couldn't reach the computer.");
     paint(); refresh(true);
   }
   // What you tap shows at once and is kept for a few seconds, so a poll that lands first can't flip it back.
@@ -3730,19 +3834,19 @@ let mixerNodes = [];
 function buildMixer() {
   const c = el('div', 'mx');
   c.innerHTML = `
-    <div class="mxrow"><span class="l">Volume</span><span class="v" id="vpct">—</span></div>
+    <div class="mxrow"><span class="l">${tr('Volume')}</span><span class="v" id="vpct">—</span></div>
     <div class="meter"><i id="meter"></i></div>
     <input type="range" id="vol" class="big" min="0" max="100" step="1" value="0">
-    <button id="mute">Mute</button>
-    <div class="outrow" id="outrow" style="display:none"><span class="l">Output</span>
+    <button id="mute">${tr('Mute')}</button>
+    <div class="outrow" id="outrow" style="display:none"><span class="l">${tr('Output')}</span>
       <button class="outbtn" id="outbtn"><span id="outname">—</span><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button></div>
-    <div class="eqtoggle" id="eqtoggle" style="display:none"><span class="l">Equalizer</span><button class="toggle" id="eqsw" aria-label="Equalizer on/off"></button></div>
+    <div class="eqtoggle" id="eqtoggle" style="display:none"><span class="l">${tr('Equalizer')}</span><button class="toggle" id="eqsw" aria-label="${tr('Equalizer on/off')}"></button></div>
     <div class="eqpresets" id="eqpresets" style="display:none"></div>
     <div class="eqstatus" id="eqstatus"></div>
-    <div class="eqhead"><span class="l">EQ</span><button id="eqreset">Reset</button></div>
-    <div class="band"><label>Bass</label><input type="range" data-band="bass" min="-12" max="12" step="0.5" value="0"><span class="bd" id="bd-bass">0.0 dB</span></div>
-    <div class="band"><label>Med</label><input type="range" data-band="mid" min="-12" max="12" step="0.5" value="0"><span class="bd" id="bd-mid">0.0 dB</span></div>
-    <div class="band"><label>High</label><input type="range" data-band="high" min="-12" max="12" step="0.5" value="0"><span class="bd" id="bd-high">0.0 dB</span></div>
+    <div class="eqhead"><span class="l">${tr('EQ')}</span><button id="eqreset">${tr('Reset')}</button></div>
+    <div class="band"><label>${tr('Bass')}</label><input type="range" data-band="bass" min="-12" max="12" step="0.5" value="0"><span class="bd" id="bd-bass">0.0 dB</span></div>
+    <div class="band"><label>${tr('Med')}</label><input type="range" data-band="mid" min="-12" max="12" step="0.5" value="0"><span class="bd" id="bd-mid">0.0 dB</span></div>
+    <div class="band"><label>${tr('High')}</label><input type="range" data-band="high" min="-12" max="12" step="0.5" value="0"><span class="bd" id="bd-high">0.0 dB</span></div>
     <div class="viz mixviz"></div>
     <div class="mixnote" id="mixnote"></div>`;
   const vz = c.querySelector('.mixviz');
@@ -3765,7 +3869,7 @@ function buildMixer() {
     c.querySelector('#eqsw').classList.toggle('on', on);
     const r = await post('/api/eq', { enabled:on });
     if (r && r.error) { toast(r.error); c.querySelector('#eqsw').classList.toggle('on', !on); }
-    else toast(on ? 'Equalizer on' : 'Equalizer off');
+    else toast(on ? tr('Equalizer on') : tr('Equalizer off'));
   });
   c.querySelector('#eqreset').addEventListener('click', async () => { for (const b of ['bass','mid','high']) await post('/api/eq', {band:b, db:0}); });
   return c;
@@ -3785,23 +3889,24 @@ function applyMixer() {
   if (mv) { if (!holdVol && volSettled && v.available) { mv.value = v.percent; $('#mvolpct').textContent = v.percent + '%'; } mv.disabled = !v.available; }
   const caps = st.capabilities || {};
   const notes = []; const r = e.routing || {};
-  if (!v.available) notes.push('<b>No audio output found on the computer.</b>');
-  if (caps.engine_label && e.connected && r.A1 === false && r.A2 === false) notes.push('<b>Not routed to any output.</b>');
-  if (caps.engine_label && !e.connected) notes.push('<b>' + caps.engine_label + ' engine not reachable.</b>');
-  if (v.muted) notes.push('<b>Muted.</b>');
-  if (v.available) notes.push('Controls the computer\'s main volume' + (v.device ? ' (' + v.device + ')' : '') + ' and follows its volume keys.');
+  if (!v.available) notes.push('<b>' + tr('No audio output found on the computer.') + '</b>');
+  if (caps.engine_label && e.connected && r.A1 === false && r.A2 === false) notes.push('<b>' + tr('Not routed to any output.') + '</b>');
+  if (caps.engine_label && !e.connected) notes.push('<b>' + escapeHtml(tr('{engine} engine not reachable.', { engine: caps.engine_label })) + '</b>');
+  if (v.muted) notes.push('<b>' + tr('Muted.') + '</b>');
+  if (v.available) notes.push(escapeHtml(v.device ? tr("Controls the computer's main volume ({device}) and follows its volume keys.", { device: v.device })
+    : tr("Controls the computer's main volume and follows its volume keys.")));
   document.querySelectorAll('.viz').forEach(z => { z.style.display = caps.meter ? '' : 'none'; });
   for (const node of mixerNodes) {
     if (!node.isConnected) continue;
     const vol = node.querySelector('#vol');
     if (!holdVol && volSettled && v.available) { vol.value = v.percent; node.querySelector('#vpct').textContent = v.percent + '%'; }
     vol.disabled = !v.available;
-    const mute = node.querySelector('#mute'); mute.classList.toggle('on', !!v.muted); mute.textContent = v.muted ? 'Muted' : 'Mute';
+    const mute = node.querySelector('#mute'); mute.classList.toggle('on', !!v.muted); mute.textContent = v.muted ? tr('Muted') : tr('Mute');
     node.querySelector('#meter').style.width = Math.min(100, (e.level||0)*140) + '%';
     node.querySelector('.meter').style.display = caps.meter ? '' : 'none';
     // Output picker + EQ switch (shown only when the host supports them)
     node.querySelector('#outrow').style.display = caps.outputs ? '' : 'none';
-    node.querySelector('#outname').textContent = v.device || 'Choose output';
+    node.querySelector('#outname').textContent = v.device || tr('Choose output');
     node.querySelector('#eqtoggle').style.display = caps.eq_toggle ? '' : 'none';
     node.querySelector('#eqsw').classList.toggle('on', !!e.enabled);
     const eqLive = caps.eq && (!caps.eq_toggle || e.enabled);       // sliders only matter while the EQ is active
@@ -3813,7 +3918,7 @@ function applyMixer() {
     }
     node.querySelector('#eqstatus').textContent = caps.eq_toggle ? (e.available === false ? e.reason : e.status || '') : '';
     const mn = node.querySelector('#mixnote');
-    if (node.classList.contains('eqonly') && !caps.eq) { mn.style.display = 'block'; mn.innerHTML = 'EQ isn\'t available with this audio backend.'; continue; }
+    if (node.classList.contains('eqonly') && !caps.eq) { mn.style.display = 'block'; mn.textContent = tr("EQ isn't available with this audio backend."); continue; }
     for (const band of ['bass','mid','high']) { const val = eq[band]; if (val == null || holdEq[band]) continue;
       node.querySelector('[data-band="'+band+'"]').value = val; node.querySelector('#bd-'+band).textContent = fmtEq(val); }
     node.querySelector('#mixnote').innerHTML = notes.join(' ');
@@ -3823,16 +3928,19 @@ function applyMixer() {
 
 /* ==================== output picker (switch device, set levels before switching) ==================== */
 let outTimer = null, outHold = false, outSig = '';
-const OUT_KIND = { bluetooth:'Bluetooth', usb:'USB', hdmi:'HDMI / display', analog:'Analog', virtual:'Virtual' };
+const OUT_KIND = { bluetooth:'Bluetooth', usb:'USB', hdmi:trKey('HDMI / display'), analog:trKey('Analog'), virtual:trKey('Virtual') };
 function closeOutputs() { const b = $('#outsheet'); if (b) b.classList.remove('show'); clearTimeout(outTimer); outTimer = null; }
 async function openOutputs() {
   let box = $('#outsheet');
   if (!box) {
     box = el('div'); box.id = 'outsheet';
-    box.innerHTML = '<div class="osback"></div><div class="oscard"><div class="oshead"><span>Audio output</span><button class="osx" aria-label="Close">✕</button></div><div class="oslist"></div><div class="oshint">Set a device\'s level first, then tap Use to switch to it.</div></div>';
+    box.innerHTML = '<div class="osback"></div><div class="oscard"><div class="oshead"><span></span><button class="osx">✕</button></div><div class="oslist"></div><div class="oshint"></div></div>';
     document.body.appendChild(box);
     box.querySelector('.osback').addEventListener('click', closeOutputs); box.querySelector('.osx').addEventListener('click', closeOutputs);
   }
+  // (made once: its words are set again on each opening, in case the language changed meanwhile)
+  box.querySelector('.oshead span').textContent = tr('Audio output'); box.querySelector('.osx').setAttribute('aria-label', tr('Close'));
+  box.querySelector('.oshint').textContent = tr("Set a device's level first, then tap Use to switch to it.");
   outSig = ''; requestAnimationFrame(() => box.classList.add('show'));
   refreshOutputs(true);
 }
@@ -3854,9 +3962,9 @@ async function refreshOutputs(first) {
 }
 function outputRow(o) {
   const row = el('div', 'osrow' + (o.default ? ' cur' : '')); row.dataset.n = o.name;
-  row.innerHTML = `<div class="top"><div class="nm"><div>${escapeHtml(o.description || o.name)}</div><div class="kind">${OUT_KIND[o.kind] || ''}${o.form_factor ? ' · ' + escapeHtml(o.form_factor) : ''}</div></div>
-    <button class="use" ${o.default ? 'disabled' : ''}>${o.default ? 'Current' : 'Use'}</button></div>
-    <div class="lv"><button class="mu" title="Mute">${o.muted ? '🔇' : '🔊'}</button><input type="range" min="0" max="100" value="${o.percent}"><span class="p">${o.percent}%</span></div>`;
+  row.innerHTML = `<div class="top"><div class="nm"><div>${escapeHtml(o.description || o.name)}</div><div class="kind">${OUT_KIND[o.kind] ? tr(OUT_KIND[o.kind]) : ''}${o.form_factor ? ' · ' + escapeHtml(o.form_factor) : ''}</div></div>
+    <button class="use" ${o.default ? 'disabled' : ''}>${o.default ? tr('Current') : tr('Use')}</button></div>
+    <div class="lv"><button class="mu" title="${tr('Mute')}">${o.muted ? '🔇' : '🔊'}</button><input type="range" min="0" max="100" value="${o.percent}"><span class="p">${o.percent}%</span></div>`;
   const inp = row.querySelector('input'), pct = row.querySelector('.p'); let t = null;
   inp.addEventListener('pointerdown', () => { outHold = true; });
   const rel = () => { outHold = false; };
@@ -3865,7 +3973,7 @@ function outputRow(o) {
   row.querySelector('.mu').addEventListener('click', async () => { o.muted = !o.muted; row.querySelector('.mu').textContent = o.muted ? '🔇' : '🔊'; await post('/api/output/volume', { name:o.name, muted:o.muted }); });
   row.querySelector('.use').addEventListener('click', async () => {
     const r = await post('/api/output', { name:o.name });
-    if (r && r.error) toast(r.error); else { toast('Switched to ' + (o.description || o.name)); outSig = ''; refreshOutputs(true); }
+    if (r && r.error) toast(r.error); else { toast(tr('Switched to {device}', { device: o.description || o.name })); outSig = ''; refreshOutputs(true); }
   });
   return row;
 }
@@ -3888,8 +3996,8 @@ async function pollMusic() {
     if (off) { wasConnected = null; wasYtm = lastYtm; }
     else {
       // tell the user when the link drops / comes back
-      if (wasConnected === true && !ok) toast('Disconnected — reconnecting…');
-      else if (wasConnected === false && ok) toast('Reconnected');
+      if (wasConnected === true && !ok) toast(tr('Disconnected — reconnecting…'));
+      else if (wasConnected === false && ok) toast(tr('Reconnected'));
       // Settings shows connection state, so refresh it live rather than making the user
       // navigate away and back to see the change.
       if (wasConnected !== null && (wasConnected !== ok || wasYtm !== lastYtm) && (view === 'settings' || view === 'set:status')) render();
@@ -3935,7 +4043,7 @@ window.__cueResume = async () => {
     lastConnected = !!st.connected; lastYtm = lastConnected && st.source === 'ytm';
     paintNow(st.connected ? (st.now || {}) : {}, st.connected ? (st.queue || []) : []);
     favPull();
-  } catch (e) { toast('Disconnected — reconnecting…'); }
+  } catch (e) { toast(tr('Disconnected — reconnecting…')); }
 };
 document.addEventListener('visibilitychange', () => { if (!document.hidden) window.__cueResume(); });
 
@@ -3958,10 +4066,10 @@ document.addEventListener('keydown', e => {
   switch (e.key) {
     case ' ': case 'k': e.preventDefault(); ytm({ type:'transport', action:'playpause' }, true); break;
     case 'ArrowRight': e.preventDefault();
-      if (e.shiftKey) { ytm({ type:'transport', action:'next' }, true); showHud({ label:'Next track', icon:false }); }
+      if (e.shiftKey) { ytm({ type:'transport', action:'next' }, true); showHud({ label:tr('Next track'), icon:false }); }
       else seekTo(seekSecs); break;
     case 'ArrowLeft': e.preventDefault();
-      if (e.shiftKey) { ytm({ type:'transport', action:'prev' }, true); showHud({ label:'Previous track', icon:false }); }
+      if (e.shiftKey) { ytm({ type:'transport', action:'prev' }, true); showHud({ label:tr('Previous track'), icon:false }); }
       else seekTo(-seekSecs); break;
     case 'ArrowUp': if (!partOn('audio')) break; e.preventDefault(); bumpVol(3); break;
     case 'ArrowDown': if (!partOn('audio')) break; e.preventDefault(); bumpVol(-3); break;
@@ -3970,7 +4078,7 @@ document.addEventListener('keydown', e => {
   }
 });
 
-placePanes(); setView(view === 'settings' ? 'settings' : (isWide() ? 'queue' : 'playing')); setRailTab('queue'); pollMusic(); pollMixer(); favPull();
+translateDom(); placePanes(); setView(view === 'settings' ? 'settings' : (isWide() ? 'queue' : 'playing')); setRailTab('queue'); pollMusic(); pollMixer(); favPull();
 setInterval(favPull, 20000);   // keep favourites in step across devices
 setTimeout(moveNavPill, 80);   // once layout settles, park the pill on the active tab
 </script>
@@ -4163,7 +4271,7 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
   const syncPlay = () => { const d = ppIcon.firstElementChild && ppIcon.firstElementChild.getAttribute('d'); const playing = d === PAUSE;
     pp.classList.toggle('pl', playing); document.documentElement.dataset.playing = playing ? '1' : '0';
     // the play / pause buttons say what pressing them does, for screen readers
-    for (const id of ['#r-pp', '#mini-pp', '#npbar-pp']) { const b = $(id); if (b) b.setAttribute('aria-label', playing ? 'Pause' : 'Play'); } };
+    for (const id of ['#r-pp', '#mini-pp', '#npbar-pp']) { const b = $(id); if (b) b.setAttribute('aria-label', playing ? tr('Pause') : tr('Play')); } };
   new MutationObserver(syncPlay).observe(ppIcon, { subtree: true, attributes: true, attributeFilter: ['d'] });
   syncPlay();
 
@@ -4195,21 +4303,21 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
   let artistArg = null;
   window.openArtist = (browseId, name, videoId) => { artistArg = { browseId, name, videoId }; setView('artist'); };
   async function renderArtist(m) {
-    m.innerHTML = ''; m.appendChild(topbar(artistArg.name || 'Artist'));
+    m.innerHTML = ''; m.appendChild(topbar(artistArg.name || tr('Artist')));
     const box = el('div'); box.innerHTML = '<div class="spinner"></div>'; m.appendChild(box);
     const r = await ytm({ type: 'artist', browseId: artistArg.browseId, videoId: artistArg.videoId, name: artistArg.name }, true);
     if (view !== 'artist') return;
     box.innerHTML = '';
-    if (!r || r.error || !r.name) { box.appendChild(emptyMsg(r && r.error === 'artist_not_found' ? "Couldn't find that artist on YouTube Music." : "Couldn't load the artist (is the YouTube Music extension connected?).")); return; }
+    if (!r || r.error || !r.name) { box.appendChild(emptyMsg(r && r.error === 'artist_not_found' ? tr("Couldn't find that artist on YouTube Music.") : tr("Couldn't load the artist (is the YouTube Music extension connected?)."))); return; }
     const head = el('div', 'arthead'), img = el('img'); img.src = r.thumb || ART_FALLBACK; img.onerror = () => img.src = ART_FALLBACK;
     const info = el('div'); info.innerHTML = '<div class="n"></div><div class="sub"></div>';
     info.firstChild.textContent = r.name; info.lastChild.textContent = r.subscribers || ''; head.append(img, info); box.appendChild(head);
     const acts = el('div', 'acts'); acts.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px';
     const mk = (label, cls, fn) => { const b = el('button', 'pill ' + cls); b.textContent = label; b.addEventListener('click', fn); acts.appendChild(b); };
     const pl = r.play && (r.play.playlistId), vid = r.play && r.play.videoId;
-    if (vid || pl) mk('Play', 'primary', () => { vid ? ytm({ type: 'play', videoId: vid, playlistId: pl }) : ytm({ type: 'startPlaylist', playlistId: pl }); toast('Playing'); });
-    if (pl) mk('Shuffle', 'ghost', () => { ytm({ type: 'startPlaylist', playlistId: pl, shuffle: true }); toast('Shuffling'); });
-    if (r.radio && r.radio.playlistId) mk('Radio', 'ghost', () => { ytm({ type: 'startPlaylist', playlistId: r.radio.playlistId }); toast('Starting radio'); });
+    if (vid || pl) mk(tr('Play'), 'primary', () => { vid ? ytm({ type: 'play', videoId: vid, playlistId: pl }) : ytm({ type: 'startPlaylist', playlistId: pl }); toast(tr('Playing')); });
+    if (pl) mk(tr('Shuffle'), 'ghost', () => { ytm({ type: 'startPlaylist', playlistId: pl, shuffle: true }); toast(tr('Shuffling')); });
+    if (r.radio && r.radio.playlistId) mk(tr('Radio'), 'ghost', () => { ytm({ type: 'startPlaylist', playlistId: r.radio.playlistId }); toast(tr('Starting radio')); });
     box.appendChild(acts);
     if (r.description) { const d = el('div', 'artdesc'); d.textContent = r.description; d.addEventListener('click', () => d.classList.toggle('open')); box.appendChild(d); }
     for (const sh of r.shelves || []) {
@@ -4220,12 +4328,15 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
   function luckyBtn() {
     if (view !== 'search' || $('#luckybtn')) return;
     const res = $('#searchres'); if (!res) return;
-    const b = el('button', 'pill ghost'); b.id = 'luckybtn'; b.textContent = "🎲 I'm feeling lucky"; b.style.margin = '0 0 12px';
-    b.addEventListener('click', async () => { const r = await ytm({ type: 'lucky' }, true); toast(r && r.ok ? 'Playing: ' + (r.picked || '') : "Couldn't pick a song"); });
+    const b = el('button', 'pill ghost'); b.id = 'luckybtn'; b.textContent = tr("🎲 I'm feeling lucky"); b.style.margin = '0 0 12px';
+    b.addEventListener('click', async () => { const r = await ytm({ type: 'lucky' }, true); toast(r && r.ok ? tr('Playing: {song}', { song: r.picked || '' }) : tr("Couldn't pick a song")); });
     res.parentElement.insertBefore(b, res);
   }
   const _render = render;
-  render = function () { if (view === 'artist') return renderArtist($('#main')); const out = _render.apply(this, arguments); setTimeout(openBanner, 80); setTimeout(luckyBtn, 120); return out; };
+  let drawnIn = LANG;   // the language changed: what is only redrawn when its contents change is redrawn now
+  render = function () {
+    if (drawnIn !== LANG) { drawnIn = LANG; syncPlay(); queueSig = null; paintRailBody(); if (railMode === 'lyrics' && !lyr.loading) { if (lyr.data) paintLyrics(); else loadLyrics(false); } }
+    if (view === 'artist') return renderArtist($('#main')); const out = _render.apply(this, arguments); setTimeout(openBanner, 80); setTimeout(luckyBtn, 120); return out; };
   const _activate = activate;
   activate = function (item) {
     if (item && item.kind === 'artist' && item.browseId) { openArtist(item.browseId, item.title); return; }
@@ -4245,34 +4356,34 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
     if (lastYtm || neverSet || !partOn('remote') || !['home', 'search', 'playlists'].includes(view)) { if (old) old.remove(); return; }
     if (old || !m) return;
     const b = el('div', 'openytm'); b.id = 'openytm';
-    b.innerHTML = '<div class="m">YouTube Music isn\'t connected on the computer. You can open it there, then play from here.</div>';
-    const btn = el('button', 'pill primary'); btn.textContent = 'Open YouTube Music on the computer';
-    btn.addEventListener('click', async () => { btn.disabled = true; await post('/api/ytm', { type: 'open' }); toast('Opening YouTube Music on the computer…'); setTimeout(() => btn.disabled = false, 4000); });
+    b.innerHTML = `<div class="m">${tr("YouTube Music isn't connected on the computer. You can open it there, then play from here.")}</div>`;
+    const btn = el('button', 'pill primary'); btn.textContent = tr('Open YouTube Music on the computer');
+    btn.addEventListener('click', async () => { btn.disabled = true; await post('/api/ytm', { type: 'open' }); toast(tr('Opening YouTube Music on the computer…')); setTimeout(() => btn.disabled = false, 4000); });
     b.appendChild(btn); const tb = m.querySelector('.topbar'); if (tb && tb.nextSibling) m.insertBefore(b, tb.nextSibling); else m.prepend(b);
   }
   setInterval(openBanner, 3000);
 
   // ---- sleep timer ----
   const row = $('.nptrow'), sBadge = document.createElement('span'); sBadge.id = 'sleepbadge';
-  const sBtn = document.createElement('button'); sBtn.id = 'np-sleep'; sBtn.className = 'npfav'; sBtn.title = 'Sleep timer';
+  const sBtn = document.createElement('button'); sBtn.id = 'np-sleep'; sBtn.className = 'npfav'; sBtn.title = trKey('Sleep timer'); sBtn.dataset.trAttr = 'title';
   sBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12.3 3a9 9 0 109 11.3A7 7 0 0112.3 3z"/></svg>';
-  row.insertBefore(sBadge, $('#np-like')); row.insertBefore(sBtn, $('#np-like'));
+  row.insertBefore(sBadge, $('#np-like')); row.insertBefore(sBtn, $('#np-like')); translateDom(row);
   const menu = document.createElement('div'); menu.id = 'sleepmenu'; document.body.appendChild(menu);
   let sleepLeft = 0, sleepAt = 0, lastMs = null;
-  async function setSleep(minutes) { const r = await post('/api/sleep', { minutes }); if (r && r.error) toast(r.error); else { sleepLeft = (r && r.remainingSec) || 0; sleepAt = Date.now(); toast(sleepLeft ? 'Sleep timer set' : 'Sleep timer off'); } paintSleep(); }
+  async function setSleep(minutes) { const r = await post('/api/sleep', { minutes }); if (r && r.error) toast(r.error); else { sleepLeft = (r && r.remainingSec) || 0; sleepAt = Date.now(); toast(sleepLeft ? tr('Sleep timer set') : tr('Sleep timer off')); } paintSleep(); }
   function paintSleep() {
     const left = sleepLeft ? Math.max(0, sleepLeft - Math.floor((Date.now() - sleepAt) / 1000)) : 0;
-    sBadge.textContent = left ? (left >= 3600 ? Math.floor(left / 3600) + 'h ' + Math.floor(left % 3600 / 60) + 'm' : left >= 60 ? Math.ceil(left / 60) + 'm' : left + 's') : '';
+    sBadge.textContent = left ? (left >= 3600 ? tr('{h}h {m}m', { h: Math.floor(left / 3600), m: Math.floor(left % 3600 / 60) }) : left >= 60 ? tr('{m}m', { m: Math.ceil(left / 60) }) : tr('{s}s', { s: left })) : '';
     sBtn.classList.toggle('on', !!left);
     const caps = mixerState && mixerState.capabilities; sBtn.style.display = (caps && caps.sleep) ? 'flex' : 'none';
     if (mixerState && mixerState !== lastMs) { lastMs = mixerState; const r = mixerState.sleep && mixerState.sleep.remainingSec || 0;
       if (!sleepLeft || Math.abs((sleepLeft - (Date.now() - sleepAt) / 1000) - r) > 3) { sleepLeft = r; sleepAt = Date.now(); } if (!r) sleepLeft = 0; }
   }
   setInterval(paintSleep, 1000);
-  sBtn.addEventListener('click', e => { e.stopPropagation(); menu.innerHTML = '<div class="h">Pause playback after…</div>';
-    for (const m of [15, 30, 45, 60, 90, 120]) { const b = document.createElement('button'); b.textContent = m + ' minutes'; b.onclick = () => { menu.classList.remove('show'); setSleep(m); }; menu.appendChild(b); }
-    const t = document.createElement('button'); t.textContent = 'When this song ends'; t.onclick = () => { menu.classList.remove('show'); setSleep('track'); }; menu.appendChild(t);
-    if (sleepLeft) { const o = document.createElement('button'); o.textContent = 'Turn off'; o.onclick = () => { menu.classList.remove('show'); setSleep(0); }; menu.appendChild(o); }
+  sBtn.addEventListener('click', e => { e.stopPropagation(); menu.innerHTML = `<div class="h">${tr('Pause playback after…')}</div>`;
+    for (const m of [15, 30, 45, 60, 90, 120]) { const b = document.createElement('button'); b.textContent = trn('{n} minute', '{n} minutes', m); b.onclick = () => { menu.classList.remove('show'); setSleep(m); }; menu.appendChild(b); }
+    const t = document.createElement('button'); t.textContent = tr('When this song ends'); t.onclick = () => { menu.classList.remove('show'); setSleep('track'); }; menu.appendChild(t);
+    if (sleepLeft) { const o = document.createElement('button'); o.textContent = tr('Turn off'); o.onclick = () => { menu.classList.remove('show'); setSleep(0); }; menu.appendChild(o); }
     const r = sBtn.getBoundingClientRect(); menu.style.left = Math.max(8, Math.min(innerWidth - 210, r.left - 80)) + 'px'; menu.style.top = Math.min(innerHeight - 330, r.bottom + 6) + 'px'; menu.classList.add('show'); });
   document.addEventListener('click', () => menu.classList.remove('show'));
 
@@ -4290,28 +4401,28 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
       const t = el('button', 'toggle' + (on ? ' on' : '')); t.addEventListener('click', () => { const n = !t.classList.contains('on'); t.classList.toggle('on', n); fn(n); }); r.appendChild(t); return r; };
     // Sections go where they belong: look settings under Appearance, the nav style with the other nav setting,
     // other players with playback, and About last.
-    const sec = (t) => [...m.querySelectorAll('.setsec')].find(x => (x.querySelector('h3') || {}).textContent === t);
+    const sec = (t) => [...m.querySelectorAll('.setsec')].find(x => (x.querySelector('h3') || { dataset: {} }).dataset.sec === t);
     const putAfter = (ref, node) => { if (ref && ref.parentNode === m) m.insertBefore(node, ref.nextSibling); else m.appendChild(node); };
-    const fx = el('div', 'setsec'); fx.appendChild(Object.assign(el('h3'), { textContent: 'Effects' }));
+    const fx = el('div', 'setsec'); fx.appendChild(secH3(trKey('Effects')));
     fx.append(
-      mkSel('Cover glow', "A soft light of the cover's colours around the album art.", 'glow', [['off', 'Off'], ['soft', 'Soft'], ['strong', 'Strong'], ['extreme', 'Extreme']]),
-      mkSel('Cover shape', 'Circle spins slowly like a record.', 'shape', [['rounded', 'Rounded'], ['soft', 'Soft'], ['circle', 'Circle'], ['cut', 'Cut corners']]),
-      mkTog('Wavy seek bar', 'The played part of the bar ripples while music plays.', P.wavy, v => savePref('wavy', v)));
+      mkSel(tr('Cover glow'), tr("A soft light of the cover's colours around the album art."), 'glow', [['off', tr('Off')], ['soft', tr('Soft')], ['strong', tr('Strong')], ['extreme', tr('Extreme')]]),
+      mkSel(tr('Cover shape'), tr('Circle spins slowly like a record.'), 'shape', [['rounded', tr('Rounded')], ['soft', tr('Soft')], ['circle', tr('Circle')], ['cut', tr('Cut corners')]]),
+      mkTog(tr('Wavy seek bar'), tr('The played part of the bar ripples while music plays.'), P.wavy, v => savePref('wavy', v)));
     putAfter(sec('Appearance'), fx);
-    const navSel = mkSel('Navigation bar (phone)', 'Classic keeps the bar along the bottom; Pill floats above the content.', 'nav', [['bar', 'Classic bar'], ['pill', 'Floating pill']]);
+    const navSel = mkSel(tr('Navigation bar (phone)'), tr('Classic keeps the bar along the bottom; Pill floats above the content.'), 'nav', [['bar', tr('Classic bar')], ['pill', tr('Floating pill')]]);
     const iface = sec('Interface'); if (iface) iface.appendChild(navSel); else fx.appendChild(navSel);
-    const op = el('div', 'setsec'); op.appendChild(Object.assign(el('h3'), { textContent: 'Other players' }));
-    const tog = mkTog('Pause other players when YouTube Music starts', 'Other music or video playing on the computer is paused when a YouTube Music song starts.', false, v => post('/api/prefs', { pauseOthers: v }));
+    const op = el('div', 'setsec'); op.appendChild(secH3(trKey('Other players')));
+    const tog = mkTog(tr('Pause other players when YouTube Music starts'), tr('Other music or video playing on the computer is paused when a YouTube Music song starts.'), false, v => post('/api/prefs', { pauseOthers: v }));
     op.appendChild(tog);
     fetch('/api/prefs').then(r => r.json()).then(j => tog.querySelector('.toggle').classList.toggle('on', !!j.pauseOthers)).catch(() => {});
-    const nb = el('div', 'setrow'); nb.innerHTML = '<div><div class="k">Pause other players now</div><div class="d">Pauses everything else that is playing on the computer.</div></div>';
-    const btn = el('button', 'pill ghost'); btn.textContent = 'Pause'; btn.style.height = '38px';
-    btn.addEventListener('click', async () => { const r = await post('/api/media/pause-others', {}); toast(r && r.paused && r.paused.length ? 'Paused ' + r.paused.join(', ') : 'Nothing else was playing'); });
+    const nb = el('div', 'setrow'); nb.innerHTML = `<div><div class="k">${tr('Pause other players now')}</div><div class="d">${tr('Pauses everything else that is playing on the computer.')}</div></div>`;
+    const btn = el('button', 'pill ghost'); btn.textContent = tr('Pause'); btn.style.height = '38px';
+    btn.addEventListener('click', async () => { const r = await post('/api/media/pause-others', {}); toast(r && r.paused && r.paused.length ? tr('Paused {players}', { players: r.paused.join(', ') }) : tr('Nothing else was playing')); });
     nb.appendChild(btn); op.appendChild(nb); putAfter(sec('Playback'), op);
 
     // ---- About: the version on the computer, whether a newer one is out, and the Android app ----
-    const ab = el('div', 'setsec'); ab.appendChild(Object.assign(el('h3'), { textContent: 'About' }));
-    const ver = el('div', 'setrow'); ver.innerHTML = '<div><div class="k">YTM Starcast</div><div class="d">Checking for updates…</div></div>';
+    const ab = el('div', 'setsec'); ab.appendChild(secH3(trKey('About')));
+    const ver = el('div', 'setrow'); ver.innerHTML = `<div><div class="k">YTM Starcast</div><div class="d">${tr('Checking for updates…')}</div></div>`;
     ab.appendChild(ver); m.appendChild(ab);
     fetch('/api/update', { cache: 'no-store' }).then(r => r.json()).then(u => {
       if (view !== 'settings' && !view.startsWith('set:')) return;
@@ -4320,17 +4431,16 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
         const stage = x && x[2] ? ({ a:'alpha', b:'beta' }[x[2].toLowerCase()] || x[2].toLowerCase()) : '';
         return x ? x[1] + (stage ? ' ' + stage + (x[3] ? ' ' + x[3] : '') : '') : String(v || ''); };
       ver.querySelector('.k').textContent = 'YTM Starcast ' + pretty(u.current);
-      ver.querySelector('.d').textContent = u.error ? "Couldn't check for updates right now."
-        : u.available ? pretty(u.latest) + ' is out. Update it on the computer (ytm-starcast --update, or the YTM Starcast window).'
-        : 'Up to date.';
+      ver.querySelector('.d').textContent = u.error ? tr("Couldn't check for updates right now.")
+        : u.available ? tr('{version} is out. Update it on the computer (ytm-starcast --update, or the YTM Starcast window).', { version: pretty(u.latest) })
+        : tr('Up to date.');
       if (u.apk) {
         const ap = el('div', 'setrow');
-        ap.innerHTML = '<div><div class="k">Android app</div><div class="d">The native app for Android phones and tablets: lock-screen and volume-key ' +
-          'controls, home-screen widgets, and music on the phone itself. Downloaded through the computer and checked against the release.</div></div>';
-        const a = el('a', 'pill ghost'); a.textContent = 'Download'; a.href = '/api/update/apk'; a.style.cssText = 'height:38px;text-decoration:none;display:inline-flex;align-items:center';
+        ap.innerHTML = `<div><div class="k">${tr('Android app')}</div><div class="d">${tr('The native app for Android phones and tablets: lock-screen and volume-key controls, home-screen widgets, and music on the phone itself. Downloaded through the computer and checked against the release.')}</div></div>`;
+        const a = el('a', 'pill ghost'); a.textContent = tr('Download'); a.href = '/api/update/apk'; a.style.cssText = 'height:38px;text-decoration:none;display:inline-flex;align-items:center';
         ap.appendChild(a); ab.appendChild(ap);
       }
-    }).catch(() => { ver.querySelector('.d').textContent = "Couldn't check for updates right now."; });
+    }).catch(() => { ver.querySelector('.d').textContent = tr("Couldn't check for updates right now."); });
   };
   // set the view for an already-open artist/settings page
   if (view === 'settings' || view === 'artist') render();
@@ -4351,39 +4461,39 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
     status: I('M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z'),
     about: I('M11 7h2v2h-2zm0 4h2v6h-2zm1-9a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z'),
   };
-  // [key, title, the sections it holds (titles; a RegExp for one whose name varies) or the view it opens]
+  // [key, title, the sections it holds (their English names, data-sec; a RegExp for one whose name varies) or the view it opens]
   const GROUPS = [
-    ['Listening', [['sound', 'Sound & outputs', 'mixer'], ['playback', 'Playback', ['Playback', 'Other players', /engine$/]]]],
-    ['Look & feel', [['appearance', 'Appearance', ['Appearance', 'Effects', 'Interface', 'Display']]]],
-    ['Connections', [['parts', 'Parts', ['Parts']], ['extension', 'Browser extension', ['Browser extension']],
-      ['devices', 'Open on another device', ['Open on another device']], ['discord', 'Discord status', ['Discord status']]]],
-    ['More', [['status', 'Status', ['Status', 'Cue app']], ['about', 'About', ['About']]]],
+    [trKey('Listening'), [['sound', trKey('Sound & outputs'), 'mixer'], ['playback', trKey('Playback'), ['Playback', 'Other players', /engine$/]]]],
+    [trKey('Look & feel'), [['appearance', trKey('Appearance'), ['Appearance', 'Effects', 'Interface', 'Display']]]],
+    [trKey('Connections'), [['parts', trKey('Parts'), ['Parts']], ['extension', trKey('Browser extension'), ['Browser extension']],
+      ['devices', trKey('Open on another device'), ['Open on another device']], ['discord', trKey('Discord status'), ['Discord status']]]],
+    [trKey('More'), [['status', trKey('Status'), ['Status', 'Cue app']], ['about', trKey('About'), ['About']]]],
   ];
   const CATS = GROUPS.flatMap(g => g[1]);
   const holds = (cat, title) => Array.isArray(cat[2]) && cat[2].some(x => x instanceof RegExp ? x.test(title) : x === title);
   const summary = (key) => {
     const st = mixerState || {}, v = st.volume || {}, x = st.extension || {}, p = st.parts || {};
     switch (key) {
-      case 'sound': return v.available ? v.percent + '%' + (v.muted ? ' (muted)' : '') + (v.device ? ' · ' + v.device : '') : "The computer's volume, outputs and equalizer";
-      case 'playback': return 'Seeking, keyboard shortcuts, other players';
+      case 'sound': return v.available ? (v.muted ? tr('{percent}% (muted)', { percent: v.percent }) : v.percent + '%') + (v.device ? ' · ' + v.device : '') : tr("The computer's volume, outputs and equalizer");
+      case 'playback': return tr('Seeking, keyboard shortcuts, other players');
       case 'appearance': {
-        const t = localStorage.getItem('vmr-theme') || 'dark';
-        return ((THEMES.find(x => x[0] === t) || [])[1] || (customThemes().find(c => c.id === t) || {}).name || 'Dark') + ' theme, effects, layout';
+        const t = localStorage.getItem('vmr-theme') || 'dark', k = (THEMES.find(x => x[0] === t) || [])[1];
+        return tr('{theme} theme, effects, layout', { theme: (k && tr(k)) || (customThemes().find(c => c.id === t) || {}).name || tr('Dark') });
       }
-      case 'parts': { const off = PARTS.filter(([k]) => p[k] === false).map(([, l]) => l); return off.length ? 'Off: ' + off.join(', ') : 'Everything is on'; }
-      case 'extension': return x.connected ? 'Connected' + (x.version ? ' · version ' + x.version : '') : 'Not connected';
-      case 'devices': return 'Addresses and a QR code for your phone';
-      case 'discord': return 'Your music on your Discord profile';
-      case 'status': return lastConnected ? (lastYtm ? 'YouTube Music connected' : 'Connected') : 'Not connected';
-      case 'about': return (st.version ? 'Version ' + st.version : 'Version') + ', updates and the Android app';
+      case 'parts': { const off = PARTS.filter(([k]) => p[k] === false).map(([, l]) => tr(l)); return off.length ? tr('Off: {parts}', { parts: off.join(', ') }) : tr('Everything is on'); }
+      case 'extension': return x.connected ? (x.version ? tr('Connected · version {version}', { version: x.version }) : tr('Connected')) : tr('Not connected');
+      case 'devices': return tr('Addresses and a QR code for your phone');
+      case 'discord': return tr('Your music on your Discord profile');
+      case 'status': return lastConnected ? (lastYtm ? tr('YouTube Music connected') : tr('Connected')) : tr('Not connected');
+      case 'about': return st.version ? tr('Version {version}, updates and the Android app', { version: st.version }) : tr('Version, updates and the Android app');
     }
     return '';
   };
   const overview = (m) => {
-    m.innerHTML = ''; m.appendChild(topbar('Settings'));
+    m.innerHTML = ''; m.appendChild(topbar(tr('Settings')));
     for (const [group, cats] of GROUPS) {
       const box = el('div', 'setgroup');
-      box.appendChild(Object.assign(el('h3'), { textContent: group }));
+      box.appendChild(Object.assign(el('h3'), { textContent: tr(group) }));
       const card = el('div', 'setcard');
       for (const c of cats) {
         if (c[0] === 'sound' && !partOn('audio')) continue;
@@ -4391,7 +4501,7 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
         const r = el('button', 'setcat');
         r.innerHTML = '<span class="ic">' + ICON[c[0]] + '</span><span class="tx"><span class="k"></span><span class="d"></span></span>' +
           '<svg class="chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6z"/></svg>';
-        r.querySelector('.k').textContent = c[1]; r.querySelector('.d').textContent = summary(c[0]);
+        r.querySelector('.k').textContent = tr(c[1]); r.querySelector('.d').textContent = summary(c[0]);
         r.addEventListener('click', () => setView(c[2] === 'mixer' ? 'mixer' : 'set:' + c[0]));
         card.appendChild(r);
       }
@@ -4404,10 +4514,10 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
     const cat = CATS.find(c => c[0] === view.slice(4));
     const out = full.apply(this, arguments);
     if (!cat) return out;
-    const h = m.querySelector('.topbar .viewtitle'); if (h) h.textContent = cat[1];
+    const h = m.querySelector('.topbar .viewtitle'); if (h) h.textContent = tr(cat[1]);
     // leave out the other categories' sections, including ones added a moment later
     const sort = () => m.querySelectorAll(':scope > .setsec').forEach(s => {
-      const t = (s.querySelector('h3') || {}).textContent || '';
+      const t = ((s.querySelector('h3') || { dataset: {} }).dataset.sec) || '';
       s.classList.toggle('offcat', !holds(cat, t));
       const h3 = s.querySelector('h3');      // the page is named after its category: a lone section needs no heading
       if (h3) h3.classList.toggle('samecat', cat[2].length === 1);

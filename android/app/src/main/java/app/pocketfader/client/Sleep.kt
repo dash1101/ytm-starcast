@@ -47,37 +47,37 @@ fun SleepButton(s: RemoteState) {
         if (active) Text(sleepText(left), style = MaterialTheme.typography.labelMedium, color = tint)
         PressIconButton(
             if (active) Icons.Filled.Bedtime else Icons.Outlined.Bedtime,
-            if (active) "Sleep timer: ${sleepText(left)} left" else "Sleep timer", 48, 24, tint, active, true,
+            if (active) tr("Sleep timer: {time} left", "time" to sleepText(left)) else tr("Sleep timer"), 48, 24, tint, active, true,
         ) { open = true }
     }
     if (open) {
         AlertDialog(
             onDismissRequest = { open = false },
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            title = { Text("Sleep timer") },
+            title = { Text(tr("Sleep timer")) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        if (active) "Playback will pause in ${sleepText(left)}."
-                        else if (s.source == "phone") "Pause playback on this phone after…" else "Pause playback on the computer after…",
+                        if (active) tr("Playback will pause in {time}.", "time" to sleepText(left))
+                        else if (s.source == "phone") tr("Pause playback on this phone after…") else tr("Pause playback on the computer after…"),
                         style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     for (row in listOf(listOf(15, 30, 45), listOf(60, 90, 120))) {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            for (m in row) FilterChip(colors = refineChipColors(onDialog = true), border = refineChipBorder(false), selected = false, onClick = { Remote.setSleep(m); open = false }, label = { Text("$m min") })
+                            for (m in row) FilterChip(colors = refineChipColors(onDialog = true), border = refineChipBorder(false), selected = false, onClick = { Remote.setSleep(m); open = false }, label = { Text(trn("{n} min", "{n} min", m)) })
                         }
                     }
-                    FilterChip(colors = refineChipColors(onDialog = true), border = refineChipBorder(false), selected = false, onClick = { Remote.setSleep("track"); open = false }, label = { Text("When this song ends") })
+                    FilterChip(colors = refineChipColors(onDialog = true), border = refineChipBorder(false), selected = false, onClick = { Remote.setSleep("track"); open = false }, label = { Text(tr("When this song ends")) })
                 }
             },
-            confirmButton = { TextButton(onClick = { open = false }) { Text("Close") } },
-            dismissButton = { if (active) TextButton(onClick = { Remote.setSleep(0); open = false }) { Text("Turn off") } },
+            confirmButton = { TextButton(onClick = { open = false }) { Text(tr("Close")) } },
+            dismissButton = { if (active) TextButton(onClick = { Remote.setSleep(0); open = false }) { Text(tr("Turn off")) } },
         )
     }
 }
 
 private fun sleepText(sec: Int): String = when {
-    sec >= 3600 -> "${sec / 3600} h ${(sec % 3600) / 60} min"
-    sec >= 60 -> "${(sec + 59) / 60} min"
-    else -> "$sec s"
+    sec >= 3600 -> tr("{h} h {m} min", "h" to sec / 3600, "m" to (sec % 3600) / 60)
+    sec >= 60 -> trn("{n} min", "{n} min", (sec + 59) / 60)
+    else -> tr("{n} s", "n" to sec)
 }

@@ -1,0 +1,10 @@
+{
+  "appDescription": {
+    "description": "The extension's description in the browser's extension list.",
+    "message": "Ваш компаньон для YouTube Music: пульт на телефоне, ваша музыка в статусе Discord и улучшенный YouTube Music."
+  },
+  "toggleDiscord": {
+    "description": "The keyboard shortcut that switches the Discord status on or off.",
+    "message": "Показывать или скрывать вашу музыку в Discord"
+  }
+}

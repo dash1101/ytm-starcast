@@ -55,14 +55,14 @@ import androidx.compose.ui.unit.dp
 fun modesCaption(now: Now?, count: Int): String {
     if (now == null) return ""
     val parts = ArrayList<String>(2)
-    if (now.shuffle) parts.add("Shuffled: your $count tracks play in a random order.")
+    if (now.shuffle) parts.add(trn("Shuffled: your {n} track plays in a random order.", "Shuffled: your {n} tracks play in a random order.", count))
     parts.add(
         when (now.repeat) {
-            "ONE" -> "Repeating this track over and over."
-            "ALL" -> "Looping the whole queue (tracks already played too), so suggestions won't play."
+            "ONE" -> tr("Repeating this track over and over.")
+            "ALL" -> tr("Looping the whole queue (tracks already played too), so suggestions won't play.")
             else -> when (now.autoplay) {
-                false -> "Plays your $count tracks once, then stops."
-                else -> "Plays your $count tracks once, then continues with suggestions."
+                false -> trn("Plays your {n} track once, then stops.", "Plays your {n} tracks once, then stops.", count)
+                else -> trn("Plays your {n} track once, then continues with suggestions.", "Plays your {n} tracks once, then continues with suggestions.", count)
             }
         }
     )
@@ -75,7 +75,7 @@ private fun QueueModes(now: Now?, bridge: Boolean, count: Int, modifier: Modifie
     Column(modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (!bridge || now == null) {
             Text(
-                "Shuffle, loop and autoplay need the YouTube Music extension connected on the computer.",
+                tr("Shuffle, loop and autoplay need the YouTube Music extension connected on the computer."),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         } else {
@@ -87,13 +87,13 @@ private fun QueueModes(now: Now?, bridge: Boolean, count: Int, modifier: Modifie
                 FilterChip(
                     selected = now.shuffle, shape = chipShape(now.shuffle), onClick = { tap(); Remote.setShuffle(!now.shuffle) },
                     colors = colors, border = refineChipBorder(now.shuffle),
-                    label = { Text(if (now.shuffle) "Shuffle on" else "Shuffle off") },
+                    label = { Text(if (now.shuffle) tr("Shuffle on") else tr("Shuffle off")) },
                     leadingIcon = { Icon(Icons.Filled.Shuffle, null, Modifier.size(18.dp)) },
                 )
                 FilterChip(
                     selected = now.repeat != "NONE", shape = chipShape(now.repeat != "NONE"), colors = colors, border = refineChipBorder(now.repeat != "NONE"),
                     onClick = { tap(); Remote.setRepeat(when (now.repeat) { "NONE" -> "ALL"; "ALL" -> "ONE"; else -> "NONE" }) },
-                    label = { Text(when (now.repeat) { "ALL" -> "Loop: queue"; "ONE" -> "Loop: track"; else -> "Loop off" }) },
+                    label = { Text(when (now.repeat) { "ALL" -> tr("Loop: queue"); "ONE" -> tr("Loop: track"); else -> tr("Loop off") }) },
                     leadingIcon = { Icon(if (now.repeat == "ONE") Icons.Filled.RepeatOne else Icons.Filled.Repeat, null, Modifier.size(18.dp)) },
                 )
                 val auto = now.autoplay
@@ -102,7 +102,7 @@ private fun QueueModes(now: Now?, bridge: Boolean, count: Int, modifier: Modifie
                         selected = auto, shape = chipShape(auto), onClick = { tap(); Remote.setAutoplay(!auto) }, colors = colors, border = refineChipBorder(auto, now.repeat == "NONE"),
                         // YouTube Music ignores autoplay while the queue is looping
                         enabled = now.repeat == "NONE",
-                        label = { Text(if (now.repeat != "NONE") "Autoplay: off while looping" else if (auto) "Autoplay on" else "Autoplay off") },
+                        label = { Text(if (now.repeat != "NONE") tr("Autoplay: off while looping") else if (auto) tr("Autoplay on") else tr("Autoplay off")) },
                         leadingIcon = { Icon(Icons.Filled.AutoAwesome, null, Modifier.size(18.dp)) },
                     )
                 }
@@ -134,7 +134,7 @@ fun LazyListScope.queueItems(
     if (s.queue.isEmpty()) {
         item(key = "q-empty") {
             Text(
-                if (s.bridge) "The queue is empty." else "The queue needs the YouTube Music extension on the computer.",
+                if (s.bridge) tr("The queue is empty.") else tr("The queue needs the YouTube Music extension on the computer."),
                 style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center, modifier = Modifier.arrive(arrival).fillMaxWidth().padding(32.dp),
             )
@@ -149,9 +149,9 @@ fun LazyListScope.queueItems(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text("Already played · ${played.size}", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    Text(tr("Already played · {n}", "n" to played.size), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                     Text(
-                        if (now?.repeat == "ALL") "These come back around because the queue is looping." else "Tap to show the tracks before this one.",
+                        if (now?.repeat == "ALL") tr("These come back around because the queue is looping.") else tr("Tap to show the tracks before this one."),
                         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -163,27 +163,27 @@ fun LazyListScope.queueItems(
         }
     }
     if (current != null) {
-        item(key = "q-now-h") { SectionHeader("Now playing", null, Modifier.arrive(arrival)) }
+        item(key = "q-now-h") { SectionHeader(tr("Now playing"), null, Modifier.arrive(arrival)) }
         item(key = "q-now", contentType = "track") {
             TrackRow(current, dimmed = false, suggestion = false, showArt = showArt, onMore = onMore, modifier = Modifier.arrive(arrival))
         }
     }
     if (upcoming.isNotEmpty()) {
-        item(key = "q-up-h") { SectionHeader("Up next · ${upcoming.size}", null, Modifier.arrive(arrival)) }
+        item(key = "q-up-h") { SectionHeader(tr("Up next · {n}", "n" to upcoming.size), null, Modifier.arrive(arrival)) }
         items2(upcoming, "qu", dimmed = false, canMove = true, lastIndex = main.size - 1, showArt = showArt, arrival = arrival, onMore = onMore)
     }
     if (auto.isNotEmpty()) {
         item(key = "q-auto-h") {
             val wontPlay = (now?.repeat ?: "NONE") != "NONE" || now?.autoplay == false
             val why = when {
-                now?.repeat == "ONE" -> "Won't play: this track is on repeat. You can still add any of them to your queue."
-                now?.repeat == "ALL" -> "Won't play: your queue is on loop. You can still add any of them to your queue."
-                now?.autoplay == false -> "Won't play: autoplay is off. You can still add any of them to your queue."
-                else -> "Plays when your queue ends. Tap + to add one to your queue now."
+                now?.repeat == "ONE" -> tr("Won't play: this track is on repeat. You can still add any of them to your queue.")
+                now?.repeat == "ALL" -> tr("Won't play: your queue is on loop. You can still add any of them to your queue.")
+                now?.autoplay == false -> tr("Won't play: autoplay is off. You can still add any of them to your queue.")
+                else -> tr("Plays when your queue ends. Tap + to add one to your queue now.")
             }
             Row(Modifier.arrive(arrival).fillMaxWidth().padding(start = 20.dp, end = 16.dp, top = 16.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Autoplay suggestions · ${auto.size}", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    Text(tr("Autoplay suggestions · {n}", "n" to auto.size), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
                     Text(why, style = MaterialTheme.typography.bodySmall, color = if (wontPlay) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 val a = now?.autoplay
@@ -267,9 +267,9 @@ private fun TrackRow(t: Track, dimmed: Boolean, suggestion: Boolean, showArt: Bo
         }
         if (suggestion) {
             // one tap puts a suggestion on the end of your real queue
-            IconButton(onClick = { Remote.queueAddEnd(t) }) { Icon(Icons.Filled.Add, "Add to your queue", tint = icons) }
+            IconButton(onClick = { Remote.queueAddEnd(t) }) { Icon(Icons.Filled.Add, tr("Add to your queue"), tint = icons) }
         }
-        IconButton(onClick = { onMore(t) }) { Icon(Icons.Filled.MoreVert, "More", tint = icons) }
+        IconButton(onClick = { onMore(t) }) { Icon(Icons.Filled.MoreVert, tr("More"), tint = icons) }
     }
 }
 
@@ -294,17 +294,17 @@ fun TrackActionsDialog(t: Track, queueSize: Int, onDone: () -> Unit) {
         title = { Text(t.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
         text = {
             Column {
-                Action(Icons.Filled.PlayArrow, "Play now") { Remote.queuePlayAt(t) }
-                if (!t.selected) Action(Icons.Filled.SkipNext, "Play next") { Remote.queueMoveNext(t) }
-                if (suggestion) Action(Icons.Filled.Add, "Add to end of queue") { Remote.queueAddEnd(t) }
-                if (canMove && t.index > 0) Action(Icons.Filled.KeyboardArrowUp, "Move up") { Remote.queueMove(t, t.index - 1) }
-                if (canMove && t.index < last) Action(Icons.Filled.KeyboardArrowDown, "Move down") { Remote.queueMove(t, t.index + 1) }
-                if (canMove) Action(Icons.Filled.Delete, "Remove") { Remote.queueRemove(t) }
-                if (isYtId(t.videoId) && !Downloads.isDownloaded(t.videoId)) Action(Icons.Filled.Download, "Download to this phone") {
+                Action(Icons.Filled.PlayArrow, tr("Play now")) { Remote.queuePlayAt(t) }
+                if (!t.selected) Action(Icons.Filled.SkipNext, tr("Play next")) { Remote.queueMoveNext(t) }
+                if (suggestion) Action(Icons.Filled.Add, tr("Add to end of queue")) { Remote.queueAddEnd(t) }
+                if (canMove && t.index > 0) Action(Icons.Filled.KeyboardArrowUp, tr("Move up")) { Remote.queueMove(t, t.index - 1) }
+                if (canMove && t.index < last) Action(Icons.Filled.KeyboardArrowDown, tr("Move down")) { Remote.queueMove(t, t.index + 1) }
+                if (canMove) Action(Icons.Filled.Delete, tr("Remove")) { Remote.queueRemove(t) }
+                if (isYtId(t.videoId) && !Downloads.isDownloaded(t.videoId)) Action(Icons.Filled.Download, tr("Download to this phone")) {
                     t.toLocal()?.let { Downloads.enqueue(it) }
                 }
             }
         },
-        confirmButton = { androidx.compose.material3.TextButton(onClick = onDone) { Text("Close") } },
+        confirmButton = { androidx.compose.material3.TextButton(onClick = onDone) { Text(tr("Close")) } },
     )
 }

@@ -7,6 +7,8 @@ import webbrowser
 from pathlib import Path
 from tkinter import font as tkfont
 
+from .. import i18n
+from ..i18n import tr
 from .core import PART_ROWS, Controller, prefers_dark
 
 ICON = Path(__file__).resolve().parent.parent / "static" / "icon-192.png"
@@ -250,7 +252,7 @@ class Window:
         names = tk.Frame(head, bg=P["bg"])
         names.pack(side="left", fill="x", expand=True)
         tk.Label(names, text="YTM Starcast", font=self.f.title, fg=P["text"], bg=P["bg"]).pack(anchor="w")
-        tk.Label(names, text="YouTube Music companion", font=self.f.small, fg=P["muted"], bg=P["bg"]).pack(anchor="w")
+        tk.Label(names, text=tr("YouTube Music companion"), font=self.f.small, fg=P["muted"], bg=P["bg"]).pack(anchor="w")
         self.version = Chip(head, P, self.f, P["bg"])
 
         # --- running or not, and how it starts
@@ -261,18 +263,18 @@ class Window:
         self.dot.pack(side="left", padx=(0, px(12)), pady=(px(5), 0), anchor="n")
         words = tk.Frame(top, bg=P["card"])
         words.pack(side="left", fill="x", expand=True)
-        self.title = tk.Label(words, text="Checking…", font=self.f.big, fg=P["text"], bg=P["card"], anchor="w")
+        self.title = tk.Label(words, text=tr("Checking…"), font=self.f.big, fg=P["text"], bg=P["card"], anchor="w")
         self.title.pack(fill="x")
         self.sub = tk.Label(words, text="", font=self.f.small, fg=P["muted"], bg=P["card"], anchor="w", justify="left")
         self.sub.pack(fill="x")
         self.run_sw = Switch(top, P, self.on_run, P["card"])
         self.run_sw.pack(side="right")
         self.divider(card)
-        self.login_sw = self.switch_row(card, "Start when I log in", "YTM Starcast runs quietly in the background after you sign in.",
+        self.login_sw = self.switch_row(card, tr("Start when I log in"), tr("YTM Starcast runs quietly in the background after you sign in."),
                                         self.on_login)
-        self.lan_sw = self.switch_row(card, "Use on my home Wi-Fi", "Lets phones on your network connect. Turns on an access token.",
+        self.lan_sw = self.switch_row(card, tr("Use on my home Wi-Fi"), tr("Lets phones on your network connect. Turns on an access token."),
                                       self.on_lan)
-        row, _ = self.row(card, "Cloudflare hostname", "Only if you put the server behind a Cloudflare Tunnel.")
+        row, _ = self.row(card, tr("Cloudflare hostname"), tr("Only if you put the server behind a Cloudflare Tunnel."))
         self.host_var = tk.StringVar()
         box = tk.Canvas(row, bg=P["card"], highlightthickness=0, bd=0, width=px(210), height=px(40))
         box.pack(side="right")
@@ -283,6 +285,9 @@ class Window:
         entry.bind("<Return>", lambda _e: self.on_host())
         entry.bind("<FocusOut>", lambda _e: self.on_host())
         self.entry = entry
+        row, _ = self.row(card, tr("Language"), tr("For YTM Starcast on every device. Automatic uses each device's own language."))
+        self.lang_btn = Pill(row, P, self.f, language_name(LANGUAGE["pref"]), self.on_language, "tonal")
+        self.lang_btn.pack(side="right")
 
         # --- updates
         card = self.card(col)
@@ -290,34 +295,35 @@ class Window:
         row.pack(fill="x")
         texts = tk.Frame(row, bg=P["card"])
         texts.pack(side="left", fill="x", expand=True)
-        tk.Label(texts, text="Updates", font=self.f.strong, fg=P["text"], bg=P["card"], anchor="w").pack(fill="x")
-        self.upd_text = tk.Label(texts, text="Checking for updates…", font=self.f.small, fg=P["muted"], bg=P["card"],
+        tk.Label(texts, text=tr("Updates"), font=self.f.strong, fg=P["text"], bg=P["card"], anchor="w").pack(fill="x")
+        self.upd_text = tk.Label(texts, text=tr("Checking for updates…"), font=self.f.small, fg=P["muted"], bg=P["card"],
                                  anchor="w", justify="left")
         self.upd_text.pack(fill="x")
-        self.upd_btn = Pill(row, P, self.f, "Check", self.on_update, "tonal")
+        self.upd_btn = Pill(row, P, self.f, tr("Check"), self.on_update, "tonal")
         self.upd_btn.pack(side="right")
         self.upd_url = None
+        self.upd_do = "check"         # what the button does: "check", "update" or "open"
 
         # --- parts (kept by the server, so they only change while it runs)
-        card = self.card(col, "Parts")
+        card = self.card(col, tr("Parts"))
         self.part_sw = {}
         for key, title, sub in PART_ROWS:
-            self.part_sw[key] = self.switch_row(card, title, sub, lambda k=key: self.on_part(k))
+            self.part_sw[key] = self.switch_row(card, tr(title), tr(sub), lambda k=key: self.on_part(k))
             self.part_sw[key].enable(False)
         self.parts_note = tk.Label(card, text="", font=self.f.small, fg=P["muted"], bg=P["card"], anchor="w", justify="left")
         self.parts_note.pack(fill="x")
 
         # --- the addresses for a phone
-        card = self.card(col, "Open on your phone")
+        card = self.card(col, tr("Open on your phone"))
         self.addr_box = tk.Frame(card, bg=P["card"])
         self.addr_box.pack(fill="x")
         self.addr_sig = None
 
         # --- status
-        card = self.card(col, "Status")
+        card = self.card(col, tr("Status"))
         self.info = {}
-        for key, label in (("device", "Sound output"), ("ytm", "YouTube Music extension"), ("now", "Now playing"),
-                           ("version", "Version")):
+        for key, label in (("device", tr("Sound output")), ("ytm", tr("YouTube Music extension")), ("now", tr("Now playing")),
+                           ("version", tr("Version"))):
             r = tk.Frame(card, bg=P["card"])
             r.pack(fill="x", pady=3)
             tk.Label(r, text=label, font=self.f.body, fg=P["text"], bg=P["card"]).pack(side="left")
@@ -328,9 +334,9 @@ class Window:
         # --- what else there is
         btns = tk.Frame(col, bg=P["bg"])
         btns.pack(fill="x", pady=(6, 0))
-        Pill(btns, P, self.f, "Open the web app", self.on_open, "filled", bg=P["bg"]).pack(side="left")
-        Pill(btns, P, self.f, "Browser extension", self.on_extension, "tonal", bg=P["bg"]).pack(side="left", padx=(px(8), 0))
-        Pill(btns, P, self.f, "Show log", self.on_log, "text", bg=P["bg"]).pack(side="left", padx=(px(8), 0))
+        Pill(btns, P, self.f, tr("Open the web app"), self.on_open, "filled", bg=P["bg"]).pack(side="left")
+        Pill(btns, P, self.f, tr("Browser extension"), self.on_extension, "tonal", bg=P["bg"]).pack(side="left", padx=(px(8), 0))
+        Pill(btns, P, self.f, tr("Show log"), self.on_log, "text", bg=P["bg"]).pack(side="left", padx=(px(8), 0))
         self.msg = tk.Label(col, text="", font=self.f.small, fg=P["muted"], bg=P["bg"], anchor="w")
         self.msg.pack(fill="x", pady=(10, 0))
 
@@ -392,11 +398,15 @@ class Window:
         if not self.title.winfo_exists():
             return
         P = self.P
-        self.loading = True
         d, s = snap["details"], snap["settings"]
+        if d and d.get("language") and d["language"] != LANGUAGE["pref"] and self.rebuild:
+            use_language(d["language"])      # chosen on another device: draw the window again in it
+            self.rebuild()
+            return
+        self.loading = True
         running = d is not None
-        self.title.config(text="YTM Starcast is running" if running else "YTM Starcast is stopped")
-        self.sub.config(text="Your phone can control this computer." if running else "Turn it on to use your phone as a remote.")
+        self.title.config(text=tr("YTM Starcast is running") if running else tr("YTM Starcast is stopped"))
+        self.sub.config(text=tr("Your phone can control this computer.") if running else tr("Turn it on to use your phone as a remote."))
         self.dot.delete("all")
         self.dot.create_oval(px(2), px(2), px(12), px(12), fill=P["ok"] if running else P["off"], outline="")
         self.run_sw.set(running)
@@ -408,8 +418,8 @@ class Window:
             if parts is not None:
                 sw.set(parts[key])
         self.parts_note.config(text="" if parts is not None else
-                               "Turn YTM Starcast on to change these." if not running else
-                               "The running server is an older version without these switches.")
+                               tr("Turn YTM Starcast on to change these.") if not running else
+                               tr("The running server is an older version without these switches."))
         if self.root.focus_get() is not self.entry:
             self.host_var.set(s["allow_host"])
         sig = tuple(snap["addresses"])
@@ -422,9 +432,9 @@ class Window:
                 row.pack(fill="x", pady=5)
                 texts = tk.Frame(row, bg=P["card"])
                 texts.pack(side="left", fill="x", expand=True)
-                tk.Label(texts, text=label, font=self.f.body, fg=P["text"], bg=P["card"], anchor="w").pack(fill="x")
+                tk.Label(texts, text=tr(label), font=self.f.body, fg=P["text"], bg=P["card"], anchor="w").pack(fill="x")
                 tk.Label(texts, text=url, font=self.f.small, fg=P["muted"], bg=P["card"], anchor="w").pack(fill="x")
-                Pill(row, P, self.f, "Copy", lambda u=url: self.copy(u), "text").pack(side="right")
+                Pill(row, P, self.f, tr("Copy"), lambda u=url: self.copy(u), "text").pack(side="right")
         d = d or {}
         ver = d.get("version") or ""
         if ver:
@@ -433,7 +443,7 @@ class Window:
         else:
             self.version.pack_forget()
         self.info["device"].config(text=d.get("device") or "—")
-        self.info["ytm"].config(text="Connected" if d.get("ytm") else ("Not connected" if d else "—"))
+        self.info["ytm"].config(text=tr("Connected") if d.get("ytm") else (tr("Not connected") if d else "—"))
         self.info["now"].config(text=(d.get("now") or "—")[:40])
         self.info["version"].config(text=ver or "—")
         self.loading = False
@@ -448,28 +458,28 @@ class Window:
 
     def _done(self, ok):
         self.busy = False
-        self.msg.config(text="" if ok else "That didn't work. Use “Show log” to see why.")
+        self.msg.config(text="" if ok else tr("That didn't work. Use “Show log” to see why."))
         self.refresh()
 
     def on_run(self):
         if not self.loading:
             on = self.run_sw.get()
-            self._do(self.ctl.start if on else self.ctl.stop, "Starting…" if on else "Stopping…")
+            self._do(self.ctl.start if on else self.ctl.stop, tr("Starting…") if on else tr("Stopping…"))
 
     def on_part(self, key):
         if not self.loading and not self.busy:
             on = self.part_sw[key].get()
-            self._do(lambda: self.ctl.set_part(key, on) is not None, "Saving…")
+            self._do(lambda: self.ctl.set_part(key, on) is not None, tr("Saving…"))
 
     def on_login(self):
         if not self.loading:
             on = self.login_sw.get()
-            self._do(lambda: self.ctl.set_autostart(on), "Saving…")
+            self._do(lambda: self.ctl.set_autostart(on), tr("Saving…"))
 
     def on_lan(self):
         if not self.loading:
             self.ctl.update(lan=bool(self.lan_sw.get()))
-            self._do(self._restart_if_running, "Applying…")
+            self._do(self._restart_if_running, tr("Applying…"))
 
     def on_host(self):
         if self.loading:
@@ -477,7 +487,7 @@ class Window:
         text = self.host_var.get().strip()
         if text != self.ctl.settings()["allow_host"]:
             self.ctl.update(allow_host=text)
-            self._do(self._restart_if_running, "Applying…")
+            self._do(self._restart_if_running, tr("Applying…"))
 
     def _restart_if_running(self):
         if self.ctl.is_running():
@@ -501,30 +511,57 @@ class Window:
         self.upd_url = info.get("url")
         if info.get("error"):
             self.upd_text.config(text=info["error"].capitalize() + ".")
-            self.upd_btn.set_text("Check")
+            self.upd_do = "check"
+            self.upd_btn.set_text(tr("Check"))
         elif info.get("available"):
             can = info.get("self_update")
-            self.upd_text.config(text=f"{info['latest']} is available (you have {info['current']}).")
-            self.upd_btn.set_text("Update now" if can else "Open page")
+            self.upd_text.config(text=tr("{latest} is available (you have {current}).", latest=info["latest"], current=info["current"]))
+            self.upd_do = "update" if can else "open"
+            self.upd_btn.set_text(tr("Update now") if can else tr("Open page"))
         else:
-            self.upd_text.config(text=f"You're up to date ({info['current']}).")
-            self.upd_btn.set_text("Check")
+            self.upd_text.config(text=tr("You're up to date ({current}).", current=info["current"]))
+            self.upd_do = "check"
+            self.upd_btn.set_text(tr("Check"))
 
     def on_update(self):
-        label = self.upd_btn.text
-        if label == "Open page" and self.upd_url:
+        if self.upd_do == "open" and self.upd_url:
             webbrowser.open(self.upd_url)
-        elif label == "Update now":
-            self._do(lambda: self.ctl.update_now()[0], "Updating…")
+        elif self.upd_do == "update":
+            self._do(lambda: self.ctl.update_now()[0], tr("Updating…"))
             self.root.after(2500, self.check_updates)
         else:
-            self.upd_text.config(text="Checking…")
+            self.upd_text.config(text=tr("Checking…"))
             self.check_updates()
+
+    def on_language(self):
+        P = self.P
+        menu = tk.Menu(self.root, tearoff=0, bg=P["card2"], fg=P["text"], activebackground=P["accent"],
+                       activeforeground=P["bg"], font=self.f.body, bd=0)
+        for code in i18n.SETTINGS:
+            menu.add_command(label=language_name(code), command=lambda c=code: self.choose_language(c))
+        try:
+            menu.tk_popup(self.lang_btn.winfo_rootx(), self.lang_btn.winfo_rooty() + self.lang_btn.winfo_height())
+        finally:
+            menu.grab_release()
+
+    def choose_language(self, code):
+        def work():
+            self.ctl.set_language(code)
+            try:
+                self.root.after(0, done)
+            except RuntimeError:
+                pass
+
+        def done():
+            use_language(code)
+            if self.rebuild:
+                self.rebuild()
+        threading.Thread(target=work, daemon=True).start()
 
     def copy(self, url):
         self.root.clipboard_clear()
         self.root.clipboard_append(url)
-        self.msg.config(text="Copied.")
+        self.msg.config(text=tr("Copied."))
 
     def on_open(self):
         webbrowser.open(f"http://127.0.0.1:{self.ctl.settings()['port']}/")
@@ -536,7 +573,7 @@ class Window:
     def on_log(self):
         P = self.P
         win = tk.Toplevel(self.root, bg=P["bg"])
-        win.title("YTM Starcast log")
+        win.title(tr("YTM Starcast log"))
         win.geometry("760x460")
         dark_title_bar(win, self.dark)
         text = tk.Text(win, wrap="word", font=self.f.mono, bg=P["card"], fg=P["text"], insertbackground=P["text"],
@@ -545,6 +582,20 @@ class Window:
         text.config(state="disabled")
         text.pack(fill="both", expand=True, padx=12, pady=12)
         text.see("end")
+
+
+# The language setting in use ("auto" or a code), shared with the apps through the server.
+LANGUAGE = {"pref": "auto"}
+
+
+def use_language(pref):
+    LANGUAGE["pref"] = pref
+    i18n.use(pref)
+
+
+def language_name(pref):
+    """"Automatic" or the language's own name."""
+    return dict(i18n.LANGUAGES).get(pref) or tr("Automatic")
 
 
 def dark_title_bar(win, dark):
@@ -584,6 +635,7 @@ def run():
         except tk.TclError:
             pass
     ctl = Controller()
+    use_language(ctl.language())
     holder = {}
 
     def build():

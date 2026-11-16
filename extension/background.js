@@ -26,6 +26,18 @@ async function ask(msg) {
 // Refine keeps the hue of the cover playing (see bridge_isolated.js); the toolbar icon is drawn in it (logo.js), and goes
 // back to its usual colours when Refine's album colours are off.
 if (typeof importScripts === "function") { try { importScripts("logo.js"); } catch (e) { /* the icon keeps its usual colours */ } }
+// the toolbar button's words in the extension's language (English when the translations can't be loaded)
+if (typeof importScripts === "function") { try { importScripts("i18n_strings.js", "i18n.js"); } catch (e) { /* English */ } }
+// the language: as the extension's script in YouTube Music last heard it from YTM Starcast
+try {
+  const I = globalThis[Symbol.for("pocketfader.i18n")];
+  if (I) {
+    Promise.resolve(ext.storage.local.get("lang")).then((r) => { if (r && r.lang) I.set(r.lang); }).catch(() => {});
+    ext.storage.onChanged.addListener((changes, area) => { if (area === "local" && changes.lang) I.set(changes.lang.newValue); });
+  }
+} catch (e) { /* no storage here */ }
+const tr = (globalThis[Symbol.for("pocketfader.i18n")] || {}).tr ||
+  ((text, vars) => String(text).replace(/\{(\w+)\}/g, (m, k) => (vars && vars[k] != null ? String(vars[k]) : m)));
 let iconFor = "";
 function paintIcon(p) {
   const L = globalThis.starcastLogo;
@@ -139,7 +151,7 @@ function markReady(v) {
   try {
     ext.action.setBadgeBackgroundColor({ color: "#8b5cf6" });
     ext.action.setBadgeText({ text: v ? "↑" : "" });
-    ext.action.setTitle({ title: v ? "YTM Starcast: version " + v + " is ready. Open this to update." : "YTM Starcast" });
+    ext.action.setTitle({ title: v ? tr("YTM Starcast: version {version} is ready. Open this to update.", { version: v }) : "YTM Starcast" });
   } catch (e) {}
 }
 

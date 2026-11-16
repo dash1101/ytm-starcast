@@ -1,0 +1,10 @@
+{
+  "appDescription": {
+    "description": "The extension's description in the browser's extension list.",
+    "message": "你的 YouTube Music 伴侣：手机遥控器、把你的音乐显示为 Discord 状态，以及更好用的 YouTube Music。"
+  },
+  "toggleDiscord": {
+    "description": "The keyboard shortcut that switches the Discord status on or off.",
+    "message": "在 Discord 上显示或停止显示你的音乐"
+  }
+}

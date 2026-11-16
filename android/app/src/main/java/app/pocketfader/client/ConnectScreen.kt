@@ -118,11 +118,11 @@ fun ConnectForm(
             }
         }
         Text(
-            if (initial.isSet) "Connection" else "Connect to your computer",
+            if (initial.isSet) tr("Connection") else tr("Connect to your computer"),
             style = MaterialTheme.typography.headlineSmall,
         )
         Text(
-            "Enter the address of the computer running YTM Starcast.",
+            tr("Enter the address of the computer running YTM Starcast."),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -135,10 +135,10 @@ fun ConnectForm(
                 result = TestResult.Idle
             },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Server address") },
+            label = { Text(tr("Server address")) },
             placeholder = { Text("my-pc.tailnet.ts.net:8777") },
             leadingIcon = { Icon(Icons.Filled.Link, null) },
-            supportingText = { Text("A Tailscale name, a home-network address, or an https:// hostname.") },
+            supportingText = { Text(tr("A Tailscale name, a home-network address, or an https:// hostname.")) },
             singleLine = true,
             shape = field,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Next),
@@ -148,14 +148,14 @@ fun ConnectForm(
             value = token,
             onValueChange = { token = it; result = TestResult.Idle },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Access token (optional)") },
+            label = { Text(tr("Access token (optional)")) },
             leadingIcon = { Icon(Icons.Filled.Key, null) },
             trailingIcon = {
                 IconButton(onClick = { showToken = !showToken }) {
-                    Icon(if (showToken) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, "Show or hide")
+                    Icon(if (showToken) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, tr("Show or hide"))
                 }
             },
-            supportingText = { Text("Only needed if the server was started with --token or --lan.") },
+            supportingText = { Text(tr("Only needed if the server was started with --token or --lan.")) },
             singleLine = true,
             shape = field,
             visualTransformation = if (showToken) VisualTransformation.None else PasswordVisualTransformation(),
@@ -172,8 +172,7 @@ fun ConnectForm(
         AnimatedVisibility(advanced) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    "If your server sits behind a Cloudflare Access login, create a service token in " +
-                        "Zero Trust and enter it here. The app sends it with every request.",
+                    tr("If your server sits behind a Cloudflare Access login, create a service token in Zero Trust and enter it here. The app sends it with every request."),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -181,7 +180,7 @@ fun ConnectForm(
                     value = cfId,
                     onValueChange = { cfId = it; result = TestResult.Idle },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Client ID") },
+                    label = { Text(tr("Client ID")) },
                     singleLine = true,
                     shape = field,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -190,10 +189,10 @@ fun ConnectForm(
                     value = cfSecret,
                     onValueChange = { cfSecret = it; result = TestResult.Idle },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Client secret") },
+                    label = { Text(tr("Client secret")) },
                     trailingIcon = {
                         IconButton(onClick = { showSecret = !showSecret }) {
-                            Icon(if (showSecret) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, "Show or hide")
+                            Icon(if (showSecret) Icons.Filled.VisibilityOff else Icons.Filled.Visibility, tr("Show or hide"))
                         }
                     },
                     singleLine = true,
@@ -230,7 +229,7 @@ fun ConnectForm(
                     }
                     Text(
                         when (r) {
-                            is TestResult.Running -> "Connecting…"
+                            is TestResult.Running -> tr("Connecting…")
                             is TestResult.Ok -> r.text
                             is TestResult.Fail -> r.text
                             else -> ""
@@ -258,20 +257,20 @@ fun ConnectForm(
                 enabled = canSave && result !is TestResult.Running,
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                 shape = PfShape.Full,
-            ) { Text("Test") }
+            ) { Text(tr("Test")) }
             Button(
                 onClick = { onSave(build()) },
                 enabled = canSave,
                 modifier = Modifier.weight(1f).heightIn(min = 48.dp),
                 shape = PfShape.Full,
-            ) { Text("Save") }
+            ) { Text(tr("Save")) }
         }
         if (onForget != null || onCancel != null) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 if (onForget != null) {
-                    TextButton(onClick = onForget) { Text("Remove this server", color = MaterialTheme.colorScheme.error) }
+                    TextButton(onClick = onForget) { Text(tr("Remove this server"), color = MaterialTheme.colorScheme.error) }
                 } else Spacer(Modifier.width(1.dp))
-                if (onCancel != null) TextButton(onClick = onCancel) { Text("Cancel") }
+                if (onCancel != null) TextButton(onClick = onCancel) { Text(tr("Cancel")) }
             }
         }
     }

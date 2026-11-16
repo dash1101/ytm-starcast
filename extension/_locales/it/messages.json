@@ -1,0 +1,10 @@
+{
+  "appDescription": {
+    "description": "The extension's description in the browser's extension list.",
+    "message": "Il compagno di YouTube Music: un telecomando sul telefono, la tua musica come stato Discord e uno YouTube Music migliore."
+  },
+  "toggleDiscord": {
+    "description": "The keyboard shortcut that switches the Discord status on or off.",
+    "message": "Mostra o smetti di mostrare la tua musica su Discord"
+  }
+}

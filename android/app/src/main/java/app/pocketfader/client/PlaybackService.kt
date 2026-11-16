@@ -197,7 +197,7 @@ class PlaybackService : Service() {
         lastKey = key
         session.setMetadata(
             MediaMetadataCompat.Builder()
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, now?.title ?: "Nothing playing")
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, now?.title ?: tr("Nothing playing"))
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, now?.artist.orEmpty())
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, ((now?.duration ?: 0.0) * 1000).toLong())
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, art)
@@ -229,26 +229,26 @@ class PlaybackService : Service() {
         )
         return NotificationCompat.Builder(this, CHANNEL)
             .setSmallIcon(android.R.drawable.ic_media_play)
-            .setContentTitle(now?.title?.ifBlank { null } ?: "Nothing playing")
+            .setContentTitle(now?.title?.ifBlank { null } ?: tr("Nothing playing"))
             .setContentText(
                 when {
-                    !s.online && s.configured -> "Can't reach the computer"
-                    !s.remoteOn -> "The YouTube Music remote is switched off"
+                    !s.online && s.configured -> tr("Can't reach the computer")
+                    !s.remoteOn -> tr("The YouTube Music remote is switched off")
                     else -> now?.artist.orEmpty()
                 }
             )
             .setLargeIcon(art)
             .setContentIntent(open)
             .setDeleteIntent(quit)
-            .addAction(action("prev", android.R.drawable.ic_media_previous, "Previous"))
+            .addAction(action("prev", android.R.drawable.ic_media_previous, tr("Previous")))
             .addAction(
                 action(
                     "playpause",
                     if (playing) android.R.drawable.ic_media_pause else android.R.drawable.ic_media_play,
-                    if (playing) "Pause" else "Play",
+                    if (playing) tr("Pause") else tr("Play"),
                 )
             )
-            .addAction(action("next", android.R.drawable.ic_media_next, "Next"))
+            .addAction(action("next", android.R.drawable.ic_media_next, tr("Next")))
             .setStyle(MediaStyle().setMediaSession(session.sessionToken).setShowActionsInCompactView(0, 1, 2))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setCategory(NotificationCompat.CATEGORY_TRANSPORT)      // a media player's controls (phones group them as such)
@@ -260,7 +260,7 @@ class PlaybackService : Service() {
     private fun createChannel() {
         if (Build.VERSION.SDK_INT >= 26) {
             (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
-                NotificationChannel(CHANNEL, "Playback controls", NotificationManager.IMPORTANCE_LOW)
+                NotificationChannel(CHANNEL, tr("Playback controls"), NotificationManager.IMPORTANCE_LOW)
                     .apply { setShowBadge(false) }
             )
         }

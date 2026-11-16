@@ -122,20 +122,20 @@ object BeaconModel {
         } catch (e: Exception) {
             heldVisible = null
             status = prev
-            Remote.notify("Couldn't change your Discord status: ${e.friendly()}")
+            Remote.notify(tr("Couldn't change your Discord status: {error}", "error" to e.friendly()))
         }
     }
 
     /** Only older computers could install anything; nothing in the app calls this any more. */
     suspend fun install(action: String) {
         val prev = status ?: return
-        status = prev.copy(install = prev.install.copy(jobState = "running", jobMessage = "Working…"))
+        status = prev.copy(install = prev.install.copy(jobState = "running", jobMessage = tr("Working…")))
         try {
             withContext(Dispatchers.IO) { Remote.beaconInstall(action) }
             refresh()
         } catch (e: Exception) {
             status = prev
-            Remote.notify("Couldn't start that: ${e.friendly()}")
+            Remote.notify(tr("Couldn't start that: {error}", "error" to e.friendly()))
         }
     }
 
@@ -154,7 +154,7 @@ object BeaconModel {
             migrateResult = try {
                 withContext(Dispatchers.IO) { Remote.beaconMigrate() }
             } catch (e: Exception) {
-                false to "Couldn't move over: ${e.friendly()}"
+                false to tr("Couldn't move over: {error}", "error" to e.friendly())
             }
             migrating = false
             refresh()
@@ -171,7 +171,7 @@ object BeaconModel {
         } catch (e: Exception) {
             heldSettings.remove(key)
             status = prev
-            Remote.notify("Couldn't save that: ${e.friendly()}")
+            Remote.notify(tr("Couldn't save that: {error}", "error" to e.friendly()))
         }
     }
 }
@@ -190,7 +190,7 @@ private fun BeaconSettings.withValue(key: String, value: Any): BeaconSettings = 
 }
 
 /** One short line for the settings overview. */
-fun beaconSummary(s: BeaconStatus): String = headlineText(s).first.substringBefore(".").trim()
+fun beaconSummary(s: BeaconStatus): String = headlineText(s).first.substringBefore(".").substringBefore("。").trim()
 
 private enum class Tone { Good, Warn, Bad, Off }
 
@@ -199,25 +199,25 @@ private enum class Tone { Good, Warn, Bad, Off }
  * differently there ([BeaconStatus.builtIn] is false): the fix is then to update YTM Starcast on the computer.
  */
 private fun headlineText(s: BeaconStatus): Pair<String, Tone> = when (s.headline) {
-    "showing" -> "Showing on Discord." to Tone.Good
-    "waiting" -> "Getting ready to show…" to Tone.Good
-    "idle" -> "Ready. Nothing is playing." to Tone.Good
-    "off" -> "Switched off. Nothing is shown on Discord." to Tone.Off
-    "snoozed" -> "Hidden for a while. It comes back by itself." to Tone.Warn
-    "paused-hidden" -> "Not shown while paused. Turn on “Show when paused” to keep it." to Tone.Warn
-    "paused-timeout" -> "Hidden because the song was paused a while. It returns when you press play." to Tone.Warn
-    "filtered" -> "Not shown: this song matches one of your never-show words." to Tone.Warn
-    "ad" -> "An advert is playing. Nothing is shown until the music is back." to Tone.Warn
-    "beacon-running" -> "The old YTM Beacon app is still running on the computer, so YTM Starcast isn't showing your status." to Tone.Warn
-    "extension-quiet" -> "The browser extension went quiet. Check that YouTube Music is open in your browser." to Tone.Warn
+    "showing" -> tr("Showing on Discord.") to Tone.Good
+    "waiting" -> tr("Getting ready to show…") to Tone.Good
+    "idle" -> tr("Ready. Nothing is playing.") to Tone.Good
+    "off" -> tr("Switched off. Nothing is shown on Discord.") to Tone.Off
+    "snoozed" -> tr("Hidden for a while. It comes back by itself.") to Tone.Warn
+    "paused-hidden" -> tr("Not shown while paused. Turn on “Show when paused” to keep it.") to Tone.Warn
+    "paused-timeout" -> tr("Hidden because the song was paused a while. It returns when you press play.") to Tone.Warn
+    "filtered" -> tr("Not shown: this song matches one of your never-show words.") to Tone.Warn
+    "ad" -> tr("An advert is playing. Nothing is shown until the music is back.") to Tone.Warn
+    "beacon-running" -> tr("The old YTM Beacon app is still running on the computer, so YTM Starcast isn't showing your status.") to Tone.Warn
+    "extension-quiet" -> tr("The browser extension went quiet. Check that YouTube Music is open in your browser.") to Tone.Warn
     "extension-missing" ->
-        (if (s.builtIn) "The YTM Starcast browser extension hasn't been heard from yet. Add it to your browser on the computer and open YouTube Music."
-        else "The YTM Beacon browser extension isn't set up yet. Install it on the computer.") to Tone.Bad
-    "discord-down" -> "Can't reach Discord. Open the Discord app on the computer." to Tone.Bad
-    "unsupported" -> "The YTM Beacon app on the computer is out of date. Update YTM Starcast on the computer: it shows your Discord status itself." to Tone.Bad
+        (if (s.builtIn) tr("The YTM Starcast browser extension hasn't been heard from yet. Add it to your browser on the computer and open YouTube Music.")
+        else tr("The YTM Beacon browser extension isn't set up yet. Install it on the computer.")) to Tone.Bad
+    "discord-down" -> tr("Can't reach Discord. Open the Discord app on the computer.") to Tone.Bad
+    "unsupported" -> tr("The YTM Beacon app on the computer is out of date. Update YTM Starcast on the computer: it shows your Discord status itself.") to Tone.Bad
     else ->
-        (if (s.builtIn) "Discord status isn't answering on the computer right now."
-        else "YTM Beacon isn't running on the computer. Update YTM Starcast on the computer: it shows your Discord status itself.") to Tone.Bad
+        (if (s.builtIn) tr("Discord status isn't answering on the computer right now.")
+        else tr("YTM Beacon isn't running on the computer. Update YTM Starcast on the computer: it shows your Discord status itself.")) to Tone.Bad
 }
 
 private fun Context.lifecycleOwner(): LifecycleOwner? {
@@ -283,7 +283,7 @@ fun BeaconCard(online: Boolean, modifier: Modifier = Modifier) {
                     Icon(Icons.Filled.Chat, null, Modifier.size(22.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
                 }
                 Text(
-                    "Discord status", Modifier.padding(start = 14.dp).weight(1f), style = MaterialTheme.typography.titleMedium,
+                    tr("Discord status"), Modifier.padding(start = 14.dp).weight(1f), style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                 )
                 if (st != null) Dot(headlineText(st).second)
@@ -291,7 +291,7 @@ fun BeaconCard(online: Boolean, modifier: Modifier = Modifier) {
 
             if (st == null) {
                 Text(
-                    if (online) "Checking…" else "Can't reach the computer.",
+                    if (online) tr("Checking…") else tr("Can't reach the computer."),
                     style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
@@ -306,7 +306,7 @@ fun BeaconCard(online: Boolean, modifier: Modifier = Modifier) {
                         )
                         // a song from a phone: this one when it plays the same song now, else another phone on the same computer
                         if (it.from == "phone") Text(
-                            if (Remote.local && Remote.state.value.now?.title == it.title) "from this phone" else "from a phone",
+                            if (Remote.local && Remote.state.value.now?.title == it.title) tr("from this phone") else tr("from a phone"),
                             style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
@@ -321,8 +321,8 @@ fun BeaconCard(online: Boolean, modifier: Modifier = Modifier) {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(Modifier.weight(1f).padding(end = 12.dp)) {
-                        Text("Show on Discord", style = MaterialTheme.typography.bodyLarge)
-                        st.discordUser?.let { Text("as $it", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                        Text(tr("Show on Discord"), style = MaterialTheme.typography.bodyLarge)
+                        st.discordUser?.let { Text(tr("as {name}", "name" to it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                     }
                     Switch(checked = st.visible, enabled = usable, onCheckedChange = null)
                 }
@@ -331,15 +331,15 @@ fun BeaconCard(online: Boolean, modifier: Modifier = Modifier) {
                 if (st.snoozeSec > 0 && !st.visible) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            "Hidden for ${leftText(left)} more",
+                            tr("Hidden for {time} more", "time" to leftText(left)),
                             Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium,
                         )
-                        Button(enabled = usable, onClick = { scope.launch { BeaconModel.setVisibility(true) } }) { Text("Show now") }
+                        Button(enabled = usable, onClick = { scope.launch { BeaconModel.setVisibility(true) } }) { Text(tr("Show now")) }
                     }
                 } else if (st.visible) {
-                    Text("Hide for…", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(tr("Hide for…"), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        for ((label, mins) in listOf("30 min" to 30, "1 hour" to 60, "3 hours" to 180)) {
+                        for ((label, mins) in listOf(trn("{n} min", "{n} min", 30) to 30, trn("{n} hour", "{n} hours", 1) to 60, trn("{n} hour", "{n} hours", 3) to 180)) {
                             FilterChip(colors = refineChipColors(), border = refineChipBorder(false, usable), 
                                 selected = false, shape = chipShape(false), enabled = usable,
                                 onClick = { scope.launch { BeaconModel.setVisibility(false, mins) } },
@@ -351,7 +351,7 @@ fun BeaconCard(online: Boolean, modifier: Modifier = Modifier) {
 
                 if (st.reachable && st.headline != "unsupported") {
                     TextButton(onClick = { showSettings = !showSettings }, enabled = usable) {
-                        Text("What it shows")
+                        Text(tr("What it shows"))
                         Icon(if (showSettings) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore, null, Modifier.padding(start = 4.dp).size(18.dp))
                     }
                     AnimatedVisibility(showSettings) { BeaconSettingsList(st.settings, usable) }
@@ -359,7 +359,7 @@ fun BeaconCard(online: Boolean, modifier: Modifier = Modifier) {
 
                 val ago = ((clock.value - st.receivedAt) / 1000).coerceAtLeast(0)
                 Text(
-                    if (!online) "Can't reach the computer. Last updated ${ago} s ago." else "Updated ${ago} s ago",
+                    if (!online) tr("Can't reach the computer. Last updated {n} s ago.", "n" to ago) else tr("Updated {n} s ago", "n" to ago),
                     style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -381,8 +381,9 @@ private fun MoveOver(st: BeaconStatus, online: Boolean) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (app.canMigrate) {
             Text(
-                "The old YTM Beacon app" + (app.version?.let { " ($it)" } ?: "") + " is still on the computer. YTM Starcast shows your " +
-                    "Discord status itself now. Move over to bring your YTM Beacon settings across and remove the old app.",
+                app.version?.let { v ->
+                    tr("The old YTM Beacon app ({version}) is still on the computer. YTM Starcast shows your Discord status itself now. Move over to bring your YTM Beacon settings across and remove the old app.", "version" to v)
+                } ?: tr("The old YTM Beacon app is still on the computer. YTM Starcast shows your Discord status itself now. Move over to bring your YTM Beacon settings across and remove the old app."),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -395,16 +396,15 @@ private fun MoveOver(st: BeaconStatus, online: Boolean) {
         }
         if (app.canMigrate || busy) {
             Button(enabled = online && !busy && app.canMigrate, onClick = { confirm = true }) {
-                Text(if (busy) "Moving over…" else "Move over")
+                Text(if (busy) tr("Moving over…") else tr("Move over"))
             }
         }
     }
     if (confirm) {
         ConfirmDialog(
-            "Move over from YTM Beacon?",
-            "YTM Starcast takes your YTM Beacon settings, then removes the YTM Beacon app from the computer (its settings file is " +
-                "kept). From then on YTM Starcast shows your music on Discord itself.",
-            "Move over",
+            tr("Move over from YTM Beacon?"),
+            tr("YTM Starcast takes your YTM Beacon settings, then removes the YTM Beacon app from the computer (its settings file is kept). From then on YTM Starcast shows your music on Discord itself."),
+            tr("Move over"),
             onDismiss = { confirm = false },
         ) {
             confirm = false
@@ -416,9 +416,9 @@ private fun MoveOver(st: BeaconStatus, online: Boolean) {
 private fun leftText(sec: Int): String {
     val s = sec.coerceAtLeast(0)
     return when {
-        s >= 3600 -> "${s / 3600} h ${(s % 3600) / 60} min"
-        s >= 60 -> "${(s + 59) / 60} min"
-        else -> "$s s"
+        s >= 3600 -> tr("{h} h {m} min", "h" to s / 3600, "m" to (s % 3600) / 60)
+        s >= 60 -> trn("{n} min", "{n} min", (s + 59) / 60)
+        else -> tr("{n} s", "n" to s)
     }
 }
 
@@ -441,27 +441,27 @@ private fun BeaconSettingsList(s: BeaconSettings, enabled: Boolean) {
     val scope = rememberCoroutineScope()
     fun flip(key: String, v: Boolean) { scope.launch { BeaconModel.setSetting(key, v) } }
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        BRow("Private mode", "Only say “Listening to music”: no song, artist, picture or button.", s.privateMode, enabled) { flip("privateMode", it) }
-        BRow("Show when paused", "Keep the song on your profile while paused.", s.showPaused, enabled) { flip("showPaused", it) }
+        BRow(tr("Private mode"), tr("Only say “Listening to music”: no song, artist, picture or button."), s.privateMode, enabled) { flip("privateMode", it) }
+        BRow(tr("Show when paused"), tr("Keep the song on your profile while paused."), s.showPaused, enabled) { flip("showPaused", it) }
         if (s.showPaused) {
-            Text("Stop showing a paused song after", style = MaterialTheme.typography.bodyMedium)
+            Text(tr("Stop showing a paused song after"), style = MaterialTheme.typography.bodyMedium)
             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 (listOf(0, 1, 5, 15, 60) + s.pauseTimeoutMinutes).distinct().sorted().forEach { m ->
                     FilterChip(colors = refineChipColors(), border = refineChipBorder(s.pauseTimeoutMinutes == m, enabled), 
                         selected = s.pauseTimeoutMinutes == m, shape = chipShape(s.pauseTimeoutMinutes == m), enabled = enabled,
                         onClick = { scope.launch { BeaconModel.setSetting("pauseTimeoutMinutes", m) } },
-                        label = { Text(if (m == 0) "Never" else "$m min") },
+                        label = { Text(if (m == 0) tr("Never") else trn("{n} min", "{n} min", m)) },
                     )
                 }
             }
         }
-        BRow("Progress bar", null, s.showProgress, enabled) { flip("showProgress", it) }
-        BRow("Play / pause icon", null, s.showStateIcon, enabled) { flip("showStateIcon", it) }
-        BRow("Listen button", "A button on the card that opens the song.", s.showButtons, enabled) { flip("showButtons", it) }
-        BRow("Album art", null, s.showAlbumArt, enabled) { flip("showAlbumArt", it) }
-        Text("Name next to your username", style = MaterialTheme.typography.bodyMedium)
+        BRow(tr("Progress bar"), null, s.showProgress, enabled) { flip("showProgress", it) }
+        BRow(tr("Play / pause icon"), null, s.showStateIcon, enabled) { flip("showStateIcon", it) }
+        BRow(tr("Listen button"), tr("A button on the card that opens the song."), s.showButtons, enabled) { flip("showButtons", it) }
+        BRow(tr("Album art"), null, s.showAlbumArt, enabled) { flip("showAlbumArt", it) }
+        Text(tr("Name next to your username"), style = MaterialTheme.typography.bodyMedium)
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            for ((v, label) in listOf("name" to "YouTube Music", "state" to "Artist", "details" to "Song title")) {
+            for ((v, label) in listOf("name" to "YouTube Music", "state" to tr("Artist"), "details" to tr("Song title"))) {
                 FilterChip(colors = refineChipColors(), border = refineChipBorder(s.statusDisplay == v, enabled), 
                     selected = s.statusDisplay == v, shape = chipShape(s.statusDisplay == v), enabled = enabled,
                     onClick = { scope.launch { BeaconModel.setSetting("statusDisplay", v) } },
@@ -481,9 +481,9 @@ private fun BeaconSettingsList(s: BeaconSettings, enabled: Boolean) {
 private fun NeverShowWords(words: List<String>, enabled: Boolean, onChange: (List<String>) -> Unit) {
     var adding by remember { mutableStateOf(false) }
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text("Never show songs matching", style = MaterialTheme.typography.bodyMedium)
+        Text(tr("Never show songs matching"), style = MaterialTheme.typography.bodyMedium)
         Text(
-            "A song whose title, artist or album contains one of these words isn't shown on Discord.",
+            tr("A song whose title, artist or album contains one of these words isn't shown on Discord."),
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         if (words.isNotEmpty()) {
@@ -493,16 +493,16 @@ private fun NeverShowWords(words: List<String>, enabled: Boolean, onChange: (Lis
                         selected = true, shape = chipShape(true), enabled = enabled,
                         onClick = { onChange(words.filter { it != w }) },
                         label = { Text(w) },
-                        trailingIcon = { Icon(Icons.Filled.Close, "Remove $w", Modifier.size(16.dp)) },
+                        trailingIcon = { Icon(Icons.Filled.Close, tr("Remove {word}", "word" to w), Modifier.size(16.dp)) },
                     )
                 }
             }
         }
-        TextButton(onClick = { adding = true }, enabled = enabled && words.size < 50) { Text("Add a word") }
+        TextButton(onClick = { adding = true }, enabled = enabled && words.size < 50) { Text(tr("Add a word")) }
     }
     if (adding) {
         TextPrompt(
-            "Never show songs matching", "", "Word or phrase", "Add",
+            tr("Never show songs matching"), "", tr("Word or phrase"), tr("Add"),
             onDismiss = { adding = false },
         ) { text ->
             adding = false

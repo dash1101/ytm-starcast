@@ -67,37 +67,37 @@ fun SongMenuButton(item: SearchItem, modifier: Modifier = Modifier) {
     var addOffline by remember { mutableStateOf(false) }
     Box(modifier) {
         // round, a squircle while pressed, and a tonal one while its menu is open; it takes the colour of the row it is in
-        ShapeIconButton(Icons.Filled.MoreVert, "More", onClick = { open = true }, tint = LocalContentColor.current, active = open)
+        ShapeIconButton(Icons.Filled.MoreVert, tr("More"), onClick = { open = true }, tint = LocalContentColor.current, active = open)
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(
-                text = { Text("Play now") }, leadingIcon = { Icon(Icons.Filled.PlayArrow, null) },
+                text = { Text(tr("Play now")) }, leadingIcon = { Icon(Icons.Filled.PlayArrow, null) },
                 onClick = { open = false; Remote.playItem(item) },
             )
             DropdownMenuItem(
-                text = { Text("Play next") }, leadingIcon = { Icon(Icons.Filled.SkipNext, null) },
+                text = { Text(tr("Play next")) }, leadingIcon = { Icon(Icons.Filled.SkipNext, null) },
                 onClick = { open = false; Remote.queueAdd(item, next = true) },
             )
             DropdownMenuItem(
-                text = { Text("Add to queue") }, leadingIcon = { Icon(Icons.Filled.Add, null) },
+                text = { Text(tr("Add to queue")) }, leadingIcon = { Icon(Icons.Filled.Add, null) },
                 onClick = { open = false; Remote.queueAdd(item, next = false) },
             )
             if (Remote.state.value.ytm || Library.playlists.value.any { it.owned }) DropdownMenuItem(
-                text = { Text("Add to playlist…") }, leadingIcon = { Icon(Icons.Filled.LibraryMusic, null) },
+                text = { Text(tr("Add to playlist…")) }, leadingIcon = { Icon(Icons.Filled.LibraryMusic, null) },
                 onClick = { open = false; addToPlaylist = true },
             )
             DropdownMenuItem(
-                text = { Text("Add to an offline playlist…") }, leadingIcon = { Icon(Icons.Filled.PlaylistAdd, null) },
+                text = { Text(tr("Add to an offline playlist…")) }, leadingIcon = { Icon(Icons.Filled.PlaylistAdd, null) },
                 onClick = { open = false; addOffline = true },
             )
             if (Downloads.isDownloaded(vid)) DropdownMenuItem(
-                text = { Text("Remove download") }, leadingIcon = { Icon(Icons.Filled.Delete, null) },
-                onClick = { open = false; Downloads.delete(vid); Remote.notify("Removed from this phone") },
+                text = { Text(tr("Remove download")) }, leadingIcon = { Icon(Icons.Filled.Delete, null) },
+                onClick = { open = false; Downloads.delete(vid); Remote.notify(tr("Removed from this phone")) },
             ) else DropdownMenuItem(
-                text = { Text("Download") }, leadingIcon = { Icon(Icons.Filled.Download, null) },
+                text = { Text(tr("Download")) }, leadingIcon = { Icon(Icons.Filled.Download, null) },
                 onClick = { open = false; item.toLocal()?.let { Downloads.enqueue(it) } },
             )
             DropdownMenuItem(
-                text = { Text("Start radio") }, leadingIcon = { Icon(Icons.Filled.Radio, null) },
+                text = { Text(tr("Start radio")) }, leadingIcon = { Icon(Icons.Filled.Radio, null) },
                 onClick = { open = false; Remote.startMix(vid) },
             )
         }
@@ -120,7 +120,7 @@ fun AddToPlaylistDialog(item: SearchItem, onDone: () -> Unit) {
     } else Library.playlists.value.filter { it.owned }.map { it.toSearchItem() }
     if (creating) {
         TextPrompt(
-            title = "New playlist", initial = "", label = "Playlist name", confirm = "Create",
+            title = tr("New playlist"), initial = "", label = tr("Playlist name"), confirm = tr("Create"),
             onDismiss = { creating = false },
         ) { name ->
             creating = false
@@ -132,7 +132,7 @@ fun AddToPlaylistDialog(item: SearchItem, onDone: () -> Unit) {
                             .put("videoIds", JSONArray().put(item.videoId ?: ""))
                     ).optBoolean("ok")
                 }
-                Remote.notify(if (ok) "Created “$name”" else "Couldn't create the playlist")
+                Remote.notify(if (ok) tr("Created “{name}”", "name" to name) else tr("Couldn't create the playlist"))
                 if (ok) LibraryStore.refreshPlaylists()
             }
         }
@@ -142,16 +142,16 @@ fun AddToPlaylistDialog(item: SearchItem, onDone: () -> Unit) {
         onDismissRequest = onDone,
         shape = PfShape.Xl,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        title = { Text("Add to playlist") },
+        title = { Text(tr("Add to playlist")) },
         text = {
             Column {
                 Text(
                     item.title, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1, overflow = TextOverflow.Ellipsis,
                 )
-                if (online) PageDialogRow("New playlist…", onClick = { creating = true }, modifier = Modifier.padding(top = 8.dp), icon = Icons.Filled.Add)
+                if (online) PageDialogRow(tr("New playlist…"), onClick = { creating = true }, modifier = Modifier.padding(top = 8.dp), icon = Icons.Filled.Add)
                 if (online && LibraryStore.playlists == null) {
-                    Text("Loading your playlists…", Modifier.padding(vertical = 8.dp), style = MaterialTheme.typography.bodySmall)
+                    Text(tr("Loading your playlists…"), Modifier.padding(vertical = 8.dp), style = MaterialTheme.typography.bodySmall)
                 }
                 LazyColumn(Modifier.heightIn(max = 320.dp)) {
                     items(lists, key = { it.playlistId ?: it.browseId ?: it.title }) { p ->
@@ -164,7 +164,7 @@ fun AddToPlaylistDialog(item: SearchItem, onDone: () -> Unit) {
                                     val id = p.playlistId
                                     if (id != null) {
                                         item.toLocal()?.let { Library.addToPlaylistLater(id, it) }
-                                        Remote.notify("Added to ${p.title}. YouTube Music gets it at the next sync.")
+                                        Remote.notify(tr("Added to {name}. YouTube Music gets it at the next sync.", "name" to p.title))
                                     }
                                 } else {
                                     scope.launch {
@@ -175,7 +175,7 @@ fun AddToPlaylistDialog(item: SearchItem, onDone: () -> Unit) {
                                                     .put("videoId", item.videoId ?: "")
                                             ).optBoolean("ok")
                                         }
-                                        Remote.notify(if (ok) "Added to ${p.title}" else "Couldn't add to ${p.title}")
+                                        Remote.notify(if (ok) tr("Added to {name}", "name" to p.title) else tr("Couldn't add to {name}", "name" to p.title))
                                     }
                                 }
                             },
@@ -184,7 +184,7 @@ fun AddToPlaylistDialog(item: SearchItem, onDone: () -> Unit) {
                 }
             }
         },
-        confirmButton = { TextButton(onClick = onDone) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = onDone) { Text(tr("Cancel")) } },
     )
 }
 
@@ -217,7 +217,7 @@ fun TextPrompt(
             )
         },
         confirmButton = { PageDialogConfirm(confirm, onClick = { if (text.isNotBlank()) onConfirm(text.trim()) }, enabled = text.isNotBlank()) },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Cancel")) } },
     )
 }
 
@@ -230,7 +230,7 @@ fun ConfirmDialog(title: String, text: String, confirm: String, onDismiss: () ->
         title = { Text(title) },
         text = { Text(text) },
         confirmButton = { PageDialogConfirm(confirm, onClick = onConfirm, danger = true) },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(tr("Cancel")) } },
     )
 }
 

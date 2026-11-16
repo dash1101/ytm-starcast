@@ -75,20 +75,20 @@ class DownloadService : Service() {
         val pct = if (count == 0) 100 else (sum.fraction * 100).toInt()
         val all = sum.count + sum.finished
         val detail = listOfNotNull(
-            if (sum.totalBytes > 0) formatBytes(sum.doneBytes) + " of about " + formatBytes(sum.totalBytes) else null,
+            if (sum.totalBytes > 0) tr("{done} of about {total}", "done" to formatBytes(sum.doneBytes), "total" to formatBytes(sum.totalBytes)) else null,
             if (sum.bps > 0) formatSpeed(sum.bps) else null,
             sum.secondsLeft?.let { formatLeft(it) },
-        ).joinToString(" · ").ifBlank { "For listening with no connection" }
+        ).joinToString(" · ").ifBlank { tr("For listening with no connection") }
         return NotificationCompat.Builder(this, CHANNEL)
             .setSmallIcon(android.R.drawable.stat_sys_download)
-            .setContentTitle(if (all <= 1) "Downloading 1 song" else "Downloading ${sum.finished + 1} of $all songs")
+            .setContentTitle(if (all <= 1) tr("Downloading 1 song") else trn("Downloading {done} of {n} song", "Downloading {done} of {n} songs", all, "done" to sum.finished + 1))
             .setContentText(detail)
             .setProgress(100, pct, count > 0 && pct == 0)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setSilent(true)
             .setContentIntent(open)
-            .addAction(0, "Stop", cancel)
+            .addAction(0, tr("Stop"), cancel)
             .build()
     }
 
@@ -106,7 +106,7 @@ class DownloadService : Service() {
             if (Build.VERSION.SDK_INT < 26) return
             val nm = c.getSystemService(NotificationManager::class.java) ?: return
             if (nm.getNotificationChannel(CHANNEL) == null) {
-                nm.createNotificationChannel(NotificationChannel(CHANNEL, "Downloads", NotificationManager.IMPORTANCE_LOW))
+                nm.createNotificationChannel(NotificationChannel(CHANNEL, tr("Downloads"), NotificationManager.IMPORTANCE_LOW))
             }
         }
 

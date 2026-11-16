@@ -1,0 +1,10 @@
+{
+  "appDescription": {
+    "description": "The extension's description in the browser's extension list.",
+    "message": "YouTube Music 도우미: 휴대폰용 리모컨, Discord 상태에 내 음악 표시, 더 좋아진 YouTube Music."
+  },
+  "toggleDiscord": {
+    "description": "The keyboard shortcut that switches the Discord status on or off.",
+    "message": "Discord에 음악 표시하기 또는 표시 중지하기"
+  }
+}

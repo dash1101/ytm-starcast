@@ -1,0 +1,10 @@
+{
+  "appDescription": {
+    "description": "The extension's description in the browser's extension list.",
+    "message": "Dein Begleiter für YouTube Music: eine Fernbedienung fürs Handy, deine Musik als Discord-Status und ein besseres YouTube Music."
+  },
+  "toggleDiscord": {
+    "description": "The keyboard shortcut that switches the Discord status on or off.",
+    "message": "Deine Musik auf Discord zeigen oder nicht mehr zeigen"
+  }
+}

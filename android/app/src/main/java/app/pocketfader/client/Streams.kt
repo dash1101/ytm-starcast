@@ -140,7 +140,7 @@ object Streams {
                     c.outputStream.use { it.write(body) }
                 }
                 val code = c.responseCode
-                if (code == 429) throw ReCaptchaException("YouTube asked for a captcha", request.url())
+                if (code == 429) throw ReCaptchaException(tr("YouTube asked for a captcha"), request.url())
                 val stream = if (code >= 400) c.errorStream else c.inputStream
                 val text = stream?.use { it.readBytes().toString(Charsets.UTF_8) }.orEmpty()
                 val headers = HashMap<String, List<String>>()
@@ -182,7 +182,7 @@ object Streams {
         block()
     } catch (e: Error) {
         CrashLog.note("a YouTube lookup on this device", e)
-        throw IOException("This device couldn't finish the YouTube lookup", e)
+        throw IOException(tr("This device couldn't finish the YouTube lookup"), e)
     }
 
     /** [quality]: "normal" (AAC, about 128 kbps, plays everywhere: what streaming uses), "best" (the highest bitrate
@@ -195,7 +195,7 @@ object Streams {
             "saver" -> streams.filter { it.averageBitrate > 0 }.minByOrNull { it.averageBitrate } ?: streams.firstOrNull()
             // AAC (m4a) plays and saves everywhere; Opus only if there's nothing else
             else -> streams.filter { it.format == NpFormat.M4A }.maxByOrNull { it.averageBitrate } ?: streams.maxByOrNull { it.averageBitrate }
-        } ?: throw IOException("No audio for this song")
+        } ?: throw IOException(tr("No audio for this song"))
         val ext = if (best.format == NpFormat.M4A) "m4a" else "webm"
         Resolved(best.content, mime = best.format?.mimeType, ext = ext)
     }
@@ -233,15 +233,15 @@ object Streams {
         is StreamInfoItem -> item.toSearchItem()
         is PlaylistInfoItem -> LIST_ID.find(item.url)?.groupValues?.get(1)?.let { id ->
             val by = item.uploaderName.orEmpty()
-            val count = if (item.streamCount > 0) "${item.streamCount} songs" else ""
+            val count = if (item.streamCount > 0) trn("{n} song", "{n} songs", item.streamCount) else ""
             SearchItem(
                 title = item.name,
-                subtitle = listOf(if (albums) "Album" else "Playlist", by, count).filter { it.isNotBlank() }.joinToString(" · "),
+                subtitle = listOf(if (albums) tr("Album") else tr("Playlist"), by, count).filter { it.isNotBlank() }.joinToString(" · "),
                 thumb = bestThumb(item), videoId = null, playlistId = id, kind = if (albums) "album" else "playlist",
             )
         }
         is ChannelInfoItem -> CHANNEL_ID.find(item.url)?.groupValues?.get(1)?.let { id ->
-            SearchItem(title = item.name, subtitle = "Artist", thumb = bestThumb(item), videoId = null, playlistId = null, kind = "artist", browseId = id)
+            SearchItem(title = item.name, subtitle = tr("Artist"), thumb = bestThumb(item), videoId = null, playlistId = null, kind = "artist", browseId = id)
         }
         else -> null
     }

@@ -61,14 +61,14 @@ private suspend fun phoneArtist(browseId: String?, name: String): ArtistPage = c
         ?: who.firstOrNull { it.title.equals(name, ignoreCase = true) }
         ?: who.firstOrNull()
     val shelves = ArrayList<Shelf>()
-    if (top.isNotEmpty()) shelves.add(Shelf("Songs", top))
-    if (albums.isNotEmpty()) shelves.add(Shelf("Albums", albums))
-    if (lists.isNotEmpty()) shelves.add(Shelf("Playlists", lists))
+    if (top.isNotEmpty()) shelves.add(Shelf(trKey("Songs"), top))
+    if (albums.isNotEmpty()) shelves.add(Shelf(trKey("Albums"), albums))
+    if (lists.isNotEmpty()) shelves.add(Shelf(trKey("Playlists"), lists))
     if (shelves.isEmpty()) throw ApiException(0, "artist_not_found")
     ArtistPage(
         browseId = browseId ?: me?.browseId.orEmpty(),
         name = me?.title ?: name,
-        description = "Found by searching from this phone. The full artist page needs YouTube Music open on the computer.",
+        description = tr("Found by searching from this phone. The full artist page needs YouTube Music open on the computer."),
         thumb = me?.thumb,
         subscribers = null,
         playVideoId = top.firstOrNull()?.videoId,
@@ -93,12 +93,12 @@ fun ArtistScreen(browseId: String?, videoId: String?, name: String, onBack: () -
                 real ?: phoneArtist(browseId, name)
             }
         } catch (e: Exception) {
-            error = if (e.message == "artist_not_found") "Couldn't find that artist on YouTube Music." else e.friendly()
+            error = if (e.message == "artist_not_found") tr("Couldn't find that artist on YouTube Music.") else e.friendly()
         }
     }
     Column(modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            ShapeIconButton(Icons.Filled.ArrowBack, "Back", onClick = onBack)
+            ShapeIconButton(Icons.Filled.ArrowBack, tr("Back"), onClick = onBack)
             Text(
                 page?.name?.ifBlank { null } ?: name, Modifier.weight(1f).padding(start = 4.dp),
                 style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis,
@@ -147,10 +147,10 @@ private fun ArtistContent(p: ArtistPage) {
                         PageHeaderPlay(onClick = { if (vid != null) Remote.play(vid, pl) else if (pl != null) Remote.startPlaylist(pl, false) })
                     }
                     if (pl != null) {
-                        PageHeaderTonal(Icons.Filled.Shuffle, "Shuffle", onClick = { Remote.startPlaylist(pl, true) })
+                        PageHeaderTonal(Icons.Filled.Shuffle, tr("Shuffle"), onClick = { Remote.startPlaylist(pl, true) })
                     }
                     p.radioPlaylistId?.let { r ->
-                        PageHeaderTonal(Icons.Filled.Radio, "Radio", onClick = { Remote.startPlaylist(r, false) })
+                        PageHeaderTonal(Icons.Filled.Radio, tr("Radio"), onClick = { Remote.startPlaylist(r, false) })
                     }
                 }
                 p.description?.let { d ->
@@ -166,7 +166,7 @@ private fun ArtistContent(p: ArtistPage) {
         for (shelf in p.shelves) {
             item(key = "h-" + shelf.title) {
                 PageSectionTitle(
-                    shelf.title, Modifier.arrive(arrival).padding(start = 16.dp, end = 16.dp, top = 18.dp, bottom = 8.dp),
+                    tr(shelf.title), Modifier.arrive(arrival).padding(start = 16.dp, end = 16.dp, top = 18.dp, bottom = 8.dp),
                 )
             }
             if (shelf.items.all { it.kind == "song" && it.videoId != null }) {

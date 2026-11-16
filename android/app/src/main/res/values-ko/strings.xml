@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Built by tools/i18n.py from i18n/*.json; don't edit it -->
+<resources>
+    <string name="widget_desc_now_wide">재생 중인 곡: 커버, 제목, 진행률, 컨트롤, 볼륨</string>
+    <string name="widget_desc_now_bar">컨트롤이 있는 얇은 재생 중 바</string>
+    <string name="widget_desc_cover">재생 중인 곡의 커버와 재생·일시정지</string>
+    <string name="widget_desc_volume">음악이 재생되는 곳의 볼륨</string>
+    <string name="widget_desc_actions">빠른 실행: 운에 맡기기, 취침 타이머, 다른 플레이어 일시정지, 휴대폰과 컴퓨터 간 전환</string>
+    <string name="widget_name_now_wide">현재 재생 중</string>
+    <string name="widget_name_now_bar">현재 재생 중 (얇게)</string>
+    <string name="widget_name_cover">커버</string>
+    <string name="widget_name_volume">볼륨</string>
+    <string name="widget_name_actions">빠른 실행</string>
+    <string name="widget_desc_beacon">음악이 Discord에 표시되는지 여부와 스위치, 1시간 숨기기</string>
+    <string name="widget_desc_upnext">대기열의 다음 곡들. 탭하면 재생돼요</string>
+    <string name="widget_name_beacon">Discord 상태</string>
+    <string name="widget_name_upnext">다음 트랙</string>
+</resources>

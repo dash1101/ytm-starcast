@@ -5,25 +5,31 @@
 const ext = globalThis.browser ?? globalThis.chrome;
 const YTM = "https://music.youtube.com/";
 const $ = (id) => document.getElementById(id);
+const i18n = globalThis[Symbol.for("pocketfader.i18n")];
+const { tr, trKey } = i18n;
+document.documentElement.lang = i18n.lang;
+i18n.translateDom();
 
 // What the app says about Discord status, in plain words (the same wording as Refine's menu).
 const DISCORD_TEXT = {
-  showing: "Showing on your Discord profile.",
-  waiting: "Getting ready to show…",
-  idle: "Ready. Nothing is playing.",
-  off: "Off. Nothing is shown on Discord.",
-  snoozed: "Hidden for a while. It comes back by itself.",
-  "paused-hidden": "Not shown while the music is paused.",
-  "paused-timeout": "Hidden after a long pause. It comes back when you press play.",
-  filtered: "Not shown: this song matches one of your never-show words.",
-  ad: "Hidden while an advert plays.",
-  "discord-down": "Can't reach Discord. Open the Discord app on this computer.",
-  "extension-quiet": "Waiting to hear from YouTube Music.",
-  "extension-missing": "Waiting to hear from YouTube Music.",
-  "beacon-running": "The old YTM Beacon app is still running. Open YTM Starcast to move over from it.",
-  unreachable: "Discord status isn't answering right now. Try again in a moment.",
+  showing: trKey("Showing on your Discord profile."),
+  waiting: trKey("Getting ready to show…"),
+  idle: trKey("Ready. Nothing is playing."),
+  off: trKey("Off. Nothing is shown on Discord."),
+  snoozed: trKey("Hidden for a while. It comes back by itself."),
+  "paused-hidden": trKey("Not shown while the music is paused."),
+  "paused-timeout": trKey("Hidden after a long pause. It comes back when you press play."),
+  filtered: trKey("Not shown: this song matches one of your never-show words."),
+  ad: trKey("Hidden while an advert plays."),
+  "discord-down": trKey("Can't reach Discord. Open the Discord app on this computer."),
+  "extension-quiet": trKey("Waiting to hear from YouTube Music."),
+  "extension-missing": trKey("Waiting to hear from YouTube Music."),
+  "beacon-running": trKey("The old YTM Beacon app is still running. Open YTM Starcast to move over from it."),
+  unreachable: trKey("Discord status isn't answering right now. Try again in a moment."),
 };
-const DISCORD_DEFAULT = $("discord").textContent;
+const DISCORD_DEFAULT = trKey("Show what you play on your Discord profile");
+$("headline").textContent = tr("Checking…");
+$("discord").textContent = tr(DISCORD_DEFAULT);
 
 // ------------------------------------------------------------------ colours: the same as Refine's in YouTube Music
 // Refine picks a hue from the album art of the song playing; the extension's script keeps the last one, and the
@@ -57,6 +63,18 @@ try {
   Promise.resolve(ext.storage.local.get("palette")).then((r) => takePalette(r && r.palette)).catch(() => {});
   ext.storage.onChanged.addListener((changes, area) => { if (area === "local" && changes.palette) takePalette(changes.palette.newValue); });
 } catch (e) { /* no storage: Refine's default colours from popup.css */ }
+// the language: as the extension's script in YouTube Music last heard it from YTM Starcast (the popup also keeps it, so
+// it opens in it at once)
+try {
+  Promise.resolve(ext.storage.local.get("lang")).then((r) => {
+    if (!r || typeof r.lang !== "string" || r.lang === i18n.pref) return;
+    i18n.set(r.lang);
+    document.documentElement.lang = i18n.lang;
+    i18n.translateDom();
+    clearTimeout(timer);
+    refresh();
+  }).catch(() => {});
+} catch (e) { /* see above */ }
 
 let lastTab = null;          // the tab that answered last time is asked first
 let parts = null;            // the switches as the app last said (null: not known, or an older app = all on)
@@ -125,30 +143,29 @@ function show(r) {
     parts = s.parts && typeof s.parts === "object" ? s.parts : null;
     ok = !!parts;
     showParts = true;
-    setState("ok", "YTM Starcast is running", ok ? null : "This version can't switch parts from here.");
+    setState("ok", tr("YTM Starcast is running"), ok ? null : tr("This version can't switch parts from here."));
     if (r.twin) {
-      setState("warn", "Two copies of the extension are loaded", "Keep only one: remove the older one (Pocketfader or " +
-        "YTM Starcast) on the browser's extensions page, then reload YouTube Music.");
+      setState("warn", tr("Two copies of the extension are loaded"), tr("Keep only one: remove the older one (Pocketfader or YTM Starcast) on the browser's extensions page, then reload YouTube Music."));
     }
     const dc = s.discord && typeof s.discord === "object" ? s.discord : null;
-    $("discord").textContent = (dc && DISCORD_TEXT[dc.headline]) || DISCORD_DEFAULT;
+    $("discord").textContent = tr((dc && DISCORD_TEXT[dc.headline]) || DISCORD_DEFAULT);
   } else {
     ok = false;
-    $("discord").textContent = DISCORD_DEFAULT;
+    $("discord").textContent = tr(DISCORD_DEFAULT);
     if (r.noTab) {
-      setState("idle", "Open YouTube Music", "YTM Starcast reaches the app on this computer through a YouTube Music tab in this browser.");
-      setAction("Open YouTube Music", () => { Promise.resolve(ext.tabs.create({ url: YTM })).catch(() => {}); });
+      setState("idle", tr("Open YouTube Music"), tr("YTM Starcast reaches the app on this computer through a YouTube Music tab in this browser."));
+      setAction(tr("Open YouTube Music"), () => { Promise.resolve(ext.tabs.create({ url: YTM })).catch(() => {}); });
     } else if (r.noAccess) {
-      setState("warn", "Allow YTM Starcast on YouTube Music", "The browser hasn't let YTM Starcast into YouTube Music yet, so it can't connect.");
-      setAction("Allow", () => {
+      setState("warn", tr("Allow YTM Starcast on YouTube Music"), tr("The browser hasn't let YTM Starcast into YouTube Music yet, so it can't connect."));
+      setAction(tr("Allow"), () => {
         // asked straight from the click: browsers only show this question in answer to one
         let asked;
         try { asked = ext.permissions.request({ origins: [YTM + "*"] }); } catch (e) {}
         Promise.resolve(asked).catch(() => {}).finally(() => refresh());
       });
     } else if (r.noScript) {
-      setState("warn", "Reload YouTube Music", "Your YouTube Music tab was open before YTM Starcast was added or updated. Reload it to connect it (the song starts again).");
-      setAction("Reload the tab", () => {
+      setState("warn", tr("Reload YouTube Music"), tr("Your YouTube Music tab was open before YTM Starcast was added or updated. Reload it to connect it (the song starts again)."));
+      setAction(tr("Reload the tab"), () => {
         $("act").disabled = true;
         Promise.resolve(ext.tabs.reload(r.tab)).catch(() => {});
         clearTimeout(timer);
@@ -157,13 +174,14 @@ function show(r) {
     } else if (r.error === "old_app") {
       parts = null;   // an app from before these switches has everything on
       showParts = true;
-      const v = r.app && typeof r.app.version === "string" && r.app.version ? " (" + r.app.version + ")" : "";
-      setState("warn", "An older app is running", "The app on this computer is an older version" + v +
-        ". Update it to YTM Starcast to switch parts on and off here. Until then everything stays on.");
+      const v = r.app && typeof r.app.version === "string" && r.app.version ? r.app.version : "";
+      setState("warn", tr("An older app is running"), v
+        ? tr("The app on this computer is an older version ({version}). Update it to YTM Starcast to switch parts on and off here. Until then everything stays on.", { version: v })
+        : tr("The app on this computer is an older version. Update it to YTM Starcast to switch parts on and off here. Until then everything stays on."));
     } else if (r.error === "offline") {
-      setState("bad", "YTM Starcast isn't answering", "Start YTM Starcast on this computer, then open this again.");
+      setState("bad", tr("YTM Starcast isn't answering"), tr("Start YTM Starcast on this computer, then open this again."));
     } else {
-      setState("bad", "YTM Starcast didn't answer properly", "Try again in a moment.");
+      setState("bad", tr("YTM Starcast didn't answer properly"), tr("Try again in a moment."));
     }
   }
   $("parts").hidden = !showParts;
@@ -196,7 +214,7 @@ for (const input of document.querySelectorAll("input[data-part]")) {
       paintParts();
       timer = setTimeout(refresh, 900);   // the Discord line catches up a moment later
     } else if (r.error === "failed" || r.error === "bad_request") {
-      setState("bad", "That change didn't go through", "Try again in a moment.");
+      setState("bad", tr("That change didn't go through"), tr("Try again in a moment."));
       paintParts();                       // the switch flips back to what the app last said
       timer = setTimeout(refresh, 4000);
     } else {
@@ -224,12 +242,11 @@ async function paintUpdate() {
   const v = r && typeof r.ready === "string" ? r.ready.slice(0, 16) : "";
   $("upd").hidden = !v;
   if (!v) return;
-  $("updHead").textContent = "Version " + v + " is ready";
+  $("updHead").textContent = tr("Version {version} is ready", { version: v });
   $("updDetail").textContent = r.tried
-    ? "It didn't take: this browser seems to load YTM Starcast from another folder than the app's. Load it from the " +
-      "app's folder instead (Settings, Browser extension in the app shows it), then updates arrive by themselves."
-    : "Updating restarts YTM Starcast in this browser and reloads your YouTube Music tabs (the song starts again).";
-  $("updAct").textContent = r.tried ? "Try again" : "Update now";
+    ? tr("It didn't take: this browser seems to load YTM Starcast from another folder than the app's. Load it from the app's folder instead (Settings, Browser extension in the app shows it), then updates arrive by themselves.")
+    : tr("Updating restarts YTM Starcast in this browser and reloads your YouTube Music tabs (the song starts again).");
+  $("updAct").textContent = r.tried ? tr("Try again") : tr("Update now");
   $("updAct").disabled = false;
   $("updAct").onclick = () => {
     $("updAct").disabled = true;

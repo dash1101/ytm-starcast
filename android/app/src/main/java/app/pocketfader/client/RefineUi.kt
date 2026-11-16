@@ -152,6 +152,7 @@ fun PillTabs(
                 labels.forEachIndexed { i, label ->
                     val off = i in crossed
                     val sel = i == selected
+                    val offDesc = if (off) tr("{tab}, not available for this song", "tab" to label) else null
                     val fg by animateColorAsState(
                         if (sel) scheme.onPrimaryContainer else scheme.onSurfaceVariant,
                         tween(if (reduce) 0 else Motion.Short, easing = Motion.Ease), label = "tab-fg",
@@ -159,7 +160,7 @@ fun PillTabs(
                     Box(
                         Modifier.weight(1f).fillMaxHeight().clip(PfShape.Full)
                             .selectable(selected = sel, enabled = !off, role = Role.Tab) { onSelect(i) }
-                            .then(if (off) Modifier.semantics { contentDescription = "$label, not available for this song" } else Modifier),
+                            .then(if (offDesc != null) Modifier.semantics { contentDescription = offDesc } else Modifier),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(

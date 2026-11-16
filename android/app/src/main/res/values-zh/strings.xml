@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Built by tools/i18n.py from i18n/*.json; don't edit it -->
+<resources>
+    <string name="widget_desc_now_wide">正在播放：封面、歌名、进度、控制按钮和音量</string>
+    <string name="widget_desc_now_bar">带控制按钮的精简正在播放栏</string>
+    <string name="widget_desc_cover">正在播放内容的封面，带播放和暂停按钮</string>
+    <string name="widget_desc_volume">正在播放音乐的设备的音量</string>
+    <string name="widget_desc_actions">快捷操作：手气不错、睡眠定时、暂停其他播放器、在手机和电脑之间切换</string>
+    <string name="widget_name_now_wide">正在播放</string>
+    <string name="widget_name_now_bar">正在播放（精简）</string>
+    <string name="widget_name_cover">封面</string>
+    <string name="widget_name_volume">音量</string>
+    <string name="widget_name_actions">快捷操作</string>
+    <string name="widget_desc_beacon">你的音乐是否正在 Discord 上显示，附带开关和隐藏一小时按钮</string>
+    <string name="widget_desc_upnext">播放队列中接下来的歌曲；点按即可播放</string>
+    <string name="widget_name_beacon">Discord 状态</string>
+    <string name="widget_name_upnext">接下来播放</string>
+</resources>

@@ -93,7 +93,7 @@ object UpdateManager {
         if (code != 200) {
             conn.disconnect()
             if (code == 404) throw NotFound()
-            throw IOException(if (code == 403 || code == 429) "GitHub is limiting how often it's asked; try again later" else "GitHub answered $code")
+            throw IOException(if (code == 403 || code == 429) tr("GitHub is limiting how often it's asked; try again later") else tr("GitHub answered {code}", "code" to code))
         }
         return conn
     }
@@ -120,7 +120,7 @@ object UpdateManager {
             }
             return releaseInfo(r) ?: continue
         }
-        return UpdateInfo(error = "no releases found")
+        return UpdateInfo(error = tr("no releases found"))
     }
 
     private fun sha256(file: File): String {
@@ -140,7 +140,7 @@ object UpdateManager {
     private fun downloadFromGithub(rel: GithubRelease, dest: File, ua: String) {
         val want = rel.sumsUrl?.let { url ->
             checksumFor(githubText(url, ua, "text/plain, */*"), rel.apkName)
-                ?: throw IOException("the release's checksum list doesn't name the app")
+                ?: throw IOException(tr("the release's checksum list doesn't name the app"))
         }
         val tmp = File(dest.path + ".part")
         val conn = github(rel.apkUrl, ua, "application/octet-stream")
@@ -151,9 +151,9 @@ object UpdateManager {
         }
         if (want != null && sha256(tmp) != want) {
             tmp.delete()
-            throw IOException("the download didn't match its checksum; try again")
+            throw IOException(tr("the download didn't match its checksum; try again"))
         }
-        if (!tmp.renameTo(dest)) throw IOException("couldn't save the download")
+        if (!tmp.renameTo(dest)) throw IOException(tr("couldn't save the download"))
     }
 
     private fun userAgent(ctx: Context) = "ytm-starcast-android/${currentVersion(ctx)}"
@@ -179,11 +179,11 @@ object UpdateManager {
                 }
             }
             info = r
-            if (r.error != null) message = "Couldn't check: ${r.error}"
-            else if (!available(ctx)) message = "You're up to date (${currentVersion(ctx)})."
+            if (r.error != null) message = tr("Couldn't check: {error}", "error" to r.error)
+            else if (!available(ctx)) message = tr("You're up to date ({version}).", "version" to currentVersion(ctx))
             else dismissed = false
         } catch (e: Exception) {
-            message = "Couldn't check: ${e.friendly()}"
+            message = tr("Couldn't check: {error}", "error" to e.friendly())
         }
         checking = false
     }
@@ -193,7 +193,7 @@ object UpdateManager {
     suspend fun install(ctx: Context) {
         if (downloading) return
         if (Build.VERSION.SDK_INT >= 26 && !ctx.packageManager.canRequestPackageInstalls()) {
-            message = "Allow YTM Starcast to install apps, then tap Install again."
+            message = tr("Allow YTM Starcast to install apps, then tap Install again.")
             ctx.startActivity(
                 Intent(AndroidSettings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${ctx.packageName}"))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -201,7 +201,7 @@ object UpdateManager {
             return
         }
         downloading = true
-        message = "Downloading…"
+        message = tr("Downloading…")
         try {
             val dir = File(ctx.cacheDir, "updates").apply { mkdirs(); listFiles()?.forEach { it.delete() } }
             val file = File(dir, "ytm-starcast-update.apk")
@@ -210,9 +210,9 @@ object UpdateManager {
             withContext(Dispatchers.IO) { if (rel != null) downloadFromGithub(rel, file, ua) else Remote.downloadUpdate(file) }
             if (signedByAnotherKey(ctx, file)) {
                 needsReinstall = true
-                message = "This version is signed with a different key than the one installed (older test builds used a temporary key), " +
-                    "so Android won't install it over this one. Uninstall YTM Starcast once, then install the new APK from the download page. " +
-                    "Future updates will install normally."
+                message = tr(
+                    "This version is signed with a different key than the one installed (older test builds used a temporary key), so Android won't install it over this one. Uninstall YTM Starcast once, then install the new APK from the download page. Future updates will install normally."
+                )
                 downloading = false
                 return
             }
@@ -223,9 +223,9 @@ object UpdateManager {
                     .setDataAndType(uri, "application/vnd.android.package-archive")
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
             )
-            message = "Ready: confirm the install on the next screen."
+            message = tr("Ready: confirm the install on the next screen.")
         } catch (e: Exception) {
-            message = "Download failed: ${e.friendly()}"
+            message = tr("Download failed: {error}", "error" to e.friendly())
         }
         downloading = false
     }

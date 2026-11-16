@@ -176,9 +176,9 @@ fun LyricsControls(ui: LyricsUi, modifier: Modifier = Modifier) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { layoutOpen = false },
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            title = { Text("Lyrics layout") },
+            title = { Text(tr("Lyrics layout")) },
             text = { Column(Modifier.verticalScroll(rememberScrollState())) { LyricsLayoutControls(onDialog = true) } },
-            confirmButton = { TextButton(onClick = { layoutOpen = false }) { Text("Done") } },
+            confirmButton = { TextButton(onClick = { layoutOpen = false }) { Text(tr("Done")) } },
         )
     }
     Column(modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -189,11 +189,11 @@ fun LyricsControls(ui: LyricsUi, modifier: Modifier = Modifier) {
                     selected = chosen, shape = chipShape(chosen),
                     onClick = { Settings.update { it.copy(lyricsSource = src.id) } },
                     enabled = src.found,
-                    label = { Text(src.label + if (src.found && src.words) " · word-by-word" else if (src.found && src.synced) " · synced" else "") },
+                    label = { Text(src.label + if (src.found && src.words) " · " + tr("word-by-word") else if (src.found && src.synced) " · " + tr("synced") else "") },
                 )
             }
-            IconButton(onClick = ui.refresh, enabled = !ui.loading) { Icon(Icons.Filled.Refresh, "Look again") }
-            FilterChip(colors = refineChipColors(), border = refineChipBorder(false), selected = false, shape = chipShape(false), onClick = { layoutOpen = true }, label = { Text("Aa  Layout") })
+            IconButton(onClick = ui.refresh, enabled = !ui.loading) { Icon(Icons.Filled.Refresh, tr("Look again")) }
+            FilterChip(colors = refineChipColors(), border = refineChipBorder(false), selected = false, shape = chipShape(false), onClick = { layoutOpen = true }, label = { Text("Aa  " + tr("Layout")) })
         }
         if (r != null && r.found) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -201,31 +201,31 @@ fun LyricsControls(ui: LyricsUi, modifier: Modifier = Modifier) {
                     FilterChip(colors = refineChipColors(), border = refineChipBorder(prefs.lyricsRoman), 
                         selected = prefs.lyricsRoman, shape = chipShape(prefs.lyricsRoman),
                         onClick = { Settings.update { it.copy(lyricsRoman = !it.lyricsRoman) } },
-                        label = { Text("Romanize") },
+                        label = { Text(tr("Romanize")) },
                     )
                 }
                 if (r.lines.any { it.tr != null }) {
                     FilterChip(colors = refineChipColors(), border = refineChipBorder(prefs.lyricsTranslation), 
                         selected = prefs.lyricsTranslation, shape = chipShape(prefs.lyricsTranslation),
                         onClick = { Settings.update { it.copy(lyricsTranslation = !it.lyricsTranslation) } },
-                        label = { Text("Translation") },
+                        label = { Text(tr("Translation")) },
                     )
                 }
             }
             if (r.synced) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Sync", style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(end = 4.dp))
-                    TextButton(onClick = { Settings.update { it.copy(lyricsOffsetMs = (it.lyricsOffsetMs - 100).coerceAtLeast(-2000)) } }) { Text("−0.1 s") }
-                    TextButton(onClick = { Settings.update { it.copy(lyricsOffsetMs = (it.lyricsOffsetMs + 100).coerceAtMost(2000)) } }) { Text("+0.1 s") }
+                    Text(tr("Sync"), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(end = 4.dp))
+                    TextButton(onClick = { Settings.update { it.copy(lyricsOffsetMs = (it.lyricsOffsetMs - 100).coerceAtLeast(-2000)) } }) { Text(tr("−0.1 s")) }
+                    TextButton(onClick = { Settings.update { it.copy(lyricsOffsetMs = (it.lyricsOffsetMs + 100).coerceAtMost(2000)) } }) { Text(tr("+0.1 s")) }
                     if (prefs.lyricsOffsetMs != 0) {
                         TextButton(onClick = { Settings.update { it.copy(lyricsOffsetMs = 0) } }) {
-                            Text("%+.1f s · reset".format(prefs.lyricsOffsetMs / 1000.0))
+                            Text(tr("{offset} s · reset", "offset" to "%+.1f".format(prefs.lyricsOffsetMs / 1000.0)))
                         }
                     }
                 }
             }
             val note = buildString {
-                append(if (r.synced) "Live lyrics follow the song. Tap a line to jump to it." else "These lyrics aren't time-synced.")
+                append(if (r.synced) tr("Live lyrics follow the song. Tap a line to jump to it.") else tr("These lyrics aren't time-synced."))
                 r.credit?.let { append("  ").append(it) }
             }
             Text(note, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -237,14 +237,14 @@ fun LyricsControls(ui: LyricsUi, modifier: Modifier = Modifier) {
 fun LazyListScope.lyricsItems(ui: LyricsUi, active: Int, prefs: Prefs, canLyrics: Boolean, hasTrack: Boolean, playing: Boolean) {
     val r = ui.result
     when {
-        !hasTrack -> item(key = "ly-none") { LyricsMessage("Nothing is playing.") }
-        !canLyrics -> item(key = "ly-old") { LyricsMessage("This server is too old for lyrics. Update YTM Starcast on the computer.") }
+        !hasTrack -> item(key = "ly-none") { LyricsMessage(tr("Nothing is playing.")) }
+        !canLyrics -> item(key = "ly-old") { LyricsMessage(tr("This server is too old for lyrics. Update YTM Starcast on the computer.")) }
         ui.loading && r == null -> item(key = "ly-load") {
             Box(Modifier.fillMaxWidth().padding(40.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
         }
         ui.error != null && r == null -> item(key = "ly-err") { LyricsMessage(ui.error) }
         r == null || !r.found -> item(key = "ly-nf") {
-            LyricsMessage("No lyrics found for this song. Try another source above, or look again.")
+            LyricsMessage(tr("No lyrics found for this song. Try another source above, or look again."))
         }
         else -> {
             val base = prefs.lyricsSp
@@ -404,7 +404,7 @@ fun JumpToLine(state: LazyListState, firstLineIndex: Int, active: Int, modifier:
         androidx.compose.material3.ExtendedFloatingActionButton(
             onClick = onJump,
             icon = { Icon(Icons.Filled.MyLocation, null) },
-            text = { Text("Current line") },
+            text = { Text(tr("Current line")) },
         )
     }
 }
@@ -420,18 +420,18 @@ fun LyricsLayoutControls(onDialog: Boolean = false) {
             options.forEach { (v, l) -> FilterChip(colors = refineChipColors(onDialog = onDialog), border = refineChipBorder(selected == v), selected = selected == v, shape = chipShape(selected == v), onClick = { pick(v) }, label = { Text(l) }) }
         }
     }
-    chips("Alignment", listOf("start" to "Left", "center" to "Centered", "end" to "Right"), p.lyricsAlign) { v -> Settings.update { it.copy(lyricsAlign = v) } }
-    Text("Text size · ${p.lyricsSp} sp", style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 10.dp))
+    chips(tr("Alignment"), listOf("start" to tr("Left"), "center" to tr("Centered"), "end" to tr("Right")), p.lyricsAlign) { v -> Settings.update { it.copy(lyricsAlign = v) } }
+    Text(tr("Text size · {size} sp", "size" to p.lyricsSp), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 10.dp))
     androidx.compose.material3.Slider(
         value = p.lyricsSp.toFloat(), onValueChange = { v -> Settings.update { it.copy(lyricsSp = v.toInt()) } }, valueRange = 14f..40f,
     )
-    chips("Line spacing", listOf("3" to "Tight", "7" to "Normal", "12" to "Relaxed", "18" to "Airy"), p.lyricsSpacing.toString()) { v -> Settings.update { it.copy(lyricsSpacing = v.toInt()) } }
-    chips("Other lines", listOf("65" to "Bright", "45" to "Normal", "28" to "Faint"), p.lyricsDim.toString()) { v -> Settings.update { it.copy(lyricsDim = v.toInt()) } }
-    Text("Sample", style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 14.dp, bottom = 4.dp))
+    chips(tr("Line spacing"), listOf("3" to tr("Tight"), "7" to tr("Normal"), "12" to tr("Relaxed"), "18" to tr("Airy")), p.lyricsSpacing.toString()) { v -> Settings.update { it.copy(lyricsSpacing = v.toInt()) } }
+    chips(tr("Other lines"), listOf("65" to tr("Bright"), "45" to tr("Normal"), "28" to tr("Faint")), p.lyricsDim.toString()) { v -> Settings.update { it.copy(lyricsDim = v.toInt()) } }
+    Text(tr("Sample"), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = 14.dp, bottom = 4.dp))
     val align = when (p.lyricsAlign) { "center" -> TextAlign.Center; "end" -> TextAlign.End; else -> TextAlign.Start }
     Column(Modifier.fillMaxWidth().padding(vertical = p.lyricsSpacing.dp)) {
-        Text("This is the line being sung", fontSize = p.lyricsSp.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, textAlign = align, lineHeight = (p.lyricsSp + 6).sp, modifier = Modifier.fillMaxWidth())
-        Text("And this one comes next", fontSize = p.lyricsSp.sp, fontWeight = FontWeight.Bold, textAlign = align, lineHeight = (p.lyricsSp + 6).sp,
+        Text(tr("This is the line being sung"), fontSize = p.lyricsSp.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, textAlign = align, lineHeight = (p.lyricsSp + 6).sp, modifier = Modifier.fillMaxWidth())
+        Text(tr("And this one comes next"), fontSize = p.lyricsSp.sp, fontWeight = FontWeight.Bold, textAlign = align, lineHeight = (p.lyricsSp + 6).sp,
             modifier = Modifier.fillMaxWidth().padding(top = p.lyricsSpacing.dp).alpha(p.lyricsDim / 100f))
     }
 }

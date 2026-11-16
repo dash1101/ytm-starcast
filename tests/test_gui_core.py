@@ -459,3 +459,27 @@ class PartsTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LanguageTests(unittest.TestCase):
+    def test_the_running_servers_setting_is_used_and_remembered(self):
+        r = Rig(http={"api/info": {"name": "YTM Starcast", "version": "0.2.9a", "auth": False},
+                      "api/prefs": {"language": "ja"}})
+        self.addCleanup(r.close)
+        self.assertEqual(r.c.language(), "ja")
+        self.assertEqual(r.c.details()["language"], "ja")
+        r.http_map.pop("api/info")              # the server stops: the last one seen
+        self.assertEqual(r.c.language(), "ja")
+
+    def test_auto_at_first_and_a_choice_goes_to_the_server(self):
+        r = Rig()
+        self.addCleanup(r.close)
+        self.assertEqual(r.c.language(), "auto")
+        self.assertEqual(r.c.set_language("de"), "de")
+        self.assertEqual(r.c.language(), "de")
+        self.assertEqual(r.posts, [])               # not running: kept here only
+        with self.assertRaises(ValueError):
+            r.c.set_language("xx")
+        r.http_map["api/info"] = {"name": "YTM Starcast", "version": "0.2.9a", "auth": False}
+        r.c.set_language("fr")
+        self.assertEqual(r.posts[0][:2], ("api/prefs", {"language": "fr"}))

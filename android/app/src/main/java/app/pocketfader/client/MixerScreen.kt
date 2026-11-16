@@ -60,9 +60,9 @@ fun MixerScreen(s: RemoteState, modifier: Modifier = Modifier) {
         modifier.edgeFade(scroll).verticalScroll(scroll).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Panel("Volume", arrival) {
+        Panel(tr("Volume"), arrival) {
             Text(
-                if (s.volume.available) s.volume.device.ifBlank { "Computer output" } else "No audio output found",
+                if (s.volume.available) s.volume.device.ifBlank { tr("Computer output") } else tr("No audio output found"),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -70,9 +70,9 @@ fun MixerScreen(s: RemoteState, modifier: Modifier = Modifier) {
         }
 
         if (s.canOutputs && s.outputs.isNotEmpty()) {
-            Panel("Output devices", arrival) {
+            Panel(tr("Output devices"), arrival) {
                 Text(
-                    "Set each device's level before you switch to it.",
+                    tr("Set each device's level before you switch to it."),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -137,7 +137,7 @@ private fun OutputRow(o: Output) {
             )
             // a muted device keeps its button on a tonal squircle, so it is clear at a glance which ones are silent
             ShapeIconButton(
-                if (o.muted) Icons.Filled.VolumeOff else Icons.Filled.VolumeUp, if (o.muted) "Unmute" else "Mute",
+                if (o.muted) Icons.Filled.VolumeOff else Icons.Filled.VolumeUp, if (o.muted) tr("Unmute") else tr("Mute"),
                 onClick = { Remote.setOutputMuted(o.name, !o.muted) }, active = o.muted,
             )
         }
@@ -161,15 +161,15 @@ private fun OutputRow(o: Output) {
     }
 }
 
-private val BAND_LABELS = listOf("bass" to "Bass", "mid" to "Mid", "high" to "High")
+private val BAND_LABELS = listOf("bass" to trKey("Bass"), "mid" to trKey("Mid"), "high" to trKey("High"))
 
 @Composable
 private fun EqPanel(eq: EqState, arrival: Arrival? = null) {
-    Panel(if (eq.label.isNotBlank()) "Equalizer · ${eq.label}" else "Equalizer", arrival) {
+    Panel(if (eq.label.isNotBlank()) tr("Equalizer") + " · ${eq.label}" else tr("Equalizer"), arrival) {
         if (eq.toggle) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    if (eq.enabled) "On" else "Off",
+                    if (eq.enabled) tr("On") else tr("Off"),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f),
                 )
@@ -190,7 +190,7 @@ private fun EqPanel(eq: EqState, arrival: Arrival? = null) {
             BAND_LABELS.forEach { (key, label) ->
                 val db = eq.bands[key] ?: 0.0
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(label, Modifier.width(48.dp), style = MaterialTheme.typography.bodyMedium)
+                    Text(tr(label), Modifier.width(48.dp), style = MaterialTheme.typography.bodyMedium)
                     Slider(
                         value = db.toFloat().coerceIn(eq.min.toFloat(), eq.max.toFloat()),
                         onValueChange = { Remote.eqBand(key, ((it * 2).roundToInt() / 2.0), false) },
@@ -215,14 +215,17 @@ private fun EqPanel(eq: EqState, arrival: Arrival? = null) {
 // ---------------------------------------------------------------------------------------------
 // Sound & outputs while music plays on the phone itself: the phone's volume and where its sound goes.
 
-/** One way out for the phone's sound: its name, an icon, whether the music goes there now. */
-private class PhoneOutput(val name: String, val icon: ImageVector, val active: Boolean)
+/** One way out for the phone's sound: its name, an icon, whether the music goes there now. [generic]: [label] is a kind
+ *  of output in English (the device has no name of its own). */
+private class PhoneOutput(val label: String, val icon: ImageVector, val active: Boolean, val generic: Boolean) {
+    val name: String get() = if (generic) tr(label) else label
+}
 
 private fun outputKind(type: Int): Pair<String, ImageVector>? = when (type) {
-    android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> "This phone's speaker" to Icons.Filled.Speaker
-    android.media.AudioDeviceInfo.TYPE_WIRED_HEADPHONES, android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET -> "Wired headphones" to Icons.Filled.Headphones
+    android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER -> trKey("This phone's speaker") to Icons.Filled.Speaker
+    android.media.AudioDeviceInfo.TYPE_WIRED_HEADPHONES, android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET -> trKey("Wired headphones") to Icons.Filled.Headphones
     android.media.AudioDeviceInfo.TYPE_BLUETOOTH_A2DP -> "Bluetooth" to Icons.Filled.Bluetooth
-    android.media.AudioDeviceInfo.TYPE_USB_HEADSET, android.media.AudioDeviceInfo.TYPE_USB_DEVICE -> "USB audio" to Icons.Filled.Usb
+    android.media.AudioDeviceInfo.TYPE_USB_HEADSET, android.media.AudioDeviceInfo.TYPE_USB_DEVICE -> trKey("USB audio") to Icons.Filled.Usb
     android.media.AudioDeviceInfo.TYPE_HDMI -> "HDMI" to Icons.Filled.Tv
     26, 27 -> "Bluetooth" to Icons.Filled.Bluetooth          // TYPE_BLE_HEADSET, TYPE_BLE_SPEAKER (Android 12)
     else -> null
@@ -245,13 +248,13 @@ private fun phoneOutputs(ctx: android.content.Context): List<PhoneOutput> {
         ?: devices.firstOrNull { it.first.type in setOf(android.media.AudioDeviceInfo.TYPE_USB_HEADSET, android.media.AudioDeviceInfo.TYPE_USB_DEVICE, android.media.AudioDeviceInfo.TYPE_WIRED_HEADPHONES, android.media.AudioDeviceInfo.TYPE_WIRED_HEADSET) }
         ?: devices.firstOrNull { it.first.type == android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER }
     return devices.map { (d, kind, icon) ->
-        val label = d.productName?.toString()?.takeIf { it.isNotBlank() && d.type != android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER && it != android.os.Build.MODEL } ?: kind
-        PhoneOutput(label, icon, if (routed.isNotEmpty()) d.id in routed else d.id == guess?.first?.id)
+        val own = d.productName?.toString()?.takeIf { it.isNotBlank() && d.type != android.media.AudioDeviceInfo.TYPE_BUILTIN_SPEAKER && it != android.os.Build.MODEL }
+        PhoneOutput(own ?: kind, icon, if (routed.isNotEmpty()) d.id in routed else d.id == guess?.first?.id, generic = own == null)
     }
 }
 
 /** Where the phone's sound goes now, for summaries ("Galaxy Buds", "This phone's speaker"). */
-fun phoneOutputName(ctx: android.content.Context): String = phoneOutputs(ctx).firstOrNull { it.active }?.name ?: "This phone"
+fun phoneOutputName(ctx: android.content.Context): String = phoneOutputs(ctx).firstOrNull { it.active }?.name ?: tr("This phone")
 
 /** Android's own output picker (Android 14 and later), its older form, or the Bluetooth settings. */
 private fun openOutputPicker(ctx: android.content.Context) {
@@ -293,15 +296,15 @@ fun PhoneSoundScreen(modifier: Modifier = Modifier) {
         modifier.edgeFade(scroll).verticalScroll(scroll).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Panel("Volume", arrival) {
+        Panel(tr("Volume"), arrival) {
             Text(
-                "Music is playing on this phone: " + (outputs.firstOrNull { it.active }?.name ?: "this phone") + ".",
+                tr("Music is playing on this phone: {output}.", "output" to (outputs.firstOrNull { it.active }?.name ?: tr("this phone"))),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             PhoneVolumeRow()
         }
-        Panel("Output", arrival) {
+        Panel(tr("Output"), arrival) {
             outputs.forEach { o ->
                 Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     DeviceIcon(o.icon, o.active)
@@ -309,13 +312,12 @@ fun PhoneSoundScreen(modifier: Modifier = Modifier) {
                         o.name, Modifier.weight(1f).padding(start = 14.dp), style = MaterialTheme.typography.bodyLarge,
                         fontWeight = if (o.active) FontWeight.SemiBold else null,
                     )
-                    if (o.active) Text("Playing here", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                    if (o.active) Text(tr("Playing here"), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
                 }
             }
-            androidx.compose.material3.FilledTonalButton(onClick = { openOutputPicker(ctx) }) { Text("Switch output") }
+            androidx.compose.material3.FilledTonalButton(onClick = { openOutputPicker(ctx) }) { Text(tr("Switch output")) }
             Text(
-                "Android chooses where the phone's sound goes; this opens its own picker. The computer's outputs are here when " +
-                    "music plays on the computer.",
+                tr("Android chooses where the phone's sound goes; this opens its own picker. The computer's outputs are here when music plays on the computer."),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
