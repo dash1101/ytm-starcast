@@ -22,10 +22,10 @@ Before the first YTM Starcast release, the repository has to move once: see
 | File | Built from |
 |---|---|
 | `ytm_starcast-<version>-py3-none-any.whl` and `ytm_starcast-<version>.tar.gz` | `python -m build` (the Python package and its source). The in-app updater installs the `.whl` with pip. |
-| `ytm-starcast-<tag>-windows-x64.zip` | PyInstaller: `ytm-starcast.exe` (the server), `ytm-starcast-gui.exe` (the desktop window) and `packaging/install-exe.ps1`, with `README.md` and `LICENSE`. |
-| `ytm-starcast-<tag>-linux-x86_64.tar.gz` | PyInstaller: the single `ytm-starcast` program, with `README.md` and `LICENSE`. |
+| `ytm-starcast-<tag>-windows-x64.zip` | PyInstaller: `ytm-starcast.exe` (the server), `ytm-starcast-gui.exe` (the desktop window) and `packaging/install-exe.ps1`, with `README.md`, `LICENSE` and `NOTICE`. |
+| `ytm-starcast-<tag>-linux-x86_64.tar.gz` | PyInstaller: the single `ytm-starcast` program, with `README.md`, `LICENSE` and `NOTICE`. |
 | `ytm-starcast-android.apk`, `ytm-starcast-android-unshrunk.apk` | The Android app, shrunk and unshrunk, signed with the release key. No version in the names, so links to the latest release keep working. |
-| `ytm-starcast-extension.zip` | The `extension/` folder, to load unpacked (the files sit at the top of the zip). |
+| `ytm-starcast-extension.zip` | The `extension/` folder with `LICENSE` and `NOTICE`, to load unpacked (the files sit at the top of the zip). |
 | `SHA256SUMS.txt` | SHA-256 of every file above. The updater checks downloads against it. |
 
 `<tag>` is the release tag, so the Windows file of `v0.2.1-alpha` is `ytm-starcast-v0.2.1-alpha-windows-x64.zip`, and
