@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Presence: the one object the server uses for Discord status. See the package docstring for the API."""
 import logging
 import os

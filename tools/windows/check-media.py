@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Windows diagnostic: list the media sessions Windows exposes and what each one allows.
 
 Use it to check whether a Bluetooth-connected phone shows up as a controllable media

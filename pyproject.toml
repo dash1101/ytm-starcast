@@ -4,11 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ytm-starcast"
-version = "0.2.9-alpha"
+version = "0.2.10-alpha"
 description = "YouTube Music companion: a remote for your phone, your music as your Discord status, and a better YouTube Music."
 readme = "README.md"
 requires-python = ">=3.9"
-license = "MIT"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE", "NOTICE"]
 dependencies = []   # the Linux build is standard-library only
 
 [project.optional-dependencies]

@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """The browser extension updating itself in place (extension/background.js), run with Node against a stand-in browser:
 YTM Starcast keeps the extension's folder up to date, and the extension reloads into the new version."""
 import json

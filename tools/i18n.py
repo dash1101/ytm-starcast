@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """YTM Starcast's translations: find the text to translate in the source and build each part's language files.
 
 Every piece of text a person reads is written in English in the source, inside tr("...") (or trn("one", "other", n) for
@@ -237,6 +239,8 @@ def outputs(found):
         out[f"starcast/lang/{lang}.json"] = _dump(_subset(table, keys["py"]))
     ext = {lang: _subset(t, keys["ext"]) for lang, t in tables.items()}
     out["extension/i18n_strings.js"] = (
+        "// YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later\n"
+        "// Additional terms under GPL section 7: see NOTICE.\n"
         "/* YTM Starcast extension: its words in each language. Built by tools/i18n.py from i18n/*.json; don't edit it */\n"
         'globalThis[Symbol.for("pocketfader.i18n.strings")] = '
         + json.dumps(ext, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + ";\n")

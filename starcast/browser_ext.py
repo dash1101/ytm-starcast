@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """The browser extension: a copy of it in a fixed folder, whether one is connected, and opening things for the setup.
 
 Browsers only take an extension like this one by hand ("Load unpacked" on their extensions page), so the apps walk

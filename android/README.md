@@ -92,7 +92,8 @@ while the app is connected) is remembered on the phone only; you can clear it in
 downloads (your most played songs plus the current quick picks), within a space limit you choose, on Wi-Fi only if you like.
 Songs you download yourself are never removed automatically. Downloads show progress in a notification.
 
-**License:** because it includes NewPipe Extractor, the Android app is GPL-3.0-or-later (see `android/LICENSE`).
+**License:** GPL-3.0-or-later with additional terms, like the rest of YTM Starcast (see [`LICENSE`](../LICENSE) and
+[`NOTICE`](../NOTICE)). It includes NewPipe Extractor, which is GPL-3.0-or-later too.
 
 ## Install
 

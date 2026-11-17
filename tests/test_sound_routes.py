@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """The computer's sound in Refine's panel (/ext/sound...): the same volume, outputs and EQ as the remote's mixer,
 only while the "Computer audio" part is on. Everything here runs against the fakes (no real audio)."""
 import unittest

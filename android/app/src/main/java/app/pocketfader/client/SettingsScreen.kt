@@ -1,3 +1,5 @@
+// YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+// Additional terms under GPL section 7: see NOTICE.
 package app.pocketfader.client
 
 import android.os.Build
@@ -590,6 +592,13 @@ fun SettingsScreen(cfg: ServerConfig, s: RemoteState, onEditConnection: () -> Un
                 }
             }
             Info("Android", "${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})")
+            Text(
+                tr("Made by {author}. Free software under the GNU GPL, version 3 or later, with no warranty.", "author" to "dash1101"),
+                modifier = Modifier.pageGlide(),
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            val links = androidx.compose.ui.platform.LocalUriHandler.current
+            OutlinedButton(onClick = { runCatching { links.openUri("https://github.com/dash1101/ytm-starcast") } }, modifier = Modifier.pageGlide()) { Text(tr("Source code")) }
             OutlinedButton(onClick = { confirmReset = true }, modifier = Modifier.pageGlide()) { Text(tr("Reset all settings")) }
         }
         if (page == "about") Section(trKey("If the app closed by itself")) {

@@ -1,3 +1,5 @@
+// YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+// Additional terms under GPL section 7: see NOTICE.
 /* YTM Starcast extension: its words in the language chosen in Starcast's settings (or the browser's own).
  *
  * Text is written in English in the scripts, inside tr() (trn() with the English for one and for more, for a count; trKey() marks

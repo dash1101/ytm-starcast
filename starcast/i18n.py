@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """YTM Starcast's words in other languages, for what the computer shows itself (the desktop window).
 
 Text is written in English in the code, inside tr() (trn() with the English for one and for more, for a count; trKey() marks a word

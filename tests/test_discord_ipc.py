@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Discord IPC client: framing, handshake, requests, ping, disconnects, and where the sockets are looked for.
 
 The "Discord" here is a fake on the other end of a socket pair; the real Discord socket is never dialed."""

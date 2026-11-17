@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Discord status settings: defaults, validation, the file (missing, partial, broken), atomic saves, concurrent
 changes, and finding YTM Beacon's settings. A port of YTM Beacon's config tests; files live in temp folders."""
 import json

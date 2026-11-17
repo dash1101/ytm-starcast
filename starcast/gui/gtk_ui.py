@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """The server window on Linux: GTK 3 (python3-gi), so it matches GNOME, KDE, Cinnamon and friends."""
 import threading
 import webbrowser
@@ -11,7 +13,7 @@ from gi.repository import Gdk, Gio, GLib, Gtk  # noqa: E402
 
 from .. import i18n  # noqa: E402
 from ..i18n import tr  # noqa: E402
-from .core import APP_ID, PART_ROWS, Controller, prefers_dark  # noqa: E402
+from .core import LICENSE, APP_ID, PART_ROWS, Controller, prefers_dark  # noqa: E402
 
 ICON = Path(__file__).resolve().parent.parent / "static" / "icon.svg"
 
@@ -135,7 +137,7 @@ class Window(Gtk.Window):
         page.pack_start(self._section(tr("Status"), self.box3), False, False, 0)
         self.detail_rows = {}
         for key, title in (("device", tr("Sound output")), ("ytm", tr("YouTube Music extension")), ("now", tr("Now playing")),
-                           ("version", tr("Version"))):
+                           ("version", tr("Version")), ("license", tr("License"))):
             r, b, _, _ = _row(title)
             val = Gtk.Label(xalign=1, ellipsize=3, max_width_chars=28)
             val.get_style_context().add_class("dim-label")
@@ -247,6 +249,7 @@ class Window(Gtk.Window):
         self.detail_rows["ytm"].set_text(tr("Connected") if d.get("ytm") else tr("Not connected") if d else "—")
         self.detail_rows["now"].set_text(d.get("now") or "—")
         self.detail_rows["version"].set_text(d.get("version") or "—")
+        self.detail_rows["license"].set_text(LICENSE)
         self._loading = False
 
     # ---------------------------------------------------------------- actions

@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Discord status for the apps (GET /api/beacon, POST /api/beacon/...), and moving over from the old YTM Beacon app.
 
 Discord status shows the song playing in YouTube Music as your Discord "Listening to" card. It is built in: the

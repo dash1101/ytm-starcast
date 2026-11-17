@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 # YTM Starcast installer for Linux (runs as a systemd user service).
 #
 #   ./install.sh                    install, start it now and every time you log in

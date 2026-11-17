@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Songs for the phone: the computer fetches a YouTube Music song's audio with yt-dlp and hands the file to the phone.
 
 The phone normally gets audio on its own; this is the fallback for when its lookup fails. Only a validated video id is

@@ -37,7 +37,7 @@ jobs:
       - name: Package
         run: |
           mkdir ytm-starcast-linux-x86_64
-          cp dist/ytm-starcast README.md LICENSE ytm-starcast-linux-x86_64/
+          cp dist/ytm-starcast README.md LICENSE NOTICE ytm-starcast-linux-x86_64/
           tar czf ytm-starcast-linux-x86_64.tar.gz ytm-starcast-linux-x86_64
       - uses: actions/upload-artifact@v4
         with: { name: linux, path: ytm-starcast-linux-x86_64.tar.gz }
@@ -136,7 +136,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory ytm-starcast-windows-x64 | Out-Null
-          Copy-Item dist\ytm-starcast.exe, dist\ytm-starcast-gui.exe, packaging\install-exe.ps1, README.md, LICENSE ytm-starcast-windows-x64
+          Copy-Item dist\ytm-starcast.exe, dist\ytm-starcast-gui.exe, packaging\install-exe.ps1, README.md, LICENSE, NOTICE ytm-starcast-windows-x64
           Compress-Archive ytm-starcast-windows-x64 ytm-starcast-windows-x64.zip
       - uses: actions/upload-artifact@v4
         with: { name: windows, path: ytm-starcast-windows-x64.zip }
@@ -225,6 +225,7 @@ jobs:
       - name: Package
         # The files sit at the top of the zip: unzip it into a folder and "Load unpacked" that folder.
         run: |
+          cp LICENSE NOTICE extension/
           cd extension
           zip -r -X -q ../ytm-starcast-extension.zip .
           cd ..

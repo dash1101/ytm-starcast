@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """YTM Starcast's desktop window: start/stop, start at login, which parts are on, phone addresses, status.
 
 `ytm-starcast-gui` (or `ytm-starcast --gui`) opens it. The window is GTK on Linux and Tk elsewhere, so it

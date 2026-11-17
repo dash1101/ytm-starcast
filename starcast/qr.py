@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """QR codes for the addresses a phone can open (byte mode, error correction level M), drawn as SVG.
 
 Small on purpose: no dependencies, only what a web address needs. Follows ISO/IEC 18004: Reed-Solomon codewords over

@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """HTTP server: the web app, a small JSON API, and the relay to the YT Music extension.
 
 SECURITY MODEL (read before changing bind logic):

@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Finding and fetching new releases.
 
 Releases are published on GitHub. The computer running YTM Starcast does the asking (so a phone never needs a

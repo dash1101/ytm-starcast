@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """What each YouTube Music tab reports, and which tab Discord follows.
 
 A tab ("source") reports the song it plays. The tracker keeps the latest report from every tab and picks

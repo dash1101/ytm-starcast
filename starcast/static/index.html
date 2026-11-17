@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!-- YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+     Additional terms under GPL section 7: see NOTICE. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -4424,6 +4426,10 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
     const ab = el('div', 'setsec'); ab.appendChild(secH3(trKey('About')));
     const ver = el('div', 'setrow'); ver.innerHTML = `<div><div class="k">YTM Starcast</div><div class="d">${tr('Checking for updates…')}</div></div>`;
     ab.appendChild(ver); m.appendChild(ab);
+    const credit = el('div', 'setrow');
+    credit.innerHTML = `<div><div class="k">${tr('License')}</div><div class="d">${tr('Made by {author}. Free software under the GNU GPL, version 3 or later, with no warranty.', { author: 'dash1101' })}</div></div>`;
+    const src = el('a', 'pill ghost'); src.textContent = tr('Source code'); src.href = 'https://github.com/dash1101/ytm-starcast'; src.target = '_blank'; src.rel = 'noopener';
+    src.style.cssText = 'height:38px;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap;flex:none'; credit.appendChild(src); ab.appendChild(credit);
     fetch('/api/update', { cache: 'no-store' }).then(r => r.json()).then(u => {
       if (view !== 'settings' && !view.startsWith('set:')) return;
       // "v0.2.1-alpha" -> "0.2.1 alpha"; older names ("0.2.0-alpha.10", "0.2.0a10") keep their number
@@ -4438,7 +4444,7 @@ html[data-audio="off"] [data-part="audio"] { display:none !important; }
         const ap = el('div', 'setrow');
         ap.innerHTML = `<div><div class="k">${tr('Android app')}</div><div class="d">${tr('The native app for Android phones and tablets: lock-screen and volume-key controls, home-screen widgets, and music on the phone itself. Downloaded through the computer and checked against the release.')}</div></div>`;
         const a = el('a', 'pill ghost'); a.textContent = tr('Download'); a.href = '/api/update/apk'; a.style.cssText = 'height:38px;text-decoration:none;display:inline-flex;align-items:center';
-        ap.appendChild(a); ab.appendChild(ap);
+        ap.appendChild(a); ab.insertBefore(ap, credit);
       }
     }).catch(() => { ver.querySelector('.d').textContent = tr("Couldn't check for updates right now."); });
   };

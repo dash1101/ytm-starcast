@@ -1,11 +1,11 @@
-### What's new in 0.2.9-alpha
+### What's new in 0.2.10-alpha
 
-- **YTM Starcast in 10 languages:** English, Español, Français, Deutsch, Português (Brasil), Italiano, Русский, 日本語,
-  한국어 and 简体中文. The web app, the Android app, the desktop window, the browser extension's popup and Refine inside
-  YouTube Music all follow one **Language** setting (Settings → Appearance in the apps, Settings in the desktop window,
-  All settings → YTM Starcast in Refine). *Automatic*, the default, uses each device's own language; choosing one uses
-  it on every device. A change shows at once, also in open YouTube Music tabs.
-- Counts read right in every language ("1 song", "2 songs"), including a few places that used to say "1 songs".
+- **New license:** YTM Starcast is now under the GNU GPL, version 3 or later, with additional terms (see `LICENSE` and
+  `NOTICE`). It stays free and open source: anyone may use, study, change and share it, as long as they keep the credit
+  to its author, mark changed versions as changed and give them their own name and icon. Nobody may present it as their
+  own work. Versions up to 0.2.9-alpha keep the license they were released under.
+- The About screens (web app, Android app, desktop window and Refine) show who made YTM Starcast, its license and a
+  link to the source code.
 
 ### Updating from 0.2.0-alpha.10 or older
 

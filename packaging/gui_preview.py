@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Draws the desktop window (the Tk one, used on Windows) with made-up answers and saves a picture of it, so its look
 can be checked on a machine without a screen of one's own (the release workflow runs it on Windows).
 
@@ -13,7 +15,7 @@ from PIL import ImageGrab
 from starcast.gui import core, tk_ui
 
 ANSWERS = {
-    "api/info": {"name": "YTM Starcast", "version": "0.2.9-alpha", "auth": False},
+    "api/info": {"name": "YTM Starcast", "version": "0.2.10-alpha", "auth": False},
     "api/state": {"volume": {"percent": 62, "device": "Speakers (Realtek(R) Audio)"}, "capabilities": {"eq_toggle": True},
                   "engine": {"enabled": True}, "parts": {"remote": True, "discord": True, "refine": False, "audio": True}},
     "api/ytm/state": {"connected": True, "source": "ytm", "now": {"title": "Midnight Satellites"}},
@@ -30,7 +32,7 @@ def stand_in():
         http=lambda url, headers=None, timeout=1.2: ANSWERS.get(url.split("/", 3)[3] if url.count("/") >= 3 else url),
         tailscale_ip=lambda: None, lan_ip=lambda: None, post=lambda *a, **k: None,
     )
-    ctl.update_info = lambda refresh=False: {"current": "0.2.9-alpha", "latest": "v0.2.9-alpha", "available": False}
+    ctl.update_info = lambda refresh=False: {"current": "0.2.10-alpha", "latest": "v0.2.10-alpha", "available": False}
     ctl.autostart_enabled = lambda: True
     return ctl
 

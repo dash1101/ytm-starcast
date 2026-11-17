@@ -1,3 +1,5 @@
+// YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+// Additional terms under GPL section 7: see NOTICE.
 /* YTM Starcast extension: the logo, drawn in the album's colours (the toolbar button and its popup).
  *
  * The same drawing as the logo Refine puts in YouTube Music's top bar: a deep tile, two arcs and Nova's four-point star,

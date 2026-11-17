@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """install.sh in a sandbox: a temp HOME (XDG_* and PF_* folders inside it), and stand-ins for systemctl, pactl, busctl,
 tailscale, journalctl, sleep and python3's venv/pip that only write down how they were called. The sandbox can't reach
 the real systemd user session (no stand-in calls the real one, and XDG_RUNTIME_DIR / DBUS_SESSION_BUS_ADDRESS point

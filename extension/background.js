@@ -1,3 +1,5 @@
+// YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+// Additional terms under GPL section 7: see NOTICE.
 /*
  * YTM Starcast extension: the keyboard shortcut (Alt+Shift+M by default, changeable on the browser's shortcuts page)
  * that shows or stops showing your music on Discord, as YTM Beacon's did. It asks the app through an open YouTube Music

@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """The desktop window on Windows (and anywhere else without GTK): Tk, drawn in Material You's style like the browser
 extension's popup. It is dark or light as the system is (and follows a change), and carries YTM Starcast's icon."""
 import sys
@@ -9,7 +11,7 @@ from tkinter import font as tkfont
 
 from .. import i18n
 from ..i18n import tr
-from .core import PART_ROWS, Controller, prefers_dark
+from .core import LICENSE, PART_ROWS, Controller, prefers_dark
 
 ICON = Path(__file__).resolve().parent.parent / "static" / "icon-192.png"
 
@@ -323,7 +325,7 @@ class Window:
         card = self.card(col, tr("Status"))
         self.info = {}
         for key, label in (("device", tr("Sound output")), ("ytm", tr("YouTube Music extension")), ("now", tr("Now playing")),
-                           ("version", tr("Version"))):
+                           ("version", tr("Version")), ("license", tr("License"))):
             r = tk.Frame(card, bg=P["card"])
             r.pack(fill="x", pady=3)
             tk.Label(r, text=label, font=self.f.body, fg=P["text"], bg=P["card"]).pack(side="left")
@@ -446,6 +448,7 @@ class Window:
         self.info["ytm"].config(text=tr("Connected") if d.get("ytm") else (tr("Not connected") if d else "—"))
         self.info["now"].config(text=(d.get("now") or "—")[:40])
         self.info["version"].config(text=ver or "—")
+        self.info["license"].config(text=LICENSE)
         self.loading = False
 
     def _do(self, fn, text):

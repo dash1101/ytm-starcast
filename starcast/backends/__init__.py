@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Backend selection. Imports are lazy so a Linux box never touches Windows-only modules
 (and vice versa): `--audio voicemeeter` is the only thing that loads the Voicemeeter DLL."""
 import sys

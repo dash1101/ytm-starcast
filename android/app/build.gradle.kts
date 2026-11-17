@@ -86,7 +86,7 @@ dependencies {
     // Playing on the phone itself: ExoPlayer with a media session (notification, lock screen, headset buttons)
     implementation("androidx.media3:media3-exoplayer:1.4.1")
     implementation("androidx.media3:media3-session:1.4.1")
-    // YouTube Music search and audio streams on the phone (GPL-3.0; this is why the Android app is GPL-3.0)
+    // YouTube Music search and audio streams on the phone (GPL-3.0-or-later)
     implementation("com.github.TeamNewPipe:NewPipeExtractor:v0.27.0")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs_nio:2.0.4")
     // unit tests on the computer (no phone): the version and release parsing

@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Discord status for the apps (/api/beacon...), the old YTM Beacon app (finding it, keeping out of its way, moving
 over from it), and the guard that keeps every test away from the real one.
 

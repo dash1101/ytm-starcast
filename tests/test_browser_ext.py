@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """The browser extension's setup: its copy in a fixed folder, its status, and opening the folder or a browser's
 extensions page on the computer. Temp folders and fakes only: nothing is opened, nothing in the real home changes."""
 import json

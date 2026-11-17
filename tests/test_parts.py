@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """The on/off switches ("parts") and the extension routes that go with them: /api/parts, /ext/parts, /ext/status,
 /ext/bye, the switches in /ext/poll and /ext/state replies, and the hook the Discord status engine plugs into.
 Fakes only: nothing here plays, pauses or changes anything on the computer, and nothing talks to Discord."""

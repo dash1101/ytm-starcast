@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 # Installs YTM Starcast from this folder into your Python and starts it at logon (Windows, for people who use Python).
 # Most people want the Windows download instead (install-exe.ps1 inside it): it needs no Python.
 #

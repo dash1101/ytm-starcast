@@ -4718,6 +4718,18 @@
   ]
  },
  {
+  "text": "License",
+  "where": [
+   "py",
+   "web"
+  ],
+  "files": [
+   "gtk_ui.py",
+   "index.html",
+   "tk_ui.py"
+  ]
+ },
+ {
   "text": "Light",
   "where": [
    "android",
@@ -5234,6 +5246,19 @@
    "ext"
   ],
   "files": [
+   "refine.js"
+  ]
+ },
+ {
+  "text": "Made by {author}. Free software under the GNU GPL, version 3 or later, with no warranty.",
+  "where": [
+   "android",
+   "ext",
+   "web"
+  ],
+  "files": [
+   "SettingsScreen.kt",
+   "index.html",
    "refine.js"
   ]
  },
@@ -9718,6 +9743,17 @@
   ],
   "files": [
    "refine.js"
+  ]
+ },
+ {
+  "text": "Source code",
+  "where": [
+   "android",
+   "web"
+  ],
+  "files": [
+   "SettingsScreen.kt",
+   "index.html"
   ]
  },
  {

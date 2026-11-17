@@ -1,0 +1,48 @@
+YTM Starcast
+Copyright (C) 2026 dash1101
+https://github.com/dash1101/ytm-starcast
+
+YTM Starcast is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+version, together with the additional terms below.
+
+YTM Starcast is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License (the LICENSE file)
+for more details.
+
+
+ADDITIONAL TERMS (GNU GPL version 3, section 7)
+
+These terms apply to all of YTM Starcast's own code, in every file of this repository that carries the notice
+"Additional terms under GPL section 7: see NOTICE", and to every copy and every work based on it. They are terms
+permitted by section 7, paragraphs (b), (c) and (e), and may not be removed.
+
+1. Credit (section 7(b)).
+   a. Keep intact every copyright notice, every author credit and this NOTICE file, in the source code and in
+      everything built from it.
+   b. A copy or modified version that has an "About", credits, settings or similar screen, page or window must show
+      there, clearly and in its own interface, the line:
+
+          Based on YTM Starcast by dash1101 (https://github.com/dash1101/ytm-starcast)
+
+      A copy that is not modified may show YTM Starcast's own About text instead. A work without any such screen must
+      put the same line at the top of its README or main documentation.
+
+2. Origin (section 7(c)).
+   a. Do not misrepresent the origin of YTM Starcast or any part of it. Do not claim, or suggest, that you or anyone
+      other than its authors wrote the parts they wrote, and do not remove or replace their names to that end.
+   b. A modified version must be marked as different from the original: its name, its description and the line in
+      1.b must make clear that it is a modified version of YTM Starcast and not YTM Starcast itself.
+
+3. Names and logo (section 7(e)).
+   No right is granted to use the name "YTM Starcast", the earlier names "Pocketfader" and "YTM Beacon", or the YTM
+   Starcast logo and icons as the name, logo or icon of any other work. A modified version must use a different name
+   and a different icon. Naming YTM Starcast in the credit line of 1.b, and to say truthfully what a work is based on,
+   is allowed.
+
+Parts made by others keep their own licenses, among them NewPipe Extractor (GPL-3.0-or-later), used by the Android
+app, and yt-dlp (Unlicense), which the program can download. These additional terms cover only YTM Starcast's own
+code.
+
+Versions released before 0.2.10-alpha were also offered under the MIT License (the Android app under
+GPL-3.0-or-later); copies of those versions keep the license they were released under.

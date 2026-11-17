@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Does audio sent to the Windows DEFAULT playback device land on Voicemeeter Strip[2]?
 
 winsound plays to the default render endpoint. If VAIO is default, the tone shows up on

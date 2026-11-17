@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """What the desktop window does, separate from how it looks."""
 import json
 import os
@@ -20,6 +22,7 @@ DESKTOP_NAME = "ytm-starcast.desktop"
 # The window's id on the desktop (GTK application id, and the name the window carries). install.sh writes the same
 # value as StartupWMClass in ytm-starcast.desktop, so the window is shown with YTM Starcast's menu entry and icon.
 APP_ID = "app.novalabs.starcast"
+LICENSE = "GPL-3.0 · dash1101"  # shown in the window, beside the version
 RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
 RUN_VALUE = "YTM Starcast"
 # YTM Starcast used to be called Pocketfader: what that name left behind is taken over (and removed) here.

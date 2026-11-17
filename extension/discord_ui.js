@@ -1,3 +1,5 @@
+// YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+// Additional terms under GPL section 7: see NOTICE.
 /*
  * YTM Starcast extension: Discord status options, shared by Refine's panel (in the YouTube Music page) and the
  * toolbar popup. Everything YTM Beacon had (show or hide, hide for a while, private mode, paused songs, progress bar,

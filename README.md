@@ -277,5 +277,7 @@ status settings in memory only: handy for trying things safely. Settings and the
 **Privacy and terms**: no accounts, analytics or ads, and nothing is sent to the developers. [Privacy](PRIVACY.md) lists
 what YTM Starcast keeps and what it sends where; [Terms of use](TERMS.md) covers the rest.
 
-MIT licensed, except the Android app (`android/`), which is **GPL-3.0-or-later** because it includes
-[NewPipe Extractor](https://github.com/TeamNewPipe/NewPipeExtractor) to play YouTube Music on the phone itself.
+**License:** [GPL-3.0-or-later](LICENSE) with [additional terms](NOTICE) under its section 7. Anyone may use, study,
+change and share YTM Starcast, as long as they keep the credit to its author, mark changed versions as changed, and give
+them a name and icon of their own. A shared or changed version shows "Based on YTM Starcast by dash1101" in its About
+screen, and nobody may present YTM Starcast or part of it as their own work.

@@ -7,10 +7,12 @@ app.
 
 ## Free, open-source software
 
-YTM Starcast is free and open source. Its code is under the [MIT License](LICENSE), except the Android app
-(`android/`), which is under the [GNU General Public License, version 3 or later](android/LICENSE) because it includes
-NewPipe Extractor. Those licenses govern copying, changing and sharing the code, and nothing on this page takes away
-any right they give you. Parts made by others, such as NewPipe Extractor and yt-dlp, come under their own licenses.
+YTM Starcast is free and open source, under the [GNU General Public License, version 3 or later](LICENSE), with the
+[additional terms in NOTICE](NOTICE) that section 7 of that license allows: copies and changed versions must keep the
+credit to YTM Starcast's author and show "Based on YTM Starcast by dash1101" in their About screen; changed versions must
+be marked as changed and use their own name and icon; and nobody may present YTM Starcast or part of it as their own
+work. The license and those terms govern copying, changing and sharing the code, and nothing on this page takes away any
+right they give you. Parts made by others, such as NewPipe Extractor and yt-dlp, come under their own licenses.
 
 ## No warranty
 

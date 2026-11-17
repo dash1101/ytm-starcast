@@ -1,3 +1,5 @@
+// YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+// Additional terms under GPL section 7: see NOTICE.
 // YTM Starcast's toolbar popup: is the app on this computer answering, what Discord status shows, and the three main switches.
 // The popup never calls the app itself. It asks the extension's script in an open YouTube Music tab, which talks to the
 // app the same way the rest of the extension does (and with the same origin).

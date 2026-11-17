@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Discord status routes added for the extension's popup and Refine's panel (/ext/discord...), the card preview in
 GET /api/beacon, POST /api/beacon/test, and a phone's song (POST /api/phone/playing). The built-in engine runs as a
 trial run (never contacts Discord)."""

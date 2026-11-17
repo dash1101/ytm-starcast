@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Talks to the Discord desktop app on this computer over its local IPC socket to set the activity.
 
 Linux and macOS: a Unix socket (discord-ipc-0..9 in the runtime/temp folders, including the Flatpak and Snap

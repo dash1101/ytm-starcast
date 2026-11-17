@@ -3,6 +3,15 @@
 What changed in each version of YTM Starcast, newest first. Versions are named `0.2.1-alpha`, `0.2.2-alpha` and so on;
 before that they were `0.2.0-alpha.1` to `0.2.0-alpha.10`.
 
+## 0.2.9-alpha
+
+- **YTM Starcast in 10 languages:** English, Español, Français, Deutsch, Português (Brasil), Italiano, Русский, 日本語,
+  한국어 and 简体中文. The web app, the Android app, the desktop window, the browser extension's popup and Refine inside
+  YouTube Music all follow one **Language** setting (Settings → Appearance in the apps, Settings in the desktop window,
+  All settings → YTM Starcast in Refine). *Automatic*, the default, uses each device's own language; choosing one uses
+  it on every device. A change shows at once, also in open YouTube Music tabs.
+- Counts read right in every language ("1 song", "2 songs"), including a few places that used to say "1 songs".
+
 ## 0.2.8-alpha
 
 - **YTM Starcast's logo in the album's colours:** the logo in YouTube Music's top bar, the extension's toolbar button

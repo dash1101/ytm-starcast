@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Open YouTube Music in the computer's browser (so a phone can start music when no tab is open).
 
 Only ever opens music.youtube.com: the address is built here from validated ids, never taken from the caller.

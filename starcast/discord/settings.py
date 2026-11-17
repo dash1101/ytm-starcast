@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Discord status settings: the same keys, defaults and rules as YTM Beacon's config.json.
 
 The file is a small JSON object (see KEYS). Missing keys keep their defaults, so a file written by an older

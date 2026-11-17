@@ -1,3 +1,5 @@
+// YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+// Additional terms under GPL section 7: see NOTICE.
 /* YTM Starcast Refine: improvements to YouTube Music itself, built into its own page (page world, after ytm_main.js).
  *
  *  - A Material 3 Expressive look in separate layers, each with its own switch: rounder shapes, colours taken from the
@@ -2797,7 +2799,8 @@
       })()],
       ["sound", tr("Computer sound"), soundSection(true)],
       ["starcast", "YTM Starcast", (() => { const { rows, note } = partsBlock(["remote", "discord", "refine"]); return [rows, languageRow(), note]; })()],
-      ["about", tr("About"), [h("p", { class: "pf-foot", text: tr("These rely on how YouTube Music's page is built, so a change on its side can break one; switch off anything that misbehaves. Settings stay in this browser. Opening music.youtube.com/?pf-refine=off starts a page without any of it. YTM Starcast extension {version}.", { version: VERSION }) })]],
+      ["about", tr("About"), [h("p", { class: "pf-foot", text: tr("These rely on how YouTube Music's page is built, so a change on its side can break one; switch off anything that misbehaves. Settings stay in this browser. Opening music.youtube.com/?pf-refine=off starts a page without any of it. YTM Starcast extension {version}.", { version: VERSION }) }),
+        h("p", { class: "pf-foot", text: tr("Made by {author}. Free software under the GNU GPL, version 3 or later, with no warranty.", { author: "dash1101" }) })]],
     ];
     const nav = h("nav", { class: "pf-all-nav", "aria-label": tr("Sections") });
     const body = h("div", { class: "pf-all-body" });

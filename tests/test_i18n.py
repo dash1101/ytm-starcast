@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Languages: the shared setting on the server, the translation helpers in each part, and the translations themselves
 (every marked text translated into every language, with the same placeholders; every part's files up to date)."""
 import json

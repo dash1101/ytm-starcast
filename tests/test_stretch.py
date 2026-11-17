@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """The extension's clear-slowed-sound processor (extension/stretch.js), run with Node on made-up tones: nothing is played.
 
 What the browser hands it at speed r, with the pitch let go, is the song slower and lower by r; the processor has to bring

@@ -1,3 +1,5 @@
+# YTM Starcast. Copyright (C) 2026 dash1101. SPDX-License-Identifier: GPL-3.0-or-later
+# Additional terms under GPL section 7: see NOTICE.
 """Measures the REAL effect of the built-in EQ: tones go through the filter-chain in a private
 PipeWire sandbox and the recorded output level is compared with the EQ flat vs boosted."""
 import array, math, os, signal, subprocess, sys, tempfile, time, wave
